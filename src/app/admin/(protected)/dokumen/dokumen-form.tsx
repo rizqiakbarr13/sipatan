@@ -21,7 +21,7 @@ export function DokumenForm({
   const [state, formAction, pending] = useActionState<ActionState, FormData>(action, {});
 
   return (
-    <form action={formAction} className="max-w-2xl space-y-4" encType="multipart/form-data">
+    <form action={formAction} className="max-w-2xl space-y-4">
       {state.error && (
         <div className="flex items-start gap-2 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800">
           <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" /> {state.error}

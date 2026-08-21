@@ -21,21 +21,29 @@ export default function AdminLoginPage() {
     setError(null);
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    if (result?.error) {
-      setError("Email atau password salah.");
+      console.log("signIn result", JSON.stringify(result));
+
+      if (result?.error) {
+        setError("Email atau password salah.");
+        setLoading(false);
+        return;
+      }
+
+      const callbackUrl = searchParams.get("callbackUrl") || "/admin";
+      router.push(callbackUrl);
+      router.refresh();
+    } catch (err) {
+      console.log("signIn threw", err);
+      setError("Terjadi kesalahan saat login.");
       setLoading(false);
-      return;
     }
-
-    const callbackUrl = searchParams.get("callbackUrl") || "/admin";
-    router.push(callbackUrl);
-    router.refresh();
   }
 
   return (
