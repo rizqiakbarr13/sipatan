@@ -88,6 +88,73 @@ export interface Dictionary {
     sisaHari: string;
     sisaSuffix: string;
   };
+  dokumen: {
+    pageTitle: string;
+    pageDesc: string;
+    cariPlaceholder: string;
+    semuaKategori: string;
+    terapkan: string;
+    lihat: string;
+    unduh: string;
+    diunduh: string;
+    tidakAda: string;
+    nomorSurat: string;
+    tanggalDokumen: string;
+    ukuranFile: string;
+    jumlahUnduhan: string;
+    unduhDokumen: string;
+    dataTidakSesuai: string;
+    dataTidakSesuaiDesc: string;
+    ajukanAtasDokumen: string;
+    kanalTertutup: string;
+    sanggahanDitanggapi: string;
+    transparansiDesc: string;
+    tanggapanAdmin: string;
+  };
+  sanggahanSukses: {
+    title: string;
+    desc: string;
+    lacakStatus: string;
+    kembaliBeranda: string;
+  };
+  lacak: {
+    title: string;
+    desc: string;
+    nomorTiket: string;
+    nik: string;
+    tombol: string;
+    tidakDitemukan: string;
+  };
+  detailSanggahan: {
+    diajukan: string;
+    bidangTerkait: string;
+    dokumenTerkait: string;
+    catatanAdmin: string;
+    riwayat: string;
+  };
+  sanggahanForm: {
+    pageTitle: string;
+    pageDesc: string;
+    kanalTertutup: string;
+    nama: string;
+    nik: string;
+    alasHak: string;
+    noDanom: string;
+    noPetaBidang: string;
+    noNis: string;
+    bidangTerkaitOpsional: string;
+    pilihBidang: string;
+    dokumenTerkaitOpsional: string;
+    pilihDokumen: string;
+    email: string;
+    nomorHp: string;
+    isiSalahSatu: string;
+    isiSanggahan: string;
+    isiSanggahanPlaceholder: string;
+    lampiran: string;
+    pernyataanBenar: string;
+    kirim: string;
+  };
 }
 
 const id: Dictionary = {
@@ -181,6 +248,76 @@ const id: Dictionary = {
     sisaPrefix: "Masa sanggah berakhir dalam",
     sisaHari: "hari",
     sisaSuffix: "sampai dengan",
+  },
+  dokumen: {
+    pageTitle: "Dokumen Publikasi",
+    pageDesc:
+      "Dokumen resmi pengadaan tanah: daftar nominatif, pengumuman, peta bidang, SK penetapan lokasi, dan berita acara.",
+    cariPlaceholder: "Cari judul dokumen...",
+    semuaKategori: "Semua Kategori",
+    terapkan: "Terapkan",
+    lihat: "Lihat",
+    unduh: "Unduh",
+    diunduh: "x diunduh",
+    tidakAda: "Tidak ada dokumen yang sesuai dengan pencarian Anda.",
+    nomorSurat: "Nomor Surat",
+    tanggalDokumen: "Tanggal Dokumen",
+    ukuranFile: "Ukuran File",
+    jumlahUnduhan: "Jumlah Unduhan",
+    unduhDokumen: "Unduh Dokumen",
+    dataTidakSesuai: "Data tidak sesuai?",
+    dataTidakSesuaiDesc: "Jika data Anda pada dokumen ini tidak sesuai, silakan ajukan sanggahan.",
+    ajukanAtasDokumen: "Ajukan Sanggahan atas Dokumen Ini",
+    kanalTertutup:
+      "Kanal sanggahan untuk dokumen ini sedang tidak tersedia (masa sanggah berakhir atau kanal ditutup admin).",
+    sanggahanDitanggapi: "Sanggahan yang Sudah Ditanggapi",
+    transparansiDesc: "Ditampilkan sebagai bentuk transparansi. Identitas penyanggah disamarkan.",
+    tanggapanAdmin: "Tanggapan Admin:",
+  },
+  sanggahanSukses: {
+    title: "Sanggahan Berhasil Dikirim",
+    desc: "Sanggahan Anda telah kami terima dan akan diproses oleh panitia. Simpan nomor tiket berikut untuk melacak status sanggahan Anda.",
+    lacakStatus: "Lacak Status Sanggahan",
+    kembaliBeranda: "Kembali ke Beranda",
+  },
+  lacak: {
+    title: "Lacak Status Sanggahan",
+    desc: "Masukkan nomor tiket dan NIK yang digunakan saat mengajukan sanggahan.",
+    nomorTiket: "Nomor Tiket",
+    nik: "NIK",
+    tombol: "Lacak",
+    tidakDitemukan: "Data tidak ditemukan. Pastikan nomor tiket dan NIK yang Anda masukkan sudah benar.",
+  },
+  detailSanggahan: {
+    diajukan: "Diajukan",
+    bidangTerkait: "Bidang Terkait",
+    dokumenTerkait: "Dokumen Terkait",
+    catatanAdmin: "Catatan / Tanggapan Admin",
+    riwayat: "Riwayat",
+  },
+  sanggahanForm: {
+    pageTitle: "Ajukan Sanggahan",
+    pageDesc: "Sampaikan sanggahan atas data nominatif atau dokumen publikasi yang menurut Anda tidak sesuai.",
+    kanalTertutup:
+      "Masa sanggah telah berakhir atau kanal sanggahan untuk dokumen terkait sedang ditutup, sehingga pengajuan sanggahan baru tidak dapat diproses saat ini.",
+    nama: "Nama *",
+    nik: "NIK *",
+    alasHak: "Alas Hak",
+    noDanom: "No. Danom",
+    noPetaBidang: "No. Peta Bidang",
+    noNis: "No. NIS",
+    bidangTerkaitOpsional: "Bidang Terkait (opsional)",
+    pilihBidang: "— Pilih bidang —",
+    dokumenTerkaitOpsional: "Dokumen Publikasi Terkait (opsional)",
+    pilihDokumen: "— Pilih dokumen —",
+    email: "Email",
+    nomorHp: "Nomor HP",
+    isiSalahSatu: "Isi salah satu: email atau nomor HP.",
+    isiSanggahan: "Isi Sanggahan *",
+    isiSanggahanPlaceholder: "Jelaskan secara rinci ketidaksesuaian data yang Anda temukan...",
+    lampiran: "Lampiran Bukti (opsional, PDF/JPG/PNG, maks. 5MB)",
+    pernyataanBenar: "Saya menyatakan bahwa data yang saya isikan di atas adalah benar.",
+    kirim: "Kirim Sanggahan",
   },
 };
 

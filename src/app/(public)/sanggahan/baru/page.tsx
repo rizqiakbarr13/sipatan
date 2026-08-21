@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { getActiveProject } from "@/lib/project";
 import { isMasaSanggahBerjalan } from "@/lib/masa-sanggah";
 import { getWargaSession } from "@/lib/warga-session";
+import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { SanggahanForm } from "@/components/sanggahan/sanggahan-form";
 
@@ -19,6 +20,7 @@ export default async function AjukanSanggahanPage({
   const { bidangId, dokumenId } = await searchParams;
 
   const session = await getWargaSession();
+  const { dict } = await getDictionary();
 
   const [project, bidangList, dokumenList, warga] = await Promise.all([
     getActiveProject(),
@@ -49,10 +51,7 @@ export default async function AjukanSanggahanPage({
 
   return (
     <div>
-      <PageHeader
-        title="Ajukan Sanggahan"
-        description="Sampaikan sanggahan atas data nominatif atau dokumen publikasi yang menurut Anda tidak sesuai."
-      />
+      <PageHeader title={dict.sanggahanForm.pageTitle} description={dict.sanggahanForm.pageDesc} />
 
       <div className="mx-auto max-w-3xl px-4 py-10">
         <SanggahanForm

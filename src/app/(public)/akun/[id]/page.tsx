@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { getWargaSession } from "@/lib/warga-session";
 import { prisma } from "@/lib/prisma";
+import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { SanggahanDetailCard } from "@/components/sanggahan/sanggahan-detail-card";
 
@@ -21,6 +22,7 @@ export default async function AkunSanggahanDetailPage({
   if (!session) redirect("/akun/masuk");
 
   const { id } = await params;
+  const { dict } = await getDictionary();
 
   const sanggahan = await prisma.sanggahan.findFirst({
     where: { id, wargaId: session.id },
@@ -37,10 +39,13 @@ export default async function AkunSanggahanDetailPage({
     <div>
       <PageHeader title="Detail Sanggahan" description={sanggahan.nomorTiket} />
       <div className="mx-auto max-w-2xl px-4 py-10">
-        <Link href="/akun" className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-emerald-700 hover:underline">
-          <ChevronLeft className="h-4 w-4" /> Kembali ke Akun Saya
+        <Link
+          href="/akun"
+          className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-emerald-700 hover:underline dark:text-emerald-400"
+        >
+          <ChevronLeft className="h-4 w-4" /> {dict.common.back} — {dict.nav.akunSaya}
         </Link>
-        <SanggahanDetailCard sanggahan={sanggahan} />
+        <SanggahanDetailCard sanggahan={sanggahan} dict={dict} />
       </div>
     </div>
   );

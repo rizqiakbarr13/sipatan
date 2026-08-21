@@ -4,6 +4,7 @@ import { Download, MessageSquareWarning } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getActiveProject } from "@/lib/project";
 import { isMasaSanggahBerjalan } from "@/lib/masa-sanggah";
+import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -23,9 +24,10 @@ export default async function DokumenDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [dokumen, project] = await Promise.all([
+  const [dokumen, project, { dict }] = await Promise.all([
     prisma.dokumenPublikasi.findUnique({ where: { id } }),
     getActiveProject(),
+    getDictionary(),
   ]);
 
   if (!dokumen || !dokumen.published) notFound();
@@ -54,45 +56,45 @@ export default async function DokumenDetailPage({
               <iframe
                 src={dokumen.fileUrl}
                 title={dokumen.judul}
-                className="h-[75vh] w-full rounded-xl border border-zinc-200 bg-zinc-50"
+                className="h-[75vh] w-full rounded-xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900"
               />
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={dokumen.fileUrl}
                 alt={dokumen.judul}
-                className="w-full rounded-xl border border-zinc-200"
+                className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800"
               />
             )}
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-xl border border-zinc-200 bg-white p-5">
+            <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
               <Badge variant="secondary">{KATEGORI_DOKUMEN_LABEL[dokumen.kategori]}</Badge>
-              <dl className="mt-4 space-y-2 text-sm text-zinc-600">
+              <dl className="mt-4 space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
                 {dokumen.nomorSurat && (
                   <div>
-                    <dt className="text-xs uppercase text-zinc-400">Nomor Surat</dt>
+                    <dt className="text-xs uppercase text-zinc-400">{dict.dokumen.nomorSurat}</dt>
                     <dd>{dokumen.nomorSurat}</dd>
                   </div>
                 )}
                 {dokumen.tanggalDokumen && (
                   <div>
-                    <dt className="text-xs uppercase text-zinc-400">Tanggal Dokumen</dt>
+                    <dt className="text-xs uppercase text-zinc-400">{dict.dokumen.tanggalDokumen}</dt>
                     <dd>{formatTanggalIndonesia(dokumen.tanggalDokumen)}</dd>
                   </div>
                 )}
                 <div>
-                  <dt className="text-xs uppercase text-zinc-400">Ukuran File</dt>
+                  <dt className="text-xs uppercase text-zinc-400">{dict.dokumen.ukuranFile}</dt>
                   <dd>{formatUkuranFile(dokumen.fileSize)}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs uppercase text-zinc-400">Jumlah Unduhan</dt>
+                  <dt className="text-xs uppercase text-zinc-400">{dict.dokumen.jumlahUnduhan}</dt>
                   <dd>{dokumen.jumlahUnduhan}x</dd>
                 </div>
               </dl>
               {dokumen.deskripsi && (
-                <p className="mt-4 whitespace-pre-line text-sm text-zinc-600">
+                <p className="mt-4 whitespace-pre-line text-sm text-zinc-600 dark:text-zinc-400">
                   {dokumen.deskripsi}
                 </p>
               )}
@@ -100,28 +102,27 @@ export default async function DokumenDetailPage({
                 href={`/api/dokumen/${dokumen.id}/unduh`}
                 className={cn(buttonVariants(), "mt-4 w-full")}
               >
-                <Download className="h-4 w-4" /> Unduh Dokumen
+                <Download className="h-4 w-4" /> {dict.dokumen.unduhDokumen}
               </a>
             </div>
 
-            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5">
-              <h2 className="flex items-center gap-2 font-semibold text-emerald-900">
-                <MessageSquareWarning className="h-5 w-5" /> Data tidak sesuai?
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-900 dark:bg-emerald-950/40">
+              <h2 className="flex items-center gap-2 font-semibold text-emerald-900 dark:text-emerald-200">
+                <MessageSquareWarning className="h-5 w-5" /> {dict.dokumen.dataTidakSesuai}
               </h2>
-              <p className="mt-1 text-sm text-emerald-800">
-                Jika data Anda pada dokumen ini tidak sesuai, silakan ajukan sanggahan.
+              <p className="mt-1 text-sm text-emerald-800 dark:text-emerald-300">
+                {dict.dokumen.dataTidakSesuaiDesc}
               </p>
               {bisaSanggah ? (
                 <Link
                   href={`/sanggahan/baru?dokumenId=${dokumen.id}`}
                   className={cn(buttonVariants({ variant: "default" }), "mt-3 w-full")}
                 >
-                  Ajukan Sanggahan atas Dokumen Ini
+                  {dict.dokumen.ajukanAtasDokumen}
                 </Link>
               ) : (
-                <p className="mt-3 rounded-md bg-white/60 p-2 text-xs text-emerald-900">
-                  Kanal sanggahan untuk dokumen ini sedang tidak tersedia (masa sanggah
-                  berakhir atau kanal ditutup admin).
+                <p className="mt-3 rounded-md bg-white/60 p-2 text-xs text-emerald-900 dark:bg-black/20 dark:text-emerald-200">
+                  {dict.dokumen.kanalTertutup}
                 </p>
               )}
             </div>
@@ -130,22 +131,20 @@ export default async function DokumenDetailPage({
 
         {sanggahanPublik.length > 0 && (
           <section className="mt-10">
-            <h2 className="font-semibold text-zinc-900">
-              Sanggahan yang Sudah Ditanggapi ({sanggahanPublik.length})
+            <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
+              {dict.dokumen.sanggahanDitanggapi} ({sanggahanPublik.length})
             </h2>
-            <p className="mt-1 text-sm text-zinc-500">
-              Ditampilkan sebagai bentuk transparansi. Identitas penyanggah disamarkan.
-            </p>
+            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{dict.dokumen.transparansiDesc}</p>
             <div className="mt-4 space-y-3">
               {sanggahanPublik.map((s) => (
-                <div key={s.id} className="rounded-lg border border-zinc-200 bg-white p-4">
+                <div key={s.id} className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
                   <p className="text-xs font-medium uppercase text-zinc-400">
                     {initialName(s.nama)} · {formatTanggalIndonesia(s.createdAt)}
                   </p>
-                  <p className="mt-1 text-sm text-zinc-700">{s.isiSanggahan}</p>
+                  <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">{s.isiSanggahan}</p>
                   {s.catatanAdmin && (
-                    <div className="mt-2 rounded-md bg-emerald-50 p-2 text-sm text-emerald-800">
-                      <span className="font-medium">Tanggapan Admin: </span>
+                    <div className="mt-2 rounded-md bg-emerald-50 p-2 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+                      <span className="font-medium">{dict.dokumen.tanggapanAdmin} </span>
                       {s.catatanAdmin}
                     </div>
                   )}
