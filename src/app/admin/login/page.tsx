@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Lock, Loader2, TriangleAlert } from "lucide-react";
@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-export default function AdminLoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -28,8 +28,6 @@ export default function AdminLoginPage() {
         redirect: false,
       });
 
-      console.log("signIn result", JSON.stringify(result));
-
       if (result?.error) {
         setError("Email atau password salah.");
         setLoading(false);
@@ -39,8 +37,7 @@ export default function AdminLoginPage() {
       const callbackUrl = searchParams.get("callbackUrl") || "/admin";
       router.push(callbackUrl);
       router.refresh();
-    } catch (err) {
-      console.log("signIn threw", err);
+    } catch {
       setError("Terjadi kesalahan saat login.");
       setLoading(false);
     }
@@ -94,5 +91,13 @@ export default function AdminLoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-zinc-50" />}>
+      <LoginForm />
+    </Suspense>
   );
 }
