@@ -95,6 +95,9 @@ model Sanggahan {
   dokumenId    String?
   dokumen      DokumenPublikasi? @relation(fields: [dokumenId], references: [id])
 
+  wargaId      String?
+  warga        Warga?   @relation(fields: [wargaId], references: [id])
+
   nama         String
   nik          String
   alasHak      String?
@@ -117,6 +120,7 @@ model Sanggahan {
 
   @@index([bidangId])
   @@index([dokumenId])
+  @@index([wargaId])
   @@index([status])
 }
 
@@ -213,4 +217,16 @@ model User {
 enum Role {
   SUPER_ADMIN
   ADMIN
+}
+
+model Warga {
+  id        String   @id @default(cuid())
+  nama      String
+  email     String   @unique
+  password  String
+  nik       String?
+  noHp      String?
+  sanggahan Sanggahan[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
