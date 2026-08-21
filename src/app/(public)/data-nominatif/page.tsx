@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { NominatifTable } from "@/components/nominatif/nominatif-table";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,23 +20,26 @@ function jenisAlasHak(suratTandaBukti: string | null): string {
 }
 
 export default async function DataNominatifPage() {
-  const bidangList = await prisma.bidang.findMany({
-    orderBy: { noUrut: "asc" },
-    select: {
-      id: true,
-      noUrut: true,
-      namaPemilik: true,
-      nik: true,
-      nib: true,
-      rtRw: true,
-      luasSesuaiAlasHak: true,
-      luasHasilUkur: true,
-      luasKena: true,
-      luasSisa: true,
-      suratTandaBukti: true,
-      keterangan: true,
-    },
-  });
+  const [bidangList, { locale, dict }] = await Promise.all([
+    prisma.bidang.findMany({
+      orderBy: { noUrut: "asc" },
+      select: {
+        id: true,
+        noUrut: true,
+        namaPemilik: true,
+        nik: true,
+        nib: true,
+        rtRw: true,
+        luasSesuaiAlasHak: true,
+        luasHasilUkur: true,
+        luasKena: true,
+        luasSisa: true,
+        suratTandaBukti: true,
+        keterangan: true,
+      },
+    }),
+    getDictionary(),
+  ]);
 
   const totalLuasKena = bidangList.reduce((sum, b) => sum + (b.luasKena ?? 0), 0);
   const jenisCounts = bidangList.reduce<Record<string, number>>((acc, b) => {
@@ -46,32 +50,29 @@ export default async function DataNominatifPage() {
 
   return (
     <div>
-      <PageHeader
-        title="Data Nominatif"
-        description="Daftar bidang tanah, bangunan, dan tanaman yang terkena dampak pengadaan tanah."
-      />
+      <PageHeader title={dict.nominatif.pageTitle} description={dict.nominatif.pageDesc} />
 
       <div className="mx-auto max-w-6xl px-4 py-8">
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs uppercase text-zinc-500">Total Bidang</p>
-              <p className="mt-1 text-2xl font-bold text-zinc-900">{bidangList.length}</p>
+              <p className="text-xs uppercase text-zinc-500 dark:text-zinc-400">{dict.nominatif.totalBidang}</p>
+              <p className="mt-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">{bidangList.length}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <p className="text-xs uppercase text-zinc-500">Total Luas Terkena</p>
-              <p className="mt-1 text-2xl font-bold text-amber-700">
-                {totalLuasKena.toLocaleString("id-ID")} m²
+              <p className="text-xs uppercase text-zinc-500 dark:text-zinc-400">{dict.nominatif.totalLuasTerkena}</p>
+              <p className="mt-1 text-2xl font-bold text-amber-700 dark:text-amber-400">
+                {totalLuasKena.toLocaleString(locale === "en" ? "en-US" : "id-ID")} m²
               </p>
             </CardContent>
           </Card>
           {["SHM", "SHGB"].map((jenis) => (
             <Card key={jenis}>
               <CardContent className="p-4">
-                <p className="text-xs uppercase text-zinc-500">{jenis}</p>
-                <p className="mt-1 text-2xl font-bold text-zinc-900">
+                <p className="text-xs uppercase text-zinc-500 dark:text-zinc-400">{jenis}</p>
+                <p className="mt-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                   {jenisCounts[jenis] ?? 0}
                 </p>
               </CardContent>

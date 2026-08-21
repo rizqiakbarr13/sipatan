@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { maskNik } from "@/lib/mask";
 import { toCsv } from "@/lib/csv-export";
+import { useLocale } from "@/lib/i18n/client";
 
 export interface NominatifRow {
   id: string;
@@ -45,6 +46,7 @@ function jenisAlasHak(suratTandaBukti: string | null): string {
 const columnHelper = createColumnHelper<NominatifRow>();
 
 export function NominatifTable({ data }: { data: NominatifRow[] }) {
+  const { dict } = useLocale();
   const [globalFilter, setGlobalFilter] = useState("");
   const [jenisFilter, setJenisFilter] = useState("");
   const [sorting, setSorting] = useState<SortingState>([{ id: "noUrut", desc: false }]);
@@ -184,7 +186,7 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
           <Input
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            placeholder="Cari nama, NIB, atau no. urut..."
+            placeholder={dict.nominatifTable.cariPlaceholder}
             className="pl-9"
           />
         </div>
@@ -192,23 +194,23 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
           <select
             value={jenisFilter}
             onChange={(e) => setJenisFilter(e.target.value)}
-            className="h-10 rounded-md border border-zinc-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+            className="h-10 rounded-md border border-zinc-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
           >
-            <option value="">Semua Alas Hak</option>
+            <option value="">{dict.nominatifTable.semuaAlasHak}</option>
             <option value="SHM">SHM</option>
             <option value="SHGB">SHGB</option>
             <option value="SHP">SHP</option>
             <option value="Lainnya">Lainnya</option>
           </select>
           <Button variant="outline" onClick={handleExportCsv}>
-            <Download className="h-4 w-4" /> Export CSV
+            <Download className="h-4 w-4" /> {dict.nominatifTable.exportCsv}
           </Button>
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-zinc-200">
+      <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
         <table className="w-full text-sm">
-          <thead className="bg-zinc-50 text-left text-xs uppercase text-zinc-500">
+          <thead className="bg-zinc-50 text-left text-xs uppercase text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
                 {hg.headers.map((header) => (
@@ -216,7 +218,7 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
                     {header.isPlaceholder ? null : (
                       <button
                         type="button"
-                        className="flex items-center gap-1 hover:text-zinc-800"
+                        className="flex items-center gap-1 hover:text-zinc-800 dark:hover:text-zinc-200"
                         onClick={header.column.getToggleSortingHandler()}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
@@ -228,11 +230,11 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-zinc-100">
+          <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="hover:bg-zinc-50">
+              <tr key={row.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900">
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="whitespace-nowrap px-3 py-2.5 text-zinc-700">
+                  <td key={cell.id} className="whitespace-nowrap px-3 py-2.5 text-zinc-700 dark:text-zinc-300">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -240,8 +242,8 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
             ))}
             {table.getRowModel().rows.length === 0 && (
               <tr>
-                <td colSpan={columns.length} className="px-3 py-8 text-center text-zinc-500">
-                  Tidak ada data yang sesuai.
+                <td colSpan={columns.length} className="px-3 py-8 text-center text-zinc-500 dark:text-zinc-400">
+                  {dict.nominatifTable.tidakAdaData}
                 </td>
               </tr>
             )}
@@ -249,9 +251,10 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
         </table>
       </div>
 
-      <div className="mt-4 flex items-center justify-between text-sm text-zinc-600">
+      <div className="mt-4 flex items-center justify-between text-sm text-zinc-600 dark:text-zinc-400">
         <span>
-          Menampilkan {table.getRowModel().rows.length} dari {filteredByJenis.length} bidang
+          {dict.nominatifTable.menampilkan} {table.getRowModel().rows.length} {dict.nominatifTable.dari}{" "}
+          {filteredByJenis.length} {dict.nominatifTable.bidang}
         </span>
         <div className="flex items-center gap-2">
           <Button
@@ -263,8 +266,8 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <span>
-            Halaman {table.getState().pagination.pageIndex + 1} dari{" "}
-            {Math.max(1, table.getPageCount())}
+            {dict.nominatifTable.halaman} {table.getState().pagination.pageIndex + 1}{" "}
+            {dict.nominatifTable.dari} {Math.max(1, table.getPageCount())}
           </span>
           <Button
             variant="outline"

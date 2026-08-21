@@ -162,6 +162,40 @@ const en: Dictionary = {
     pernyataanBenar: "I declare that the data I have entered above is true.",
     kirim: "Submit Objection",
   },
+  nominatif: {
+    pageTitle: "Nominative Data",
+    pageDesc: "List of land parcels, buildings, and plants affected by the land acquisition.",
+    totalBidang: "Total Parcels",
+    totalLuasTerkena: "Total Affected Area",
+    dataTidakSesuai: "Data doesn't match?",
+    dataTidakSesuaiDesc: "If any data in this parcel doesn't match your records, please submit an objection.",
+    ajukanUntukBidang: "Submit an Objection for This Parcel",
+    masaSanggahBerakhir: "The objection period has ended; new objections cannot be processed.",
+  },
+  nominatifTable: {
+    cariPlaceholder: "Search name, NIB, or parcel no...",
+    semuaAlasHak: "All Title Types",
+    exportCsv: "Export CSV",
+    tidakAdaData: "No matching data.",
+    menampilkan: "Showing",
+    dari: "of",
+    bidang: "parcels",
+    halaman: "Page",
+  },
+  sop: {
+    pageTitle: "Land Acquisition SOP",
+    pageDesc: "Stages of the land acquisition process for public interest, from planning to right release.",
+    adaLampiran: "PDF attachment available",
+    belumAda: "No SOP stages have been published yet.",
+    tahap: "Stage",
+    unduhLampiran: "Download PDF Attachment",
+  },
+  pengumuman: {
+    pageTitle: "Announcements",
+    pageDesc: "Official announcements related to land acquisition activities for public interest.",
+    lihatLampiran: "View attachment",
+    belumAda: "No announcements yet.",
+  },
 };
 
 export default en;

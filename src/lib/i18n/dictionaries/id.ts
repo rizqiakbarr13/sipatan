@@ -155,6 +155,40 @@ export interface Dictionary {
     pernyataanBenar: string;
     kirim: string;
   };
+  nominatif: {
+    pageTitle: string;
+    pageDesc: string;
+    totalBidang: string;
+    totalLuasTerkena: string;
+    dataTidakSesuai: string;
+    dataTidakSesuaiDesc: string;
+    ajukanUntukBidang: string;
+    masaSanggahBerakhir: string;
+  };
+  nominatifTable: {
+    cariPlaceholder: string;
+    semuaAlasHak: string;
+    exportCsv: string;
+    tidakAdaData: string;
+    menampilkan: string;
+    dari: string;
+    bidang: string;
+    halaman: string;
+  };
+  sop: {
+    pageTitle: string;
+    pageDesc: string;
+    adaLampiran: string;
+    belumAda: string;
+    tahap: string;
+    unduhLampiran: string;
+  };
+  pengumuman: {
+    pageTitle: string;
+    pageDesc: string;
+    lihatLampiran: string;
+    belumAda: string;
+  };
 }
 
 const id: Dictionary = {
@@ -318,6 +352,40 @@ const id: Dictionary = {
     lampiran: "Lampiran Bukti (opsional, PDF/JPG/PNG, maks. 5MB)",
     pernyataanBenar: "Saya menyatakan bahwa data yang saya isikan di atas adalah benar.",
     kirim: "Kirim Sanggahan",
+  },
+  nominatif: {
+    pageTitle: "Data Nominatif",
+    pageDesc: "Daftar bidang tanah, bangunan, dan tanaman yang terkena dampak pengadaan tanah.",
+    totalBidang: "Total Bidang",
+    totalLuasTerkena: "Total Luas Terkena",
+    dataTidakSesuai: "Data tidak sesuai?",
+    dataTidakSesuaiDesc: "Jika ada data pada bidang ini yang menurut Anda tidak sesuai, silakan ajukan sanggahan.",
+    ajukanUntukBidang: "Ajukan Sanggahan untuk Bidang Ini",
+    masaSanggahBerakhir: "Masa sanggah telah berakhir, pengajuan sanggahan baru tidak dapat diproses.",
+  },
+  nominatifTable: {
+    cariPlaceholder: "Cari nama, NIB, atau no. urut...",
+    semuaAlasHak: "Semua Alas Hak",
+    exportCsv: "Export CSV",
+    tidakAdaData: "Tidak ada data yang sesuai.",
+    menampilkan: "Menampilkan",
+    dari: "dari",
+    bidang: "bidang",
+    halaman: "Halaman",
+  },
+  sop: {
+    pageTitle: "SOP Pengadaan Tanah",
+    pageDesc: "Tahapan proses pengadaan tanah untuk kepentingan umum, dari perencanaan hingga pelepasan hak.",
+    adaLampiran: "Ada lampiran PDF",
+    belumAda: "Belum ada tahapan SOP yang dipublikasikan.",
+    tahap: "Tahap",
+    unduhLampiran: "Unduh Lampiran PDF",
+  },
+  pengumuman: {
+    pageTitle: "Pengumuman",
+    pageDesc: "Pengumuman resmi terkait kegiatan pengadaan tanah untuk kepentingan umum.",
+    lihatLampiran: "Lihat lampiran",
+    belumAda: "Belum ada pengumuman.",
   },
 };
 
