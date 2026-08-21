@@ -49,6 +49,17 @@ export interface Dictionary {
     ajukanAnonim: string;
     dataOtomatisTerisi: string;
   };
+  footer: {
+    alamat: string;
+    tautanTitle: string;
+    sanggahanTitle: string;
+    adminTitle: string;
+    sopPengadaan: string;
+    lacakStatus: string;
+    unduhFormulir: string;
+    loginAdmin: string;
+    hakCipta: string;
+  };
 }
 
 const id: Dictionary = {
@@ -102,6 +113,18 @@ const id: Dictionary = {
     ajukanAnonim: "Ajukan sebagai anonim (jangan kaitkan dengan akun saya)",
     dataOtomatisTerisi:
       "Data di bawah sudah terisi otomatis dan sanggahan ini akan tersimpan di riwayat akun Anda.",
+  },
+  footer: {
+    alamat:
+      "Pelebaran Simpang Parung Bingung, Jalan Raya Sawangan, Jalan Raya Muchtar, dan Jalan Meruyung Raya, Kecamatan Pancoran Mas & Sawangan, Kota Depok, Jawa Barat.",
+    tautanTitle: "Tautan",
+    sanggahanTitle: "Sanggahan",
+    adminTitle: "Admin",
+    sopPengadaan: "SOP Pengadaan",
+    lacakStatus: "Lacak Status Sanggahan",
+    unduhFormulir: "Unduh Formulir PDF",
+    loginAdmin: "Login Admin",
+    hakCipta: "Panitia Pengadaan Tanah Kota Depok. Seluruh dokumen bersifat resmi.",
   },
 };
 

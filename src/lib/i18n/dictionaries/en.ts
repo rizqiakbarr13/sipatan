@@ -52,6 +52,18 @@ const en: Dictionary = {
     dataOtomatisTerisi:
       "The fields below are auto-filled, and this objection will be saved to your account history.",
   },
+  footer: {
+    alamat:
+      "Widening of Simpang Parung Bingung, Jalan Raya Sawangan, Jalan Raya Muchtar, and Jalan Meruyung Raya, Pancoran Mas & Sawangan Districts, Depok City, West Java.",
+    tautanTitle: "Links",
+    sanggahanTitle: "Objections",
+    adminTitle: "Admin",
+    sopPengadaan: "Land Acquisition SOP",
+    lacakStatus: "Track Objection Status",
+    unduhFormulir: "Download Objection Form (PDF)",
+    loginAdmin: "Admin Login",
+    hakCipta: "Depok City Land Acquisition Committee. All documents are official.",
+  },
 };
 
 export default en;
