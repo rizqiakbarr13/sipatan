@@ -1,13 +1,59 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #18181b;
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --border: #e4e4e7;
+  --input: #d4d4d8;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --primary: #047857;
+  --primary-foreground: #ffffff;
+  --accent: #ecfdf5;
+  --accent-foreground: #065f46;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --ring: #059669;
+}
+
+.dark {
+  --background: #0f1115;
+  --foreground: #f4f4f5;
+  --card: #18181b;
+  --card-foreground: #f4f4f5;
+  --border: #27272a;
+  --input: #3f3f46;
+  --muted: #1f1f23;
+  --muted-foreground: #a1a1aa;
+  --primary: #10b981;
+  --primary-foreground: #0f1115;
+  --accent: #052e22;
+  --accent-foreground: #6ee7b7;
+  --destructive: #f87171;
+  --destructive-foreground: #1f0a0a;
+  --ring: #10b981;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring: var(--ring);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -16,12 +62,17 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .markdown-content {
   font-size: 0.9375rem;
   line-height: 1.75;
   color: #3f3f46;
+}
+
+.dark .markdown-content {
+  color: #d4d4d8;
 }
 
 .markdown-content > * + * {
@@ -34,6 +85,12 @@ body {
   font-weight: 600;
   color: #18181b;
   margin-top: 1.5em;
+}
+
+.dark .markdown-content h1,
+.dark .markdown-content h2,
+.dark .markdown-content h3 {
+  color: #f4f4f5;
 }
 
 .markdown-content h1 {
@@ -85,6 +142,15 @@ body {
   font-weight: 600;
 }
 
+.dark .markdown-content th,
+.dark .markdown-content td {
+  border-color: #3f3f46;
+}
+
+.dark .markdown-content th {
+  background: #27272a;
+}
+
 .markdown-content blockquote {
   border-left: 3px solid #a7f3d0;
   padding-left: 1em;
@@ -92,9 +158,19 @@ body {
   font-style: italic;
 }
 
+.dark .markdown-content blockquote {
+  border-left-color: #065f46;
+  color: #a1a1aa;
+}
+
 .markdown-content code {
   background: #f4f4f5;
   padding: 0.125em 0.375em;
   border-radius: 0.25em;
   font-size: 0.875em;
+}
+
+.dark .markdown-content code {
+  background: #27272a;
+  color: #e4e4e7;
 }

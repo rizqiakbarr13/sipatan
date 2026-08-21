@@ -15,6 +15,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -42,9 +43,12 @@ export function AdminSidebar({
 
   return (
     <aside className="flex h-full w-64 shrink-0 flex-col border-r bg-white">
-      <div className="border-b p-4">
-        <p className="text-sm font-semibold text-emerald-800">Admin Panel</p>
-        <p className="text-xs text-zinc-500">Pengadaan Tanah Depok</p>
+      <div className="flex items-start justify-between gap-2 border-b p-4">
+        <div>
+          <p className="text-sm font-semibold text-emerald-800">Admin Panel</p>
+          <p className="text-xs text-zinc-500">Pengadaan Tanah Depok</p>
+        </div>
+        <ThemeToggle className="h-9 w-9 shrink-0" />
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
