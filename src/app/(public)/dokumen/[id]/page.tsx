@@ -13,6 +13,7 @@ import {
   formatTanggalIndonesia,
   formatUkuranFile,
 } from "@/lib/labels";
+import { initialName } from "@/lib/mask";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,12 @@ export default async function DokumenDetailPage({
   ]);
 
   if (!dokumen || !dokumen.published) notFound();
+
+  const sanggahanPublik = await prisma.sanggahan.findMany({
+    where: { dokumenId: id, tampilPublik: true },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, nama: true, isiSanggahan: true, catatanAdmin: true, createdAt: true },
+  });
 
   const masaSanggahAktif = isMasaSanggahBerjalan(
     project?.masaSanggahMulai ?? null,
@@ -120,6 +127,33 @@ export default async function DokumenDetailPage({
             </div>
           </div>
         </div>
+
+        {sanggahanPublik.length > 0 && (
+          <section className="mt-10">
+            <h2 className="font-semibold text-zinc-900">
+              Sanggahan yang Sudah Ditanggapi ({sanggahanPublik.length})
+            </h2>
+            <p className="mt-1 text-sm text-zinc-500">
+              Ditampilkan sebagai bentuk transparansi. Identitas penyanggah disamarkan.
+            </p>
+            <div className="mt-4 space-y-3">
+              {sanggahanPublik.map((s) => (
+                <div key={s.id} className="rounded-lg border border-zinc-200 bg-white p-4">
+                  <p className="text-xs font-medium uppercase text-zinc-400">
+                    {initialName(s.nama)} · {formatTanggalIndonesia(s.createdAt)}
+                  </p>
+                  <p className="mt-1 text-sm text-zinc-700">{s.isiSanggahan}</p>
+                  {s.catatanAdmin && (
+                    <div className="mt-2 rounded-md bg-emerald-50 p-2 text-sm text-emerald-800">
+                      <span className="font-medium">Tanggapan Admin: </span>
+                      {s.catatanAdmin}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
