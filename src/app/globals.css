@@ -12,15 +12,89 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.markdown-content {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: #3f3f46;
+}
+
+.markdown-content > * + * {
+  margin-top: 1em;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+  font-weight: 600;
+  color: #18181b;
+  margin-top: 1.5em;
+}
+
+.markdown-content h1 {
+  font-size: 1.5em;
+}
+
+.markdown-content h2 {
+  font-size: 1.25em;
+}
+
+.markdown-content h3 {
+  font-size: 1.125em;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  padding-left: 1.5em;
+}
+
+.markdown-content ul {
+  list-style-type: disc;
+}
+
+.markdown-content ol {
+  list-style-type: decimal;
+}
+
+.markdown-content a {
+  color: #047857;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875em;
+}
+
+.markdown-content th,
+.markdown-content td {
+  border: 1px solid #e4e4e7;
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+
+.markdown-content th {
+  background: #fafafa;
+  font-weight: 600;
+}
+
+.markdown-content blockquote {
+  border-left: 3px solid #a7f3d0;
+  padding-left: 1em;
+  color: #52525b;
+  font-style: italic;
+}
+
+.markdown-content code {
+  background: #f4f4f5;
+  padding: 0.125em 0.375em;
+  border-radius: 0.25em;
+  font-size: 0.875em;
 }

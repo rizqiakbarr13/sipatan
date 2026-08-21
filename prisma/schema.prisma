@@ -1,0 +1,216 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Project {
+  id            String   @id @default(cuid())
+  namaProyek    String
+  nomorPeng     String
+  tanggalPeng   DateTime
+  kelurahan     String
+  kecamatan     String
+  kota          String
+  provinsi      String
+  masaSanggahMulai   DateTime?
+  masaSanggahSelesai DateTime?
+  deskripsi     String?  @db.Text
+  bidang        Bidang[]
+  dokumen       DokumenPublikasi[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Bidang {
+  id                String   @id @default(cuid())
+  projectId         String
+  project           Project  @relation(fields: [projectId], references: [id])
+  noUrut            Int
+  noPetaBidang      String?
+
+  // Pihak yang berhak
+  namaPemilik       String
+  tanggalLahir      String?
+  pekerjaan         String?
+  alamat            String?  @db.Text
+  nik               String?
+
+  // Tanah
+  nib               String?
+  rtRw              String?
+  danomNo           String?
+  luasSesuaiAlasHak Float?
+  luasHasilUkur     Float?
+  nisTerkena        String?
+  luasKena          Float?
+  nisSisa           String?
+  luasSisa          Float?
+  suratTandaBukti   String?
+
+  // Ringkasan aset
+  bangunanRingkas   String?  @db.Text
+  tanamanRingkas    String?  @db.Text
+  keterangan        String?  @db.Text
+
+  bangunan          BangunanItem[]
+  tanaman           TanamanItem[]
+  sanggahan         Sanggahan[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([projectId, noUrut])
+}
+
+model BangunanItem {
+  id       String @id @default(cuid())
+  bidangId String
+  bidang   Bidang @relation(fields: [bidangId], references: [id], onDelete: Cascade)
+  jenis    String
+  jumlah   Float?
+  satuan   String?
+}
+
+model TanamanItem {
+  id       String @id @default(cuid())
+  bidangId String
+  bidang   Bidang @relation(fields: [bidangId], references: [id], onDelete: Cascade)
+  jenis    String
+  kecil    Int?
+  sedang   Int?
+  besar    Int?
+  jumlah   Int?
+}
+
+model Sanggahan {
+  id           String   @id @default(cuid())
+  nomorTiket   String   @unique
+
+  bidangId     String?
+  bidang       Bidang?  @relation(fields: [bidangId], references: [id])
+
+  dokumenId    String?
+  dokumen      DokumenPublikasi? @relation(fields: [dokumenId], references: [id])
+
+  nama         String
+  nik          String
+  alasHak      String?
+  noDanom      String?
+  noPetaBidang String?
+  noNis        String?
+  kontakEmail  String?
+  kontakHp     String?
+  isiSanggahan String   @db.Text
+  lampiranUrl  String?
+
+  status       SanggahanStatus @default(DITERIMA)
+  catatanAdmin String?  @db.Text
+  tampilPublik Boolean  @default(false)
+
+  riwayat      SanggahanLog[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([bidangId])
+  @@index([dokumenId])
+  @@index([status])
+}
+
+enum SanggahanStatus {
+  DITERIMA
+  DIVERIFIKASI
+  DITINDAKLANJUTI
+  DITERIMA_SAH
+  DITOLAK
+  SELESAI
+}
+
+model SanggahanLog {
+  id          String    @id @default(cuid())
+  sanggahanId String
+  sanggahan   Sanggahan @relation(fields: [sanggahanId], references: [id], onDelete: Cascade)
+  statusLama  String?
+  statusBaru  String
+  catatan     String?   @db.Text
+  olehAdmin   String?
+  createdAt   DateTime  @default(now())
+}
+
+model SOPDoc {
+  id        String   @id @default(cuid())
+  judul     String
+  slug      String   @unique
+  konten    String   @db.Text
+  urutan    Int      @default(0)
+  fileUrl   String?
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Pengumuman {
+  id            String   @id @default(cuid())
+  judul         String
+  konten        String   @db.Text
+  lampiranUrl   String?
+  tanggalTerbit DateTime @default(now())
+  published     Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model DokumenPublikasi {
+  id              String   @id @default(cuid())
+  projectId       String?
+  project         Project? @relation(fields: [projectId], references: [id])
+
+  judul           String
+  deskripsi       String?  @db.Text
+  kategori        KategoriDokumen @default(DAFTAR_NOMINATIF)
+  fileUrl         String
+  fileName        String
+  fileType        String?
+  fileSize        Int?
+  nomorSurat      String?
+  tanggalDokumen  DateTime?
+  tanggalUpload   DateTime @default(now())
+  published       Boolean  @default(true)
+  sanggahanDibuka Boolean  @default(true)
+  jumlahUnduhan   Int      @default(0)
+
+  sanggahan       Sanggahan[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([kategori])
+  @@index([published])
+}
+
+enum KategoriDokumen {
+  DAFTAR_NOMINATIF
+  PENGUMUMAN
+  PETA_BIDANG
+  SK_PENETAPAN_LOKASI
+  SOP
+  BERITA_ACARA
+  LAINNYA
+}
+
+model User {
+  id        String   @id @default(cuid())
+  nama      String
+  email     String   @unique
+  password  String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+}
