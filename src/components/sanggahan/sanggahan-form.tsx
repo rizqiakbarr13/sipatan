@@ -22,24 +22,34 @@ export interface DokumenOption {
   judul: string;
 }
 
+export interface WargaPrefill {
+  nama: string;
+  email: string;
+  nik: string | null;
+  noHp: string | null;
+}
+
 export function SanggahanForm({
   bidangOptions,
   dokumenOptions,
   defaultBidangId,
   defaultDokumenId,
   masaSanggahDitutup,
+  warga,
 }: {
   bidangOptions: BidangOption[];
   dokumenOptions: DokumenOption[];
   defaultBidangId?: string;
   defaultDokumenId?: string;
   masaSanggahDitutup: boolean;
+  warga?: WargaPrefill | null;
 }) {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [anonim, setAnonim] = useState(false);
 
   const {
     register,
@@ -50,6 +60,10 @@ export function SanggahanForm({
     defaultValues: {
       bidangId: defaultBidangId ?? "",
       dokumenId: defaultDokumenId ?? "",
+      nama: warga?.nama ?? "",
+      nik: warga?.nik ?? "",
+      kontakEmail: warga?.email ?? "",
+      kontakHp: warga?.noHp ?? "",
       pernyataanBenar: false,
     },
   });
@@ -83,6 +97,7 @@ export function SanggahanForm({
         formData.append(key, String(value));
       });
       if (file) formData.append("lampiran", file);
+      if (warga) formData.append("anonim", String(anonim));
 
       const res = await fetch("/api/sanggahan", { method: "POST", body: formData });
       const data = await res.json();
@@ -118,6 +133,24 @@ export function SanggahanForm({
         <div className="flex items-start gap-2 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800">
           <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
           <p>{serverError}</p>
+        </div>
+      )}
+
+      {warga && (
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+          <p>
+            Masuk sebagai <strong>{warga.nama}</strong>. Data di bawah sudah terisi otomatis dan
+            sanggahan ini akan tersimpan di riwayat akun Anda.
+          </p>
+          <label className="mt-2 flex items-start gap-2">
+            <input
+              type="checkbox"
+              checked={anonim}
+              onChange={(e) => setAnonim(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-emerald-300 text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+            />
+            <span>Ajukan sebagai anonim (jangan kaitkan dengan akun saya)</span>
+          </label>
         </div>
       )}
 

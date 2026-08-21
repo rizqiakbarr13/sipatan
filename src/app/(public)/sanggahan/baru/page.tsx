@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getActiveProject } from "@/lib/project";
 import { isMasaSanggahBerjalan } from "@/lib/masa-sanggah";
+import { getWargaSession } from "@/lib/warga-session";
 import { PageHeader } from "@/components/layout/page-header";
 import { SanggahanForm } from "@/components/sanggahan/sanggahan-form";
 
@@ -17,7 +18,9 @@ export default async function AjukanSanggahanPage({
 }) {
   const { bidangId, dokumenId } = await searchParams;
 
-  const [project, bidangList, dokumenList] = await Promise.all([
+  const session = await getWargaSession();
+
+  const [project, bidangList, dokumenList, warga] = await Promise.all([
     getActiveProject(),
     prisma.bidang.findMany({
       orderBy: { noUrut: "asc" },
@@ -28,6 +31,12 @@ export default async function AjukanSanggahanPage({
       orderBy: { tanggalUpload: "desc" },
       select: { id: true, judul: true, sanggahanDibuka: true },
     }),
+    session
+      ? prisma.warga.findUnique({
+          where: { id: session.id },
+          select: { nama: true, email: true, nik: true, noHp: true },
+        })
+      : null,
   ]);
 
   const masaSanggahAktif = isMasaSanggahBerjalan(
@@ -52,6 +61,7 @@ export default async function AjukanSanggahanPage({
           defaultBidangId={bidangId}
           defaultDokumenId={dokumenId}
           masaSanggahDitutup={!masaSanggahAktif || kanalDokumenDitutup}
+          warga={warga}
         />
       </div>
     </div>

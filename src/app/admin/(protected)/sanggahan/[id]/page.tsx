@@ -22,6 +22,7 @@ export default async function SanggahanDetailPage({
     include: {
       bidang: { select: { id: true, noUrut: true, namaPemilik: true } },
       dokumen: { select: { id: true, judul: true } },
+      warga: { select: { nama: true, email: true } },
       riwayat: { orderBy: { createdAt: "asc" } },
     },
   });
@@ -29,14 +30,19 @@ export default async function SanggahanDetailPage({
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-mono text-xl font-bold text-zinc-900">{sanggahan.nomorTiket}</h1>
           <p className="text-sm text-zinc-500">Diajukan {formatTanggalIndonesia(sanggahan.createdAt)}</p>
         </div>
-        <Badge variant={SANGGAHAN_STATUS_BADGE_VARIANT[sanggahan.status]}>
-          {SANGGAHAN_STATUS_LABEL[sanggahan.status]}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant={sanggahan.warga ? "default" : "secondary"}>
+            {sanggahan.warga ? `Akun: ${sanggahan.warga.nama}` : "Anonim"}
+          </Badge>
+          <Badge variant={SANGGAHAN_STATUS_BADGE_VARIANT[sanggahan.status]}>
+            {SANGGAHAN_STATUS_LABEL[sanggahan.status]}
+          </Badge>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">

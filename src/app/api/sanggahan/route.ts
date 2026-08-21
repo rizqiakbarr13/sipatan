@@ -4,6 +4,7 @@ import { sanggahanFormSchema } from "@/lib/validation/sanggahan";
 import { generateNomorTiket } from "@/lib/nomor-tiket";
 import { isMasaSanggahBerjalan } from "@/lib/masa-sanggah";
 import { getActiveProject } from "@/lib/project";
+import { getWargaSession } from "@/lib/warga-session";
 import {
   getStorageDriver,
   MAX_UPLOAD_SIZE_BYTES,
@@ -117,11 +118,15 @@ export async function POST(request: NextRequest) {
 
   const nomorTiket = await generateNomorTiket();
 
+  const anonim = formData.get("anonim")?.toString() === "true";
+  const wargaSession = anonim ? null : await getWargaSession();
+
   const sanggahan = await prisma.sanggahan.create({
     data: {
       nomorTiket,
       bidangId: data.bidangId || null,
       dokumenId: data.dokumenId || null,
+      wargaId: wargaSession?.id || null,
       nama: data.nama,
       nik: data.nik,
       alasHak: data.alasHak,
