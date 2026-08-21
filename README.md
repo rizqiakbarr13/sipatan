@@ -113,7 +113,8 @@ Lihat [`.env.example`](./.env.example) untuk daftar lengkap beserta penjelasan. 
 | `BLOB_READ_WRITE_TOKEN` | jika `blob` | Token Vercel Blob |
 | `S3_*` | jika `s3` | Kredensial & endpoint S3-compatible |
 | `MAX_UPLOAD_SIZE_MB` | tidak | Default 5 |
-| `RESEND_API_KEY` / `EMAIL_FROM` | tidak | Notifikasi email status sanggahan (belum diimplementasikan, disiapkan untuk pengembangan lanjutan) |
+| `WARGA_SESSION_SECRET` | tidak | Secret sesi akun warga (fallback ke `AUTH_SECRET` jika kosong) |
+| `RESEND_API_KEY` / `EMAIL_FROM` | tidak | Notifikasi email konfirmasi & perubahan status sanggahan via [Resend](https://resend.com). Jika `RESEND_API_KEY` kosong, pengiriman email di-skip (log peringatan saja, tidak error) — cocok untuk dev tanpa akun Resend. |
 
 ## Deployment
 
@@ -188,6 +189,7 @@ src/components/ui/...      Komponen UI dasar bergaya shadcn
 
 - Password admin di-hash dengan bcrypt.
 - Route `/admin/*` diproteksi middleware Auth.js; `/admin/users` dibatasi role `SUPER_ADMIN` (dicek di middleware maupun server action).
+- Akun warga (`/akun/*`) memakai sesi cookie terpisah (JWT ditandatangani sendiri via `jose`, cookie `warga_session`, httpOnly) — sengaja tidak memakai Auth.js/NextAuth yang sama dengan admin agar sesi warga tidak pernah bisa dianggap sesi admin oleh middleware `/admin/*`.
 - NIK disamarkan (`3276●●●●●●●●0003`) di seluruh tampilan publik; hanya admin yang melihat NIK penuh.
 - Endpoint `POST /api/sanggahan` memiliki rate-limit in-memory sederhana (5 pengajuan/jam per IP) — cukup untuk deployment single-instance; untuk multi-instance/production skala besar, ganti dengan solusi eksternal (mis. Upstash Ratelimit / Redis).
 - Validasi tipe & ukuran file upload (PDF/JPG/PNG/WEBP, maks. `MAX_UPLOAD_SIZE_MB`) di server, bukan hanya klien.

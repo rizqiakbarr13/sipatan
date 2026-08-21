@@ -5,6 +5,8 @@ import { z } from "zod";
 import { SanggahanStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { sendEmail, sanggahanStatusEmail } from "@/lib/email";
+import { SANGGAHAN_STATUS_LABEL } from "@/lib/labels";
 
 const updateStatusSchema = z.object({
   status: z.enum(SanggahanStatus),
@@ -46,6 +48,16 @@ export async function updateSanggahanStatus(id: string, formData: FormData) {
 
   revalidatePath("/admin/sanggahan");
   revalidatePath(`/admin/sanggahan/${id}`);
+
+  if (sanggahan.kontakEmail && sanggahan.status !== status) {
+    const { subject, html } = sanggahanStatusEmail(
+      sanggahan.nomorTiket,
+      SANGGAHAN_STATUS_LABEL[status] ?? status,
+      catatan
+    );
+    await sendEmail({ to: sanggahan.kontakEmail, subject, html });
+  }
+
   return { success: true };
 }
 

@@ -5,6 +5,7 @@ import { generateNomorTiket } from "@/lib/nomor-tiket";
 import { isMasaSanggahBerjalan } from "@/lib/masa-sanggah";
 import { getActiveProject } from "@/lib/project";
 import { getWargaSession } from "@/lib/warga-session";
+import { sendEmail, sanggahanKonfirmasiEmail } from "@/lib/email";
 import {
   getStorageDriver,
   MAX_UPLOAD_SIZE_BYTES,
@@ -146,6 +147,11 @@ export async function POST(request: NextRequest) {
       },
     },
   });
+
+  if (data.kontakEmail) {
+    const { subject, html } = sanggahanKonfirmasiEmail(sanggahan.nomorTiket);
+    await sendEmail({ to: data.kontakEmail, subject, html });
+  }
 
   return NextResponse.json({ nomorTiket: sanggahan.nomorTiket }, { status: 201 });
 }
