@@ -1,0 +1,33 @@
+"use client";
+
+import { ToggleSwitch } from "@/components/admin/toggle-switch";
+import { ConfirmDeleteButton } from "@/components/admin/confirm-delete-button";
+import { togglePublishDokumen, toggleSanggahanDibuka, deleteDokumen } from "./actions";
+
+export function DokumenRowActions({
+  id,
+  published,
+  sanggahanDibuka,
+}: {
+  id: string;
+  published: boolean;
+  sanggahanDibuka: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-4">
+      <div className="flex flex-col items-center gap-1">
+        <ToggleSwitch checked={published} onToggle={(next) => togglePublishDokumen(id, next)} label="Toggle publish" />
+        <span className="text-[10px] text-zinc-400">Publish</span>
+      </div>
+      <div className="flex flex-col items-center gap-1">
+        <ToggleSwitch
+          checked={sanggahanDibuka}
+          onToggle={(next) => toggleSanggahanDibuka(id, next)}
+          label="Toggle kanal sanggahan"
+        />
+        <span className="text-[10px] text-zinc-400">Sanggahan</span>
+      </div>
+      <ConfirmDeleteButton onDelete={() => deleteDokumen(id)} />
+    </div>
+  );
+}
