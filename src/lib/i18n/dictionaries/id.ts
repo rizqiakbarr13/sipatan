@@ -60,6 +60,34 @@ export interface Dictionary {
     loginAdmin: string;
     hakCipta: string;
   };
+  home: {
+    eyebrow: string;
+    namaProyekFallback: string;
+    nomorPengumuman: string;
+    tanggal: string;
+    lokasi: string;
+    layananUtama: string;
+    lihatNominatifTitle: string;
+    lihatNominatifDesc: string;
+    ajukanSanggahanTitle: string;
+    ajukanSanggahanDesc: string;
+    sopTitle: string;
+    sopDesc: string;
+    unduhFormulirTitle: string;
+    unduhFormulirDesc: string;
+    tentangKegiatan: string;
+    ctaTitle: string;
+    ctaDesc: string;
+    ctaButton: string;
+  };
+  banner: {
+    belumDiatur: string;
+    berakhirPrefix: string;
+    berakhirSuffix: string;
+    sisaPrefix: string;
+    sisaHari: string;
+    sisaSuffix: string;
+  };
 }
 
 const id: Dictionary = {
@@ -125,6 +153,34 @@ const id: Dictionary = {
     unduhFormulir: "Unduh Formulir PDF",
     loginAdmin: "Login Admin",
     hakCipta: "Panitia Pengadaan Tanah Kota Depok. Seluruh dokumen bersifat resmi.",
+  },
+  home: {
+    eyebrow: "Pengadaan Tanah untuk Kepentingan Umum",
+    namaProyekFallback: "Pelebaran Simpang Parung Bingung, Kota Depok",
+    nomorPengumuman: "Nomor Pengumuman:",
+    tanggal: "Tanggal:",
+    lokasi: "Lokasi:",
+    layananUtama: "Layanan Utama",
+    lihatNominatifTitle: "Lihat Data Nominatif",
+    lihatNominatifDesc: "Periksa data bidang, luas tanah, bangunan, dan tanaman yang terkena dampak.",
+    ajukanSanggahanTitle: "Ajukan Sanggahan",
+    ajukanSanggahanDesc: "Sampaikan sanggahan bila data yang diumumkan tidak sesuai.",
+    sopTitle: "SOP Pengadaan",
+    sopDesc: "Pelajari tahapan proses pengadaan tanah dari awal hingga akhir.",
+    unduhFormulirTitle: "Unduh Formulir Sanggahan",
+    unduhFormulirDesc: "Unduh formulir sanggahan resmi dalam format PDF.",
+    tentangKegiatan: "Tentang Kegiatan",
+    ctaTitle: "Data Anda tidak sesuai dengan pengumuman?",
+    ctaDesc: "Ajukan sanggahan secara online, dapatkan nomor tiket, dan pantau statusnya kapan saja.",
+    ctaButton: "Ajukan Sanggahan Sekarang",
+  },
+  banner: {
+    belumDiatur: "Jadwal masa sanggah belum diumumkan.",
+    berakhirPrefix: "Masa sanggah telah berakhir pada",
+    berakhirSuffix: "Pengajuan sanggahan baru untuk data ini tidak lagi diterima.",
+    sisaPrefix: "Masa sanggah berakhir dalam",
+    sisaHari: "hari",
+    sisaSuffix: "sampai dengan",
   },
 };
 
