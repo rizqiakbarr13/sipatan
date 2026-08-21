@@ -15,6 +15,16 @@ Lihat [`PRD.md`](./PRD.md) untuk spesifikasi lengkap.
 - @tanstack/react-table v8 untuk tabel data nominatif
 - @react-pdf/renderer v4 untuk generate PDF formulir sanggahan
 - Storage dokumen/lampiran: driver `local` / `blob` (Vercel Blob) / `s3` (S3-compatible), dipilih via env
+- **Akun warga** (opsional login masyarakat untuk mengajukan sanggahan, terpisah dari Auth.js admin — lihat catatan versi)
+- **Notifikasi email** status sanggahan via [Resend](https://resend.com)
+- **Tema gelap/terang** (`next-themes`) dan **bahasa ID/EN** (kamus dwibahasa custom berbasis cookie, tanpa prefix URL)
+
+## Fitur Tambahan (di luar spesifikasi awal PRD)
+
+- **Akun Warga** (`/akun/daftar`, `/akun/masuk`, `/akun`): warga dapat mendaftar/masuk untuk mengajukan sanggahan dengan data (nama/NIK/email/HP) otomatis terisi, serta melihat riwayat semua sanggahan yang pernah diajukan lewat akun tersebut ("Sanggahan Saya"). Saat login, tersedia juga pilihan **"Ajukan sebagai anonim"** agar sanggahan tidak dikaitkan ke akun. Pengajuan tanpa login (sepenuhnya anonim) tetap berfungsi seperti semula, dilacak lewat nomor tiket + NIK di `/sanggahan/lacak`.
+- **Notifikasi Email**: konfirmasi otomatis saat sanggahan diterima dan saat status berubah (jika pengaju mengisi email), dikirim via Resend. Tanpa `RESEND_API_KEY`, pengiriman di-skip dengan log peringatan (aman untuk dev).
+- **Tema Gelap/Terang**: tombol ikon matahari/bulan di header publik dan sidebar admin, memakai `next-themes` (class-based, tersimpan di localStorage browser).
+- **Bahasa ID/EN**: tombol ganti bahasa di header publik. Cakupan: seluruh *UI chrome* (navigasi, tombol, label form, pesan validasi, judul/deskripsi halaman) — **konten dari database** (isi Pengumuman, markdown SOP, deskripsi Project, isi Sanggahan, dan label field teknis data nominatif) sengaja **tidak** diterjemahkan otomatis karena itu konten resmi pemerintah yang diinput apa adanya. Panel admin tetap Bahasa Indonesia (alat internal staf).
 
 ### Catatan versi (penting untuk kontributor)
 
@@ -23,6 +33,8 @@ Beberapa keputusan versi menyimpang dari asumsi umum karena kondisi nyata saat p
 - **Prisma 7 + driver adapter, bukan `DATABASE_URL` di `schema.prisma`.** Prisma 7 menghapus dukungan `url = env("DATABASE_URL")` di blok `datasource` dan mewajibkan driver adapter untuk koneksi. Koneksi diatur di dua tempat: `prisma.config.ts` (dipakai CLI: migrate/seed/studio) dan `src/lib/prisma.ts` (dipakai aplikasi, via `PrismaPg` dari `@prisma/adapter-pg`). Generator tetap `prisma-client-js` (bukan `prisma-client` yang baru) agar import `@prisma/client` tidak berubah.
 - **React 19, bukan 18.** `@react-pdf/renderer` v4 di dalam Next.js 15 App Router route handler (`/api/formulir-pdf`) menghasilkan `Minified React error #31` di React 18; berfungsi normal di React 19.
 - **UI components ditulis manual**, bukan hasil `npx shadcn init`. Mengikuti konvensi shadcn (Tailwind + `class-variance-authority` + `cn()` utility, file "dimiliki" bukan di-import dari package UI kit), tanpa bergantung pada CLI interaktif.
+- **Akun warga tidak memakai Auth.js/NextAuth.** Sesi warga ditandatangani sendiri via `jose` (JWT), disimpan di cookie `warga_session` (httpOnly, terpisah total dari cookie session admin). Alasan: `middleware.ts`/`auth.config.ts` hanya mengecek "sudah login atau belum" untuk gerbang `/admin/*` — menyatukan dua jenis akun dalam satu sistem Auth.js berisiko sesi warga dianggap sesi admin. Proteksi halaman `/akun/*` dilakukan di level page (redirect manual), bukan lewat middleware.
+- **Sistem i18n custom, bukan `next-intl`.** Karena user memilih tanpa-prefix-URL (bukan `/id/*` `/en/*`), dipakai context React + kamus dictionary (`src/lib/i18n/`) yang membaca locale dari cookie — lebih ringan untuk kebutuhan 2 bahasa tanpa restrukturisasi routing.
 
 ## Setup Lokal
 
@@ -187,7 +199,7 @@ src/components/ui/...      Komponen UI dasar bergaya shadcn
 
 ## Keamanan & Privasi
 
-- Password admin di-hash dengan bcrypt.
+- Password admin dan warga sama-sama di-hash dengan bcrypt (tabel terpisah: `User` vs `Warga`).
 - Route `/admin/*` diproteksi middleware Auth.js; `/admin/users` dibatasi role `SUPER_ADMIN` (dicek di middleware maupun server action).
 - Akun warga (`/akun/*`) memakai sesi cookie terpisah (JWT ditandatangani sendiri via `jose`, cookie `warga_session`, httpOnly) — sengaja tidak memakai Auth.js/NextAuth yang sama dengan admin agar sesi warga tidak pernah bisa dianggap sesi admin oleh middleware `/admin/*`.
 - NIK disamarkan (`3276●●●●●●●●0003`) di seluruh tampilan publik; hanya admin yang melihat NIK penuh.
