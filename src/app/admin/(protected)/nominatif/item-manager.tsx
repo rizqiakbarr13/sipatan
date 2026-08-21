@@ -19,7 +19,7 @@ export function BangunanManager({ bidangId, items }: { bidangId: string; items: 
   return (
     <div>
       <table className="w-full text-sm">
-        <thead className="text-left text-xs uppercase text-zinc-400">
+        <thead className="text-left text-xs uppercase text-zinc-400 dark:text-zinc-500">
           <tr>
             <th className="pb-2">Jenis</th>
             <th className="pb-2">Jumlah</th>
@@ -27,7 +27,7 @@ export function BangunanManager({ bidangId, items }: { bidangId: string; items: 
             <th className="pb-2" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-zinc-100">
+        <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
           {items.map((item) => (
             <tr key={item.id}>
               <td className="py-2">{item.jenis}</td>
@@ -75,7 +75,7 @@ export function TanamanManager({ bidangId, items }: { bidangId: string; items: T
   return (
     <div>
       <table className="w-full text-sm">
-        <thead className="text-left text-xs uppercase text-zinc-400">
+        <thead className="text-left text-xs uppercase text-zinc-400 dark:text-zinc-500">
           <tr>
             <th className="pb-2">Jenis</th>
             <th className="pb-2">Kecil</th>
@@ -85,7 +85,7 @@ export function TanamanManager({ bidangId, items }: { bidangId: string; items: T
             <th className="pb-2" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-zinc-100">
+        <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
           {items.map((item) => (
             <tr key={item.id}>
               <td className="py-2">{item.jenis}</td>

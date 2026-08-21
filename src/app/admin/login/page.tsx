@@ -44,14 +44,14 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4">
-      <div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 dark:bg-zinc-950">
+      <div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:bg-zinc-900 dark:border-zinc-800">
         <div className="mb-6 flex flex-col items-center text-center">
           <span className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
             <Lock className="h-6 w-6" />
           </span>
-          <h1 className="mt-3 font-semibold text-zinc-900">Login Admin</h1>
-          <p className="text-sm text-zinc-500">Pengadaan Tanah Kota Depok</p>
+          <h1 className="mt-3 font-semibold text-zinc-900 dark:text-zinc-100">Login Admin</h1>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">Pengadaan Tanah Kota Depok</p>
         </div>
 
         {error && (
@@ -96,7 +96,7 @@ function LoginForm() {
 
 export default function AdminLoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-zinc-50" />}>
+    <Suspense fallback={<div className="min-h-screen bg-zinc-50 dark:bg-zinc-950" />}>
       <LoginForm />
     </Suspense>
   );

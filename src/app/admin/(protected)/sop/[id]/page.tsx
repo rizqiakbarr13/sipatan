@@ -14,7 +14,7 @@ export default async function SopEditPage({
 
   return (
     <div>
-      <h1 className="mb-6 text-xl font-bold text-zinc-900">Edit SOP</h1>
+      <h1 className="mb-6 text-xl font-bold text-zinc-900 dark:text-zinc-100">Edit SOP</h1>
       <SopForm
         sop={sop}
         action={async (_prevState, formData) => {

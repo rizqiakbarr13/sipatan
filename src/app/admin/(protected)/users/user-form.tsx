@@ -44,7 +44,7 @@ export function UserForm({
           id="role"
           name="role"
           defaultValue={user?.role ?? "ADMIN"}
-          className="h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+          className="h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 dark:bg-zinc-900 dark:border-zinc-700"
         >
           <option value="ADMIN">Admin</option>
           <option value="SUPER_ADMIN">Super Admin</option>

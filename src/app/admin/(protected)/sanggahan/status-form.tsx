@@ -35,7 +35,7 @@ export function StatusForm({ id, currentStatus }: { id: string; currentStatus: s
           id="status"
           name="status"
           defaultValue={currentStatus}
-          className="h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+          className="h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 dark:bg-zinc-900 dark:border-zinc-700"
         >
           {Object.entries(SANGGAHAN_STATUS_LABEL).map(([value, label]) => (
             <option key={value} value={value}>{label}</option>

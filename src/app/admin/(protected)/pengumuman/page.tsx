@@ -15,17 +15,17 @@ export default async function AdminPengumumanPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-zinc-900">Kelola Pengumuman</h1>
-          <p className="text-sm text-zinc-500">CRUD pengumuman untuk halaman publik.</p>
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Kelola Pengumuman</h1>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">CRUD pengumuman untuk halaman publik.</p>
         </div>
         <Link href="/admin/pengumuman/baru" className={cn(buttonVariants())}>
           <Plus className="h-4 w-4" /> Tambah
         </Link>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
+      <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white dark:bg-zinc-900 dark:border-zinc-800">
         <table className="w-full text-sm">
-          <thead className="bg-zinc-50 text-left text-xs uppercase text-zinc-500">
+          <thead className="bg-zinc-50 text-left text-xs uppercase text-zinc-500 dark:text-zinc-400 dark:bg-zinc-950">
             <tr>
               <th className="px-4 py-3">Judul</th>
               <th className="px-4 py-3">Tanggal Terbit</th>
@@ -33,11 +33,11 @@ export default async function AdminPengumumanPage() {
               <th className="px-4 py-3">Aksi</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-100">
+          <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
             {list.map((p) => (
               <tr key={p.id}>
-                <td className="px-4 py-3 font-medium text-zinc-900">{p.judul}</td>
-                <td className="px-4 py-3 text-zinc-600">{formatTanggalIndonesia(p.tanggalTerbit)}</td>
+                <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{p.judul}</td>
+                <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">{formatTanggalIndonesia(p.tanggalTerbit)}</td>
                 <td className="px-4 py-3">
                   <PengumumanRowActions id={p.id} published={p.published} />
                 </td>
@@ -50,7 +50,7 @@ export default async function AdminPengumumanPage() {
             ))}
             {list.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-zinc-500">
+                <td colSpan={4} className="px-4 py-8 text-center text-zinc-500 dark:text-zinc-400">
                   Belum ada pengumuman.
                 </td>
               </tr>

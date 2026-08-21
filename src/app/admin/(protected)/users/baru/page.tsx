@@ -4,7 +4,7 @@ import { createUser } from "../actions";
 export default function UserBaruPage() {
   return (
     <div>
-      <h1 className="mb-6 text-xl font-bold text-zinc-900">Tambah User Admin</h1>
+      <h1 className="mb-6 text-xl font-bold text-zinc-900 dark:text-zinc-100">Tambah User Admin</h1>
       <UserForm
         action={async (_prevState, formData) => {
           "use server";

@@ -28,7 +28,7 @@ export function BidangForm({
       )}
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-900">Pihak yang Berhak</h2>
+        <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Pihak yang Berhak</h2>
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="No. Urut" name="noUrut" type="number" defaultValue={bidang?.noUrut} required />
           <Field label="No. Peta Bidang" name="noPetaBidang" defaultValue={bidang?.noPetaBidang} />
@@ -44,7 +44,7 @@ export function BidangForm({
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-900">Data Tanah</h2>
+        <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Data Tanah</h2>
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="NIB" name="nib" defaultValue={bidang?.nib} />
           <Field label="RT/RW" name="rtRw" defaultValue={bidang?.rtRw} />
@@ -60,7 +60,7 @@ export function BidangForm({
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-900">Ringkasan &amp; Keterangan</h2>
+        <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Ringkasan &amp; Keterangan</h2>
         <div className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="bangunanRingkas">Ringkasan Bangunan</Label>

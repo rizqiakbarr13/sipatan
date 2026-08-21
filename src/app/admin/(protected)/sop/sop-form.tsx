@@ -57,7 +57,7 @@ export function SopForm({
           name="published"
           type="checkbox"
           defaultChecked={sop?.published ?? true}
-          className="h-4 w-4 rounded border-zinc-300 text-emerald-700"
+          className="h-4 w-4 rounded border-zinc-300 text-emerald-700 dark:border-zinc-700"
         />
         <Label htmlFor="published" className="font-normal">Publikasikan</Label>
       </div>

@@ -14,7 +14,7 @@ export default async function PengumumanEditPage({
 
   return (
     <div>
-      <h1 className="mb-6 text-xl font-bold text-zinc-900">Edit Pengumuman</h1>
+      <h1 className="mb-6 text-xl font-bold text-zinc-900 dark:text-zinc-100">Edit Pengumuman</h1>
       <PengumumanForm
         pengumuman={pengumuman}
         action={async (_prevState, formData) => {

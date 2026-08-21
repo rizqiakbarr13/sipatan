@@ -40,7 +40,7 @@ export function DokumenForm({
             id="kategori"
             name="kategori"
             defaultValue={dokumen?.kategori ?? "DAFTAR_NOMINATIF"}
-            className="h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+            className="h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 dark:bg-zinc-900 dark:border-zinc-700"
           >
             {Object.entries(KATEGORI_DOKUMEN_LABEL).map(([value, label]) => (
               <option key={value} value={value}>{label}</option>
@@ -71,17 +71,17 @@ export function DokumenForm({
         <Label htmlFor="file">
           {dokumen ? "Ganti File (opsional)" : "File Dokumen"} — PDF/JPG/PNG, maks. 5MB
         </Label>
-        <div className="rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center">
+        <div className="rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center dark:border-zinc-700">
           <input
             id="file"
             name="file"
             type="file"
             accept=".pdf,.jpg,.jpeg,.png,.webp"
             required={!dokumen}
-            className="block w-full text-sm text-zinc-700 file:mr-4 file:rounded-md file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100"
+            className="block w-full text-sm text-zinc-700 file:mr-4 file:rounded-md file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100 dark:text-zinc-300"
           />
           {dokumen && (
-            <p className="mt-2 flex items-center justify-center gap-1 text-xs text-zinc-500">
+            <p className="mt-2 flex items-center justify-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
               <UploadCloud className="h-3.5 w-3.5" /> File saat ini: {dokumen.fileName}
             </p>
           )}

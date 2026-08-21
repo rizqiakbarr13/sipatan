@@ -31,31 +31,31 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-zinc-900">Dashboard</h1>
-      <p className="text-sm text-zinc-500">{project?.namaProyek}</p>
+      <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Dashboard</h1>
+      <p className="text-sm text-zinc-500 dark:text-zinc-400">{project?.namaProyek}</p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs uppercase text-zinc-500">Total Bidang</p>
-            <p className="mt-1 text-2xl font-bold text-zinc-900">{totalBidang}</p>
+            <p className="text-xs uppercase text-zinc-500 dark:text-zinc-400">Total Bidang</p>
+            <p className="mt-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">{totalBidang}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs uppercase text-zinc-500">Total Dokumen Publikasi</p>
-            <p className="mt-1 text-2xl font-bold text-zinc-900">{totalDokumen}</p>
+            <p className="text-xs uppercase text-zinc-500 dark:text-zinc-400">Total Dokumen Publikasi</p>
+            <p className="mt-1 text-2xl font-bold text-zinc-900 dark:text-zinc-100">{totalDokumen}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs uppercase text-zinc-500">Sanggahan Baru Hari Ini</p>
+            <p className="text-xs uppercase text-zinc-500 dark:text-zinc-400">Sanggahan Baru Hari Ini</p>
             <p className="mt-1 text-2xl font-bold text-emerald-700">{sanggahanHariIni}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs uppercase text-zinc-500">Sisa Masa Sanggah</p>
+            <p className="text-xs uppercase text-zinc-500 dark:text-zinc-400">Sisa Masa Sanggah</p>
             <p className="mt-1 text-2xl font-bold text-amber-700">
               {statusMasaSanggah.status === "berjalan"
                 ? `${statusMasaSanggah.sisaHari} hari`
@@ -68,18 +68,18 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="mt-8">
-        <h2 className="font-semibold text-zinc-900">Sanggahan per Status</h2>
+        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">Sanggahan per Status</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {Object.entries(SANGGAHAN_STATUS_LABEL).map(([key, label]) => (
             <Card key={key}>
               <CardContent className="p-4">
-                <p className="text-xs text-zinc-500">{label}</p>
-                <p className="mt-1 text-xl font-bold text-zinc-900">{statusMap[key] ?? 0}</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">{label}</p>
+                <p className="mt-1 text-xl font-bold text-zinc-900 dark:text-zinc-100">{statusMap[key] ?? 0}</p>
               </CardContent>
             </Card>
           ))}
         </div>
-        <p className="mt-2 text-xs text-zinc-500">Total keseluruhan: {totalSanggahan} sanggahan</p>
+        <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Total keseluruhan: {totalSanggahan} sanggahan</p>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ export function ConfirmDeleteButton({
   if (confirming) {
     return (
       <div className="flex items-center gap-1.5 text-xs">
-        <span className="text-zinc-600">{confirmText}</span>
+        <span className="text-zinc-600 dark:text-zinc-400">{confirmText}</span>
         <button
           type="button"
           className="rounded bg-red-600 px-2 py-1 font-medium text-white hover:bg-red-700"
@@ -30,7 +30,7 @@ export function ConfirmDeleteButton({
         </button>
         <button
           type="button"
-          className="rounded border px-2 py-1 font-medium text-zinc-600 hover:bg-zinc-50"
+          className="rounded border px-2 py-1 font-medium text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-800"
           onClick={() => setConfirming(false)}
         >
           Batal

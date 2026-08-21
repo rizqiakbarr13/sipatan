@@ -42,11 +42,11 @@ export function AdminSidebar({
       : NAV_ITEMS;
 
   return (
-    <aside className="flex h-full w-64 shrink-0 flex-col border-r bg-white">
+    <aside className="flex h-full w-64 shrink-0 flex-col border-r bg-white dark:bg-zinc-900">
       <div className="flex items-start justify-between gap-2 border-b p-4">
         <div>
           <p className="text-sm font-semibold text-emerald-800">Admin Panel</p>
-          <p className="text-xs text-zinc-500">Pengadaan Tanah Depok</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">Pengadaan Tanah Depok</p>
         </div>
         <ThemeToggle className="h-9 w-9 shrink-0" />
       </div>
@@ -59,7 +59,7 @@ export function AdminSidebar({
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-emerald-50 hover:text-emerald-800",
+                "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-emerald-50 hover:text-emerald-800 dark:text-zinc-300",
                 isActive && "bg-emerald-50 text-emerald-800"
               )}
             >
@@ -71,7 +71,7 @@ export function AdminSidebar({
       </nav>
 
       <div className="border-t p-3">
-        <p className="truncate px-3 text-xs text-zinc-500">
+        <p className="truncate px-3 text-xs text-zinc-500 dark:text-zinc-400">
           {nama} · {role === "SUPER_ADMIN" ? "Super Admin" : "Admin"}
         </p>
         <button

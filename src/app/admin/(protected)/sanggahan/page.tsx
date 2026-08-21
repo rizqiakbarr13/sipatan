@@ -47,8 +47,8 @@ export default async function AdminSanggahanPage({
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-zinc-900">Kelola Sanggahan</h1>
-          <p className="text-sm text-zinc-500">{list.length} sanggahan.</p>
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Kelola Sanggahan</h1>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">{list.length} sanggahan.</p>
         </div>
         <a
           href={`/api/admin/sanggahan/export?${exportParams.toString()}`}
@@ -63,7 +63,7 @@ export default async function AdminSanggahanPage({
         <select
           name="status"
           defaultValue={status ?? ""}
-          className="h-10 rounded-md border border-zinc-300 bg-white px-3 text-sm"
+          className="h-10 rounded-md border border-zinc-300 bg-white px-3 text-sm dark:bg-zinc-900 dark:border-zinc-700"
         >
           <option value="">Semua Status</option>
           {Object.entries(SANGGAHAN_STATUS_LABEL).map(([value, label]) => (
@@ -73,9 +73,9 @@ export default async function AdminSanggahanPage({
         <button type="submit" className={cn(buttonVariants({ variant: "outline" }))}>Terapkan</button>
       </form>
 
-      <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
+      <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white dark:bg-zinc-900 dark:border-zinc-800">
         <table className="w-full text-sm">
-          <thead className="bg-zinc-50 text-left text-xs uppercase text-zinc-500">
+          <thead className="bg-zinc-50 text-left text-xs uppercase text-zinc-500 dark:text-zinc-400 dark:bg-zinc-950">
             <tr>
               <th className="px-4 py-3">Tiket</th>
               <th className="px-4 py-3">Nama</th>
@@ -84,7 +84,7 @@ export default async function AdminSanggahanPage({
               <th className="px-4 py-3">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-100">
+          <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
             {list.map((s) => (
               <tr key={s.id}>
                 <td className="px-4 py-3">
@@ -92,14 +92,14 @@ export default async function AdminSanggahanPage({
                     {s.nomorTiket}
                   </Link>
                 </td>
-                <td className="px-4 py-3 font-medium text-zinc-900">{s.nama}</td>
-                <td className="px-4 py-3 text-zinc-600">
+                <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{s.nama}</td>
+                <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
                   {s.bidang && `Bidang No. ${s.bidang.noUrut}`}
                   {s.dokumen && s.bidang && " · "}
                   {s.dokumen && s.dokumen.judul}
                   {!s.bidang && !s.dokumen && "-"}
                 </td>
-                <td className="px-4 py-3 text-zinc-500">{formatTanggalIndonesia(s.createdAt)}</td>
+                <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400">{formatTanggalIndonesia(s.createdAt)}</td>
                 <td className="px-4 py-3">
                   <Badge variant={SANGGAHAN_STATUS_BADGE_VARIANT[s.status]}>
                     {SANGGAHAN_STATUS_LABEL[s.status]}
@@ -109,7 +109,7 @@ export default async function AdminSanggahanPage({
             ))}
             {list.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-zinc-500">
+                <td colSpan={5} className="px-4 py-8 text-center text-zinc-500 dark:text-zinc-400">
                   Belum ada sanggahan.
                 </td>
               </tr>

@@ -72,11 +72,11 @@ export function ImportCsvClient() {
 
   return (
     <div className="max-w-4xl space-y-6">
-      <div className="rounded-lg border-2 border-dashed border-zinc-300 p-6 text-center">
-        <UploadCloud className="mx-auto h-8 w-8 text-zinc-400" />
-        <p className="mt-2 text-sm text-zinc-600">
+      <div className="rounded-lg border-2 border-dashed border-zinc-300 p-6 text-center dark:border-zinc-700">
+        <UploadCloud className="mx-auto h-8 w-8 text-zinc-400 dark:text-zinc-500" />
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
           Pilih file CSV sesuai template{" "}
-          <code className="rounded bg-zinc-100 px-1">data/nominatif.csv</code>
+          <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">data/nominatif.csv</code>
         </p>
         <input
           type="file"
@@ -84,7 +84,7 @@ export function ImportCsvClient() {
           onChange={handleFile}
           className="mx-auto mt-3 block text-sm file:mr-4 file:rounded-md file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100"
         />
-        {fileName && <p className="mt-2 text-xs text-zinc-500">File: {fileName}</p>}
+        {fileName && <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">File: {fileName}</p>}
       </div>
 
       {error && (
@@ -103,7 +103,7 @@ export function ImportCsvClient() {
       {rows && rows.length > 0 && !result && (
         <div>
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-sm text-zinc-600">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
               <span className="font-medium text-emerald-700">{validCount} baris valid</span>
               {invalidCount > 0 && (
                 <span className="ml-2 font-medium text-red-600">{invalidCount} baris bermasalah</span>
@@ -115,9 +115,9 @@ export function ImportCsvClient() {
             </Button>
           </div>
 
-          <div className="max-h-96 overflow-auto rounded-xl border border-zinc-200 bg-white">
+          <div className="max-h-96 overflow-auto rounded-xl border border-zinc-200 bg-white dark:bg-zinc-900 dark:border-zinc-800">
             <table className="w-full text-xs">
-              <thead className="sticky top-0 bg-zinc-50 text-left uppercase text-zinc-500">
+              <thead className="sticky top-0 bg-zinc-50 text-left uppercase text-zinc-500 dark:text-zinc-400 dark:bg-zinc-950">
                 <tr>
                   <th className="px-3 py-2">Baris</th>
                   <th className="px-3 py-2">Status</th>
@@ -126,7 +126,7 @@ export function ImportCsvClient() {
                   <th className="px-3 py-2">Keterangan</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                 {rows.map((r) => (
                   <tr key={r.line} className={r.ok ? "" : "bg-red-50"}>
                     <td className="px-3 py-2">{r.line}</td>
