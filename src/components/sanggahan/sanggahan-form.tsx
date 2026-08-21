@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Loader2, TriangleAlert } from "lucide-react";
+import { useLocale } from "@/lib/i18n/client";
 
 export interface BidangOption {
   id: string;
@@ -45,6 +46,7 @@ export function SanggahanForm({
   warga?: WargaPrefill | null;
 }) {
   const router = useRouter();
+  const { dict } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -137,10 +139,9 @@ export function SanggahanForm({
       )}
 
       {warga && (
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
           <p>
-            Masuk sebagai <strong>{warga.nama}</strong>. Data di bawah sudah terisi otomatis dan
-            sanggahan ini akan tersimpan di riwayat akun Anda.
+            {dict.account.masukSebagai} <strong>{warga.nama}</strong>. {dict.account.dataOtomatisTerisi}
           </p>
           <label className="mt-2 flex items-start gap-2">
             <input
@@ -149,7 +150,7 @@ export function SanggahanForm({
               onChange={(e) => setAnonim(e.target.checked)}
               className="mt-0.5 h-4 w-4 rounded border-emerald-300 text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
             />
-            <span>Ajukan sebagai anonim (jangan kaitkan dengan akun saya)</span>
+            <span>{dict.account.ajukanAnonim}</span>
           </label>
         </div>
       )}
