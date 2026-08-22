@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
     include: {
       bidang: { select: { noUrut: true, namaPemilik: true } },
       dokumen: { select: { judul: true } },
+      pengumuman: { select: { judul: true } },
     },
   });
 
@@ -42,6 +43,7 @@ export async function GET(request: NextRequest) {
       { key: "kontakHp", label: "No. HP" },
       { key: "bidang", label: "Bidang Terkait" },
       { key: "dokumen", label: "Dokumen Terkait" },
+      { key: "pengumuman", label: "Pengumuman Terkait" },
       { key: "status", label: "Status" },
       { key: "isiSanggahan", label: "Isi Sanggahan" },
       { key: "catatanAdmin", label: "Catatan Admin" },
@@ -55,6 +57,7 @@ export async function GET(request: NextRequest) {
       kontakHp: s.kontakHp ?? "",
       bidang: s.bidang ? `No. ${s.bidang.noUrut} - ${s.bidang.namaPemilik}` : "",
       dokumen: s.dokumen?.judul ?? "",
+      pengumuman: s.pengumuman?.judul ?? "",
       status: SANGGAHAN_STATUS_LABEL[s.status] ?? s.status,
       isiSanggahan: s.isiSanggahan,
       catatanAdmin: s.catatanAdmin ?? "",

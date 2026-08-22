@@ -1,6 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { getActiveProject } from "@/lib/project";
-import { isMasaSanggahBerjalan } from "@/lib/masa-sanggah";
 import { getWargaSession } from "@/lib/warga-session";
 import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
@@ -15,15 +13,14 @@ export const metadata = {
 export default async function AjukanSanggahanPage({
   searchParams,
 }: {
-  searchParams: Promise<{ bidangId?: string; dokumenId?: string }>;
+  searchParams: Promise<{ bidangId?: string; dokumenId?: string; pengumumanId?: string }>;
 }) {
-  const { bidangId, dokumenId } = await searchParams;
+  const { bidangId, dokumenId, pengumumanId } = await searchParams;
 
   const session = await getWargaSession();
   const { dict } = await getDictionary();
 
-  const [project, bidangList, dokumenList, warga] = await Promise.all([
-    getActiveProject(),
+  const [bidangList, dokumenList, pengumumanList, warga] = await Promise.all([
     prisma.bidang.findMany({
       orderBy: { noUrut: "asc" },
       select: { id: true, noUrut: true, namaPemilik: true },
@@ -31,6 +28,11 @@ export default async function AjukanSanggahanPage({
     prisma.dokumenPublikasi.findMany({
       where: { published: true },
       orderBy: { tanggalUpload: "desc" },
+      select: { id: true, judul: true, sanggahanDibuka: true },
+    }),
+    prisma.pengumuman.findMany({
+      where: { published: true },
+      orderBy: { tanggalTerbit: "desc" },
       select: { id: true, judul: true, sanggahanDibuka: true },
     }),
     session
@@ -41,13 +43,11 @@ export default async function AjukanSanggahanPage({
       : null,
   ]);
 
-  const masaSanggahAktif = isMasaSanggahBerjalan(
-    project?.masaSanggahMulai ?? null,
-    project?.masaSanggahSelesai ?? null
-  );
-
   const dokumenTerkait = dokumenId ? dokumenList.find((d) => d.id === dokumenId) : undefined;
   const kanalDokumenDitutup = dokumenTerkait ? !dokumenTerkait.sanggahanDibuka : false;
+
+  const pengumumanTerkait = pengumumanId ? pengumumanList.find((p) => p.id === pengumumanId) : undefined;
+  const kanalPengumumanDitutup = pengumumanTerkait ? !pengumumanTerkait.sanggahanDibuka : false;
 
   return (
     <div>
@@ -57,9 +57,13 @@ export default async function AjukanSanggahanPage({
         <SanggahanForm
           bidangOptions={bidangList}
           dokumenOptions={dokumenList.map((d) => ({ id: d.id, judul: d.judul }))}
+          pengumumanOptions={pengumumanList
+            .filter((p) => p.sanggahanDibuka)
+            .map((p) => ({ id: p.id, judul: p.judul }))}
           defaultBidangId={bidangId}
           defaultDokumenId={dokumenId}
-          masaSanggahDitutup={!masaSanggahAktif || kanalDokumenDitutup}
+          defaultPengumumanId={pengumumanId}
+          masaSanggahDitutup={kanalDokumenDitutup || kanalPengumumanDitutup}
           warga={warga}
         />
       </div>

@@ -2,9 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MessageSquareWarning } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { getActiveProject } from "@/lib/project";
-import { isMasaSanggahBerjalan } from "@/lib/masa-sanggah";
-import { maskNik } from "@/lib/mask";
+import { maskNik, maskSebagian, maskTanggalLahir } from "@/lib/mask";
 import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { cn } from "@/lib/utils";
@@ -30,21 +28,16 @@ export default async function DetailBidangPage({
   const noUrut = Number(noUrutParam);
   if (!Number.isInteger(noUrut)) notFound();
 
-  const [bidang, project, { locale, dict }] = await Promise.all([
+  const [bidang, { locale, dict }] = await Promise.all([
     prisma.bidang.findFirst({
       where: { noUrut },
       include: { bangunan: true, tanaman: true },
     }),
-    getActiveProject(),
     getDictionary(),
   ]);
 
   if (!bidang) notFound();
 
-  const masaSanggahAktif = isMasaSanggahBerjalan(
-    project?.masaSanggahMulai ?? null,
-    project?.masaSanggahSelesai ?? null
-  );
   const numberLocale = locale === "en" ? "en-US" : "id-ID";
 
   return (
@@ -57,10 +50,11 @@ export default async function DetailBidangPage({
           <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             <InfoItem label="Nama Pemilik" value={bidang.namaPemilik} />
             <InfoItem label="NIK" value={maskNik(bidang.nik)} />
-            <InfoItem label="Pekerjaan" value={bidang.pekerjaan} />
+            <InfoItem label="Tanggal Lahir" value={maskTanggalLahir(bidang.tanggalLahir)} />
+            <InfoItem label="Pekerjaan" value={maskSebagian(bidang.pekerjaan)} />
             <InfoItem label="No. Peta Bidang" value={bidang.noPetaBidang} />
             <InfoItem label="RT/RW" value={bidang.rtRw} />
-            <InfoItem label="Alamat" value={bidang.alamat} />
+            <InfoItem label="Alamat" value={maskSebagian(bidang.alamat, 4)} />
           </dl>
         </section>
 
@@ -161,18 +155,12 @@ export default async function DetailBidangPage({
             <MessageSquareWarning className="h-5 w-5" /> {dict.nominatif.dataTidakSesuai}
           </h2>
           <p className="mt-1 text-sm text-emerald-800 dark:text-emerald-300">{dict.nominatif.dataTidakSesuaiDesc}</p>
-          {masaSanggahAktif ? (
-            <Link
-              href={`/sanggahan/baru?bidangId=${bidang.id}`}
-              className={cn(buttonVariants(), "mt-3")}
-            >
-              {dict.nominatif.ajukanUntukBidang}
-            </Link>
-          ) : (
-            <p className="mt-3 rounded-md bg-white/60 p-2 text-xs text-emerald-900 dark:bg-black/20 dark:text-emerald-200">
-              {dict.nominatif.masaSanggahBerakhir}
-            </p>
-          )}
+          <Link
+            href={`/sanggahan/baru?bidangId=${bidang.id}`}
+            className={cn(buttonVariants(), "mt-3")}
+          >
+            {dict.nominatif.ajukanUntukBidang}
+          </Link>
         </section>
       </div>
     </div>

@@ -1,8 +1,11 @@
-import { FileDown } from "lucide-react";
+import Link from "next/link";
+import { FileDown, MessageSquareWarning } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { formatTanggalIndonesia } from "@/lib/labels";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -33,16 +36,26 @@ export default async function PengumumanPage() {
             <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
               {p.konten}
             </p>
-            {p.lampiranUrl && (
-              <a
-                href={p.lampiranUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-emerald-700 hover:underline dark:text-emerald-400"
-              >
-                <FileDown className="h-4 w-4" /> {dict.pengumuman.lihatLampiran}
-              </a>
-            )}
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              {p.lampiranUrl && (
+                <a
+                  href={p.lampiranUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-emerald-700 hover:underline dark:text-emerald-400"
+                >
+                  <FileDown className="h-4 w-4" /> {dict.pengumuman.lihatLampiran}
+                </a>
+              )}
+              {p.sanggahanDibuka && (
+                <Link
+                  href={`/sanggahan/baru?pengumumanId=${p.id}`}
+                  className={cn(buttonVariants({ size: "sm" }))}
+                >
+                  <MessageSquareWarning className="h-4 w-4" /> {dict.nav.ajukanSanggahan}
+                </Link>
+              )}
+            </div>
           </article>
         ))}
 

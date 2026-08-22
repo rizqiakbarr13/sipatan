@@ -23,6 +23,11 @@ export interface DokumenOption {
   judul: string;
 }
 
+export interface PengumumanOption {
+  id: string;
+  judul: string;
+}
+
 export interface WargaPrefill {
   nama: string;
   email: string;
@@ -33,15 +38,19 @@ export interface WargaPrefill {
 export function SanggahanForm({
   bidangOptions,
   dokumenOptions,
+  pengumumanOptions,
   defaultBidangId,
   defaultDokumenId,
+  defaultPengumumanId,
   masaSanggahDitutup,
   warga,
 }: {
   bidangOptions: BidangOption[];
   dokumenOptions: DokumenOption[];
+  pengumumanOptions: PengumumanOption[];
   defaultBidangId?: string;
   defaultDokumenId?: string;
+  defaultPengumumanId?: string;
   masaSanggahDitutup: boolean;
   warga?: WargaPrefill | null;
 }) {
@@ -62,6 +71,7 @@ export function SanggahanForm({
     defaultValues: {
       bidangId: defaultBidangId ?? "",
       dokumenId: defaultDokumenId ?? "",
+      pengumumanId: defaultPengumumanId ?? "",
       nama: warga?.nama ?? "",
       nik: warga?.nik ?? "",
       kontakEmail: warga?.email ?? "",
@@ -216,6 +226,24 @@ export function SanggahanForm({
           </select>
         </div>
       </div>
+
+      {pengumumanOptions.length > 0 && (
+        <div className="space-y-1.5">
+          <Label htmlFor="pengumumanId">{dict.sanggahanForm.pengumumanTerkaitOpsional}</Label>
+          <select
+            id="pengumumanId"
+            {...register("pengumumanId")}
+            className="flex h-10 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+          >
+            <option value="">{dict.sanggahanForm.pilihPengumuman}</option>
+            {pengumumanOptions.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.judul}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">

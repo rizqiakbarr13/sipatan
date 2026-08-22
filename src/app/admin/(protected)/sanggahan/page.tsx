@@ -36,6 +36,7 @@ export default async function AdminSanggahanPage({
     include: {
       bidang: { select: { noUrut: true, namaPemilik: true } },
       dokumen: { select: { judul: true } },
+      pengumuman: { select: { judul: true } },
     },
   });
 
@@ -94,10 +95,13 @@ export default async function AdminSanggahanPage({
                 </td>
                 <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{s.nama}</td>
                 <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
-                  {s.bidang && `Bidang No. ${s.bidang.noUrut}`}
-                  {s.dokumen && s.bidang && " · "}
-                  {s.dokumen && s.dokumen.judul}
-                  {!s.bidang && !s.dokumen && "-"}
+                  {[
+                    s.bidang && `Bidang No. ${s.bidang.noUrut}`,
+                    s.dokumen && s.dokumen.judul,
+                    s.pengumuman && s.pengumuman.judul,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ") || "-"}
                 </td>
                 <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400">{formatTanggalIndonesia(s.createdAt)}</td>
                 <td className="px-4 py-3">

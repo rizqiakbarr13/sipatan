@@ -87,7 +87,7 @@ const en: Dictionary = {
   banner: {
     belumDiatur: "The objection period schedule has not been announced yet.",
     berakhirPrefix: "The objection period ended on",
-    berakhirSuffix: "New objections for this data are no longer being accepted.",
+    berakhirSuffix: "Objections can still be submitted for any document, announcement, or parcel data whose channel remains open.",
     sisaPrefix: "The objection period ends in",
     sisaHari: "days",
     sisaSuffix: "until",
@@ -135,6 +135,7 @@ const en: Dictionary = {
     diajukan: "Submitted",
     bidangTerkait: "Related Parcel",
     dokumenTerkait: "Related Document",
+    pengumumanTerkait: "Related Announcement",
     catatanAdmin: "Admin Note / Response",
     riwayat: "History",
   },
@@ -153,6 +154,8 @@ const en: Dictionary = {
     pilihBidang: "— Select a parcel —",
     dokumenTerkaitOpsional: "Related Public Document (optional)",
     pilihDokumen: "— Select a document —",
+    pengumumanTerkaitOpsional: "Related Announcement (optional)",
+    pilihPengumuman: "— Select an announcement —",
     email: "Email",
     nomorHp: "Phone Number",
     isiSalahSatu: "Fill in at least one: email or phone number.",
@@ -170,7 +173,6 @@ const en: Dictionary = {
     dataTidakSesuai: "Data doesn't match?",
     dataTidakSesuaiDesc: "If any data in this parcel doesn't match your records, please submit an objection.",
     ajukanUntukBidang: "Submit an Objection for This Parcel",
-    masaSanggahBerakhir: "The objection period has ended; new objections cannot be processed.",
   },
   nominatifTable: {
     cariPlaceholder: "Search name, NIB, or parcel no...",

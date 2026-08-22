@@ -9,6 +9,7 @@ type SanggahanDetail = {
   catatanAdmin: string | null;
   bidang: { noUrut: number; namaPemilik: string } | null;
   dokumen: { judul: string } | null;
+  pengumuman: { judul: string } | null;
   riwayat: { id: string; statusBaru: string; catatan: string | null; createdAt: Date }[];
 };
 
@@ -47,6 +48,12 @@ export function SanggahanDetailCard({
             <div>
               <dt className="text-xs uppercase text-zinc-400">{dict.detailSanggahan.dokumenTerkait}</dt>
               <dd>{sanggahan.dokumen.judul}</dd>
+            </div>
+          )}
+          {sanggahan.pengumuman && (
+            <div>
+              <dt className="text-xs uppercase text-zinc-400">{dict.detailSanggahan.pengumumanTerkait}</dt>
+              <dd>{sanggahan.pengumuman.judul}</dd>
             </div>
           )}
         </dl>

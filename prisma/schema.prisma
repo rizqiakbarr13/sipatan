@@ -95,6 +95,9 @@ model Sanggahan {
   dokumenId    String?
   dokumen      DokumenPublikasi? @relation(fields: [dokumenId], references: [id])
 
+  pengumumanId String?
+  pengumuman   Pengumuman? @relation(fields: [pengumumanId], references: [id])
+
   wargaId      String?
   warga        Warga?   @relation(fields: [wargaId], references: [id])
 
@@ -120,6 +123,7 @@ model Sanggahan {
 
   @@index([bidangId])
   @@index([dokumenId])
+  @@index([pengumumanId])
   @@index([wargaId])
   @@index([status])
 }
@@ -157,14 +161,16 @@ model SOPDoc {
 }
 
 model Pengumuman {
-  id            String   @id @default(cuid())
-  judul         String
-  konten        String   @db.Text
-  lampiranUrl   String?
-  tanggalTerbit DateTime @default(now())
-  published     Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id              String   @id @default(cuid())
+  judul           String
+  konten          String   @db.Text
+  lampiranUrl     String?
+  tanggalTerbit   DateTime @default(now())
+  published       Boolean  @default(true)
+  sanggahanDibuka Boolean  @default(false)
+  sanggahan       Sanggahan[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model DokumenPublikasi {

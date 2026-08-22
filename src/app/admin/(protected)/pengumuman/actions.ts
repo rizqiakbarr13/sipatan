@@ -78,3 +78,12 @@ export async function togglePublishPengumuman(id: string, published: boolean) {
   revalidatePath("/admin/pengumuman");
   revalidatePath("/pengumuman");
 }
+
+export async function toggleSanggahanDibukaPengumuman(id: string, dibuka: boolean) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  await prisma.pengumuman.update({ where: { id }, data: { sanggahanDibuka: dibuka } });
+  revalidatePath("/admin/pengumuman");
+  revalidatePath("/pengumuman");
+}

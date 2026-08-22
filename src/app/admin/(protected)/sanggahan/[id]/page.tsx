@@ -22,6 +22,7 @@ export default async function SanggahanDetailPage({
     include: {
       bidang: { select: { id: true, noUrut: true, namaPemilik: true } },
       dokumen: { select: { id: true, judul: true } },
+      pengumuman: { select: { id: true, judul: true } },
       warga: { select: { nama: true, email: true } },
       riwayat: { orderBy: { createdAt: "asc" } },
     },
@@ -61,7 +62,7 @@ export default async function SanggahanDetailPage({
             </dl>
 
             <div className="mt-4">
-              <p className="text-xs uppercase text-zinc-400 dark:text-zinc-500">Bidang / Dokumen Terkait</p>
+              <p className="text-xs uppercase text-zinc-400 dark:text-zinc-500">Bidang / Dokumen / Pengumuman Terkait</p>
               <div className="mt-1 flex flex-wrap gap-3 text-sm">
                 {sanggahan.bidang && (
                   <Link href={`/admin/nominatif/${sanggahan.bidang.id}`} className="text-emerald-700 hover:underline">
@@ -73,7 +74,14 @@ export default async function SanggahanDetailPage({
                     Dokumen: {sanggahan.dokumen.judul}
                   </Link>
                 )}
-                {!sanggahan.bidang && !sanggahan.dokumen && <span className="text-zinc-500 dark:text-zinc-400">-</span>}
+                {sanggahan.pengumuman && (
+                  <Link href={`/admin/pengumuman/${sanggahan.pengumuman.id}`} className="text-emerald-700 hover:underline">
+                    Pengumuman: {sanggahan.pengumuman.judul}
+                  </Link>
+                )}
+                {!sanggahan.bidang && !sanggahan.dokumen && !sanggahan.pengumuman && (
+                  <span className="text-zinc-500 dark:text-zinc-400">-</span>
+                )}
               </div>
             </div>
 

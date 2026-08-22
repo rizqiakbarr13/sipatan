@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sanggahanFormSchema } from "@/lib/validation/sanggahan";
 import { generateNomorTiket } from "@/lib/nomor-tiket";
-import { isMasaSanggahBerjalan } from "@/lib/masa-sanggah";
-import { getActiveProject } from "@/lib/project";
 import { getWargaSession } from "@/lib/warga-session";
 import { sendEmail, sanggahanKonfirmasiEmail } from "@/lib/email";
 import {
@@ -47,6 +45,7 @@ export async function POST(request: NextRequest) {
     noNis: formData.get("noNis")?.toString() || undefined,
     bidangId: formData.get("bidangId")?.toString() || undefined,
     dokumenId: formData.get("dokumenId")?.toString() || undefined,
+    pengumumanId: formData.get("pengumumanId")?.toString() || undefined,
     kontakEmail: formData.get("kontakEmail")?.toString() || undefined,
     kontakHp: formData.get("kontakHp")?.toString() || undefined,
     isiSanggahan: formData.get("isiSanggahan")?.toString() ?? "",
@@ -62,18 +61,6 @@ export async function POST(request: NextRequest) {
   }
   const data = parsed.data;
 
-  const project = await getActiveProject();
-  if (!project) {
-    return NextResponse.json({ error: "Proyek belum dikonfigurasi" }, { status: 400 });
-  }
-
-  if (!isMasaSanggahBerjalan(project.masaSanggahMulai, project.masaSanggahSelesai)) {
-    return NextResponse.json(
-      { error: "Masa sanggah sudah berakhir. Pengajuan sanggahan baru tidak dapat diproses." },
-      { status: 403 }
-    );
-  }
-
   let dokumen = null;
   if (data.dokumenId) {
     dokumen = await prisma.dokumenPublikasi.findUnique({ where: { id: data.dokumenId } });
@@ -83,6 +70,19 @@ export async function POST(request: NextRequest) {
     if (!dokumen.sanggahanDibuka) {
       return NextResponse.json(
         { error: "Kanal sanggahan untuk dokumen ini sedang ditutup" },
+        { status: 403 }
+      );
+    }
+  }
+
+  if (data.pengumumanId) {
+    const pengumuman = await prisma.pengumuman.findUnique({ where: { id: data.pengumumanId } });
+    if (!pengumuman) {
+      return NextResponse.json({ error: "Pengumuman terkait tidak ditemukan" }, { status: 400 });
+    }
+    if (!pengumuman.sanggahanDibuka) {
+      return NextResponse.json(
+        { error: "Kanal sanggahan untuk pengumuman ini sedang ditutup" },
         { status: 403 }
       );
     }
@@ -127,6 +127,7 @@ export async function POST(request: NextRequest) {
       nomorTiket,
       bidangId: data.bidangId || null,
       dokumenId: data.dokumenId || null,
+      pengumumanId: data.pengumumanId || null,
       wargaId: wargaSession?.id || null,
       nama: data.nama,
       nik: data.nik,

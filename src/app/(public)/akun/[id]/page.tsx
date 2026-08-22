@@ -30,6 +30,7 @@ export default async function AkunSanggahanDetailPage({
       riwayat: { orderBy: { createdAt: "asc" } },
       bidang: { select: { noUrut: true, namaPemilik: true } },
       dokumen: { select: { judul: true } },
+      pengumuman: { select: { judul: true } },
     },
   });
 

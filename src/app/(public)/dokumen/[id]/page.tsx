@@ -2,8 +2,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Download, MessageSquareWarning } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { getActiveProject } from "@/lib/project";
-import { isMasaSanggahBerjalan } from "@/lib/masa-sanggah";
 import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -24,9 +22,8 @@ export default async function DokumenDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [dokumen, project, { dict }] = await Promise.all([
+  const [dokumen, { dict }] = await Promise.all([
     prisma.dokumenPublikasi.findUnique({ where: { id } }),
-    getActiveProject(),
     getDictionary(),
   ]);
 
@@ -38,11 +35,7 @@ export default async function DokumenDetailPage({
     select: { id: true, nama: true, isiSanggahan: true, catatanAdmin: true, createdAt: true },
   });
 
-  const masaSanggahAktif = isMasaSanggahBerjalan(
-    project?.masaSanggahMulai ?? null,
-    project?.masaSanggahSelesai ?? null
-  );
-  const bisaSanggah = masaSanggahAktif && dokumen.sanggahanDibuka;
+  const bisaSanggah = dokumen.sanggahanDibuka;
   const isPdf = dokumen.fileType === "application/pdf" || dokumen.fileUrl.endsWith(".pdf");
 
   return (

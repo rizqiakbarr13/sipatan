@@ -29,6 +29,7 @@ export default async function LacakSanggahanPage({
           riwayat: { orderBy: { createdAt: "asc" } },
           bidang: { select: { noUrut: true, namaPemilik: true } },
           dokumen: { select: { judul: true } },
+          pengumuman: { select: { judul: true } },
         },
       })
     : null;

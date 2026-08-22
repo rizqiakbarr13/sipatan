@@ -29,7 +29,7 @@ export default async function AdminPengumumanPage() {
             <tr>
               <th className="px-4 py-3">Judul</th>
               <th className="px-4 py-3">Tanggal Terbit</th>
-              <th className="px-4 py-3">Publish</th>
+              <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Aksi</th>
             </tr>
           </thead>
@@ -39,7 +39,7 @@ export default async function AdminPengumumanPage() {
                 <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{p.judul}</td>
                 <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">{formatTanggalIndonesia(p.tanggalTerbit)}</td>
                 <td className="px-4 py-3">
-                  <PengumumanRowActions id={p.id} published={p.published} />
+                  <PengumumanRowActions id={p.id} published={p.published} sanggahanDibuka={p.sanggahanDibuka} />
                 </td>
                 <td className="px-4 py-3">
                   <Link href={`/admin/pengumuman/${p.id}`} className="text-emerald-700 hover:underline">

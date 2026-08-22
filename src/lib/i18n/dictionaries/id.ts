@@ -129,6 +129,7 @@ export interface Dictionary {
     diajukan: string;
     bidangTerkait: string;
     dokumenTerkait: string;
+    pengumumanTerkait: string;
     catatanAdmin: string;
     riwayat: string;
   };
@@ -146,6 +147,8 @@ export interface Dictionary {
     pilihBidang: string;
     dokumenTerkaitOpsional: string;
     pilihDokumen: string;
+    pengumumanTerkaitOpsional: string;
+    pilihPengumuman: string;
     email: string;
     nomorHp: string;
     isiSalahSatu: string;
@@ -163,7 +166,6 @@ export interface Dictionary {
     dataTidakSesuai: string;
     dataTidakSesuaiDesc: string;
     ajukanUntukBidang: string;
-    masaSanggahBerakhir: string;
   };
   nominatifTable: {
     cariPlaceholder: string;
@@ -278,7 +280,7 @@ const id: Dictionary = {
   banner: {
     belumDiatur: "Jadwal masa sanggah belum diumumkan.",
     berakhirPrefix: "Masa sanggah telah berakhir pada",
-    berakhirSuffix: "Pengajuan sanggahan baru untuk data ini tidak lagi diterima.",
+    berakhirSuffix: "Sanggahan tetap dapat diajukan untuk dokumen, pengumuman, atau data bidang yang kanalnya masih dibuka.",
     sisaPrefix: "Masa sanggah berakhir dalam",
     sisaHari: "hari",
     sisaSuffix: "sampai dengan",
@@ -326,6 +328,7 @@ const id: Dictionary = {
     diajukan: "Diajukan",
     bidangTerkait: "Bidang Terkait",
     dokumenTerkait: "Dokumen Terkait",
+    pengumumanTerkait: "Pengumuman Terkait",
     catatanAdmin: "Catatan / Tanggapan Admin",
     riwayat: "Riwayat",
   },
@@ -344,6 +347,8 @@ const id: Dictionary = {
     pilihBidang: "— Pilih bidang —",
     dokumenTerkaitOpsional: "Dokumen Publikasi Terkait (opsional)",
     pilihDokumen: "— Pilih dokumen —",
+    pengumumanTerkaitOpsional: "Pengumuman Terkait (opsional)",
+    pilihPengumuman: "— Pilih pengumuman —",
     email: "Email",
     nomorHp: "Nomor HP",
     isiSalahSatu: "Isi salah satu: email atau nomor HP.",
@@ -361,7 +366,6 @@ const id: Dictionary = {
     dataTidakSesuai: "Data tidak sesuai?",
     dataTidakSesuaiDesc: "Jika ada data pada bidang ini yang menurut Anda tidak sesuai, silakan ajukan sanggahan.",
     ajukanUntukBidang: "Ajukan Sanggahan untuk Bidang Ini",
-    masaSanggahBerakhir: "Masa sanggah telah berakhir, pengajuan sanggahan baru tidak dapat diproses.",
   },
   nominatifTable: {
     cariPlaceholder: "Cari nama, NIB, atau no. urut...",

@@ -13,6 +13,7 @@ export const sanggahanFormSchema = z
     noNis: z.string().optional(),
     bidangId: z.string().optional(),
     dokumenId: z.string().optional(),
+    pengumumanId: z.string().optional(),
     kontakEmail: z
       .string()
       .trim()
