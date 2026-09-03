@@ -1,5 +1,12 @@
+import { FileDown, Paperclip } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { formatTanggalIndonesia, SANGGAHAN_STATUS_BADGE_VARIANT, SANGGAHAN_STATUS_LABEL } from "@/lib/labels";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import {
+  formatTanggalWaktuIndonesia,
+  SANGGAHAN_STATUS_BADGE_VARIANT,
+  SANGGAHAN_STATUS_LABEL,
+} from "@/lib/labels";
 import type { Dictionary } from "@/lib/i18n/dictionaries/id";
 
 type SanggahanDetail = {
@@ -11,13 +18,18 @@ type SanggahanDetail = {
   dokumen: { judul: string } | null;
   pengumuman: { judul: string } | null;
   riwayat: { id: string; statusBaru: string; catatan: string | null; createdAt: Date }[];
+  lampiranUrl?: string | null;
+  lampiran?: { id: string; fileUrl: string; fileName: string }[];
+  buktiTambahan?: { id: string; jenisBukti: string; keterangan: string | null }[];
 };
 
 export function SanggahanDetailCard({
   sanggahan,
+  nik,
   dict,
 }: {
   sanggahan: SanggahanDetail;
+  nik: string;
   dict: Dictionary;
 }) {
   return (
@@ -31,10 +43,16 @@ export function SanggahanDetailCard({
             {SANGGAHAN_STATUS_LABEL[sanggahan.status]}
           </Badge>
         </div>
+        <a
+          href={`/api/sanggahan/pdf?tiket=${encodeURIComponent(sanggahan.nomorTiket)}&nik=${encodeURIComponent(nik)}`}
+          className={cn(buttonVariants({ variant: "outline", size: "sm" }), "mt-3")}
+        >
+          <FileDown className="h-4 w-4" /> {dict.detailSanggahan.unduhBukti}
+        </a>
         <dl className="mt-4 grid gap-2 text-sm text-zinc-600 dark:text-zinc-400 sm:grid-cols-2">
           <div>
             <dt className="text-xs uppercase text-zinc-400">{dict.detailSanggahan.diajukan}</dt>
-            <dd>{formatTanggalIndonesia(sanggahan.createdAt)}</dd>
+            <dd>{formatTanggalWaktuIndonesia(sanggahan.createdAt)}</dd>
           </div>
           {sanggahan.bidang && (
             <div>
@@ -57,10 +75,56 @@ export function SanggahanDetailCard({
             </div>
           )}
         </dl>
+        {sanggahan.status === "DITERIMA" && (
+          <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-400">{dict.detailSanggahan.perkiraanTanggapan}</p>
+        )}
         {sanggahan.catatanAdmin && (
           <div className="mt-4 rounded-lg bg-zinc-50 p-3 text-sm text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
             <p className="text-xs font-medium uppercase text-zinc-400">{dict.detailSanggahan.catatanAdmin}</p>
             <p className="mt-1 whitespace-pre-line">{sanggahan.catatanAdmin}</p>
+          </div>
+        )}
+
+        {((sanggahan.lampiran && sanggahan.lampiran.length > 0) || sanggahan.lampiranUrl) && (
+          <div className="mt-4">
+            <p className="text-xs uppercase text-zinc-400">{dict.detailSanggahan.lampiranBukti}</p>
+            <div className="mt-1 flex flex-col gap-1.5">
+              {sanggahan.lampiranUrl && (
+                <a
+                  href={sanggahan.lampiranUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-emerald-700 hover:underline dark:text-emerald-400"
+                >
+                  <Paperclip className="h-4 w-4" /> Lampiran
+                </a>
+              )}
+              {sanggahan.lampiran?.map((file) => (
+                <a
+                  key={file.id}
+                  href={file.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-emerald-700 hover:underline dark:text-emerald-400"
+                >
+                  <Paperclip className="h-4 w-4" /> {file.fileName}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {sanggahan.buktiTambahan && sanggahan.buktiTambahan.length > 0 && (
+          <div className="mt-4">
+            <p className="text-xs uppercase text-zinc-400">{dict.detailSanggahan.tabelBuktiTambahan}</p>
+            <ul className="mt-1 space-y-1 text-sm text-zinc-700 dark:text-zinc-300">
+              {sanggahan.buktiTambahan.map((row) => (
+                <li key={row.id}>
+                  <strong>{row.jenisBukti}</strong>
+                  {row.keterangan ? `: ${row.keterangan}` : ""}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
@@ -74,7 +138,7 @@ export function SanggahanDetailCard({
               <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                 {SANGGAHAN_STATUS_LABEL[log.statusBaru] ?? log.statusBaru}
               </p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-500">{formatTanggalIndonesia(log.createdAt)}</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-500">{formatTanggalWaktuIndonesia(log.createdAt)}</p>
               {log.catatan && <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{log.catatan}</p>}
             </li>
           ))}

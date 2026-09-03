@@ -12,6 +12,9 @@ const pengumumanSchema = z.object({
   lampiranUrl: z.string().optional(),
   tanggalTerbit: z.string().min(1),
   published: z.string().optional(),
+  projectId: z.string().optional(),
+  dokumenTerkaitId: z.string().optional(),
+  linkDataNominatif: z.string().optional(),
 });
 
 export async function createPengumuman(formData: FormData) {
@@ -29,12 +32,15 @@ export async function createPengumuman(formData: FormData) {
       lampiranUrl: data.lampiranUrl || null,
       tanggalTerbit: new Date(data.tanggalTerbit),
       published: data.published === "on",
+      projectId: data.projectId || null,
+      dokumenTerkaitId: data.dokumenTerkaitId || null,
+      linkDataNominatif: data.linkDataNominatif === "on",
     },
   });
 
   revalidatePath("/admin/pengumuman");
   revalidatePath("/pengumuman");
-  redirect("/admin/pengumuman");
+  redirect("/admin/pengumuman?saved=created");
 }
 
 export async function updatePengumuman(id: string, formData: FormData) {
@@ -53,12 +59,15 @@ export async function updatePengumuman(id: string, formData: FormData) {
       lampiranUrl: data.lampiranUrl || null,
       tanggalTerbit: new Date(data.tanggalTerbit),
       published: data.published === "on",
+      projectId: data.projectId || null,
+      dokumenTerkaitId: data.dokumenTerkaitId || null,
+      linkDataNominatif: data.linkDataNominatif === "on",
     },
   });
 
   revalidatePath("/admin/pengumuman");
   revalidatePath("/pengumuman");
-  redirect("/admin/pengumuman");
+  redirect("/admin/pengumuman?saved=updated");
 }
 
 export async function deletePengumuman(id: string) {

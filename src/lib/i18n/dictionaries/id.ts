@@ -5,6 +5,7 @@ export interface Dictionary {
     loading: string;
     optional: string;
     back: string;
+    semuaProyek: string;
   };
   nav: {
     beranda: string;
@@ -13,6 +14,8 @@ export interface Dictionary {
     sop: string;
     pengumuman: string;
     lacak: string;
+    faq: string;
+    kontak: string;
     ajukanSanggahan: string;
     masuk: string;
     daftar: string;
@@ -25,14 +28,15 @@ export interface Dictionary {
   auth: {
     masukTitle: string;
     masukDesc: string;
+    masukUntukSanggahan: string;
     daftarTitle: string;
     daftarDesc: string;
     namaLengkap: string;
     email: string;
     password: string;
     konfirmasiPassword: string;
-    nikOpsional: string;
-    noHpOpsional: string;
+    nik: string;
+    noHp: string;
     catatanNikHp: string;
     tombolMasuk: string;
     tombolDaftar: string;
@@ -53,12 +57,26 @@ export interface Dictionary {
     alamat: string;
     tautanTitle: string;
     sanggahanTitle: string;
-    adminTitle: string;
+    kontakTitle: string;
+    bantuanTitle: string;
     sopPengadaan: string;
     lacakStatus: string;
     unduhFormulir: string;
-    loginAdmin: string;
+    faqLink: string;
     hakCipta: string;
+  };
+  kontak: {
+    title: string;
+    desc: string;
+    alamatLabel: string;
+    emailLabel: string;
+    teleponLabel: string;
+    jamLabel: string;
+  };
+  faq: {
+    title: string;
+    desc: string;
+    items: { q: string; a: string }[];
   };
   home: {
     eyebrow: string;
@@ -75,18 +93,48 @@ export interface Dictionary {
     sopDesc: string;
     unduhFormulirTitle: string;
     unduhFormulirDesc: string;
+    unduhFormulirPilihProyekDesc: string;
+    lacakStatusTitle: string;
+    lacakStatusDesc: string;
+    bacaSelengkapnya: string;
     tentangKegiatan: string;
     ctaTitle: string;
     ctaDesc: string;
     ctaButton: string;
-  };
-  banner: {
-    belumDiatur: string;
-    berakhirPrefix: string;
-    berakhirSuffix: string;
-    sisaPrefix: string;
-    sisaHari: string;
-    sisaSuffix: string;
+    kanalSanggahanTitle: string;
+    kanalSanggahanDesc: string;
+    kanalSanggahanNominatif: string;
+    kanalSanggahanPengumuman: string;
+    pengumumanTerbaruTitle: string;
+    pengumumanTerbaruLihatSemua: string;
+    pengumumanTerbaruKosong: string;
+    dataTerkiniBadge: string;
+    dataTerkiniBidang: string;
+    dataTerkiniDokumen: string;
+    dataTerkiniPengumuman: string;
+    dataTerkiniSanggahan: string;
+    pembaruanTerakhir: string;
+    faqTeaserLink: string;
+    kontakTeaserLink: string;
+    instansiPelayananLabel: string;
+    instansiIndukTitle: string;
+    instansiIndukKota: string;
+    instansiBidang: string;
+    instansiDesc: string;
+    unitLainTitle: string;
+    unitLainAndaDiSini: string;
+    unitLainSegeraHadir: string;
+    unitLainKunjungiWebsite: string;
+    unitPerumahan: string;
+    unitPermukiman: string;
+    unitPertanahan: string;
+    unitTataBangunan: string;
+    unitUptdPemakaman: string;
+    unitUptdRusunawa: string;
+    galeriTitle: string;
+    galeriDesc: string;
+    galeriSoon: string;
+    galeriKlikPerbesar: string;
   };
   dokumen: {
     pageTitle: string;
@@ -114,6 +162,7 @@ export interface Dictionary {
   sanggahanSukses: {
     title: string;
     desc: string;
+    unduhBukti: string;
     lacakStatus: string;
     kembaliBeranda: string;
   };
@@ -127,11 +176,15 @@ export interface Dictionary {
   };
   detailSanggahan: {
     diajukan: string;
+    unduhBukti: string;
     bidangTerkait: string;
     dokumenTerkait: string;
     pengumumanTerkait: string;
     catatanAdmin: string;
+    perkiraanTanggapan: string;
     riwayat: string;
+    lampiranBukti: string;
+    tabelBuktiTambahan: string;
   };
   sanggahanForm: {
     pageTitle: string;
@@ -143,6 +196,9 @@ export interface Dictionary {
     noDanom: string;
     noPetaBidang: string;
     noNis: string;
+    proyekTerkait: string;
+    pilihProyek: string;
+    pilihProyekDulu: string;
     bidangTerkaitOpsional: string;
     pilihBidang: string;
     dokumenTerkaitOpsional: string;
@@ -157,6 +213,18 @@ export interface Dictionary {
     lampiran: string;
     pernyataanBenar: string;
     kirim: string;
+    sectionIdentitas: string;
+    sectionPernyataan: string;
+    sectionBukti: string;
+    lampiranDesc: string;
+    hapus: string;
+    tabelBuktiTitle: string;
+    tabelBuktiDesc: string;
+    tabelBuktiJenis: string;
+    tabelBuktiJenisPlaceholder: string;
+    tabelBuktiKeterangan: string;
+    tabelBuktiKeteranganPlaceholder: string;
+    tambahBarisBukti: string;
   };
   nominatif: {
     pageTitle: string;
@@ -166,6 +234,7 @@ export interface Dictionary {
     dataTidakSesuai: string;
     dataTidakSesuaiDesc: string;
     ajukanUntukBidang: string;
+    kembaliKeDaftar: string;
   };
   nominatifTable: {
     cariPlaceholder: string;
@@ -189,7 +258,20 @@ export interface Dictionary {
     pageTitle: string;
     pageDesc: string;
     lihatLampiran: string;
+    lihatDokumenTerkait: string;
+    lihatDataNominatif: string;
     belumAda: string;
+    baruBadge: string;
+    kanalDibuka: string;
+    cariPlaceholder: string;
+    semuaStatus: string;
+    filterDibuka: string;
+    filterTutup: string;
+    terapkan: string;
+    tidakAda: string;
+    urutkanLabel: string;
+    urutkanTerbaru: string;
+    urutkanTerlama: string;
   };
 }
 
@@ -200,6 +282,7 @@ const id: Dictionary = {
     loading: "Memuat...",
     optional: "opsional",
     back: "Kembali",
+    semuaProyek: "Semua Proyek",
   },
   nav: {
     beranda: "Beranda",
@@ -208,6 +291,8 @@ const id: Dictionary = {
     sop: "SOP",
     pengumuman: "Pengumuman",
     lacak: "Lacak Sanggahan",
+    faq: "FAQ",
+    kontak: "Kontak",
     ajukanSanggahan: "Ajukan Sanggahan",
     masuk: "Masuk",
     daftar: "Daftar",
@@ -220,15 +305,17 @@ const id: Dictionary = {
   auth: {
     masukTitle: "Masuk Akun Warga",
     masukDesc: "Untuk mengajukan sanggahan dengan data otomatis terisi dan melihat riwayat.",
+    masukUntukSanggahan:
+      "Masuk terlebih dahulu untuk mengajukan sanggahan. Setelah masuk, Anda tetap bisa memilih mengajukan dengan nama sendiri atau secara anonim.",
     daftarTitle: "Daftar Akun Warga",
     daftarDesc: "Ajukan sanggahan lebih cepat dan pantau riwayatnya di satu tempat.",
     namaLengkap: "Nama Lengkap",
     email: "Email",
     password: "Kata Sandi",
     konfirmasiPassword: "Konfirmasi Kata Sandi",
-    nikOpsional: "NIK (opsional)",
-    noHpOpsional: "No. HP (opsional)",
-    catatanNikHp: "NIK/No. HP hanya dipakai untuk mengisi otomatis form sanggahan Anda nanti.",
+    nik: "NIK *",
+    noHp: "No. HP *",
+    catatanNikHp: "Pastikan NIK dan No. HP sudah benar — data ini akan tersimpan di akun Anda dan dipakai untuk mengisi otomatis form sanggahan Anda nanti.",
     tombolMasuk: "Masuk",
     tombolDaftar: "Daftar",
     belumPunyaAkun: "Belum punya akun?",
@@ -247,15 +334,50 @@ const id: Dictionary = {
   },
   footer: {
     alamat:
-      "Pelebaran Simpang Parung Bingung, Jalan Raya Sawangan, Jalan Raya Muchtar, dan Jalan Meruyung Raya, Kecamatan Pancoran Mas & Sawangan, Kota Depok, Jawa Barat.",
+      "SIPATAN — Sistem Informasi Pengadaan Tanah adalah portal resmi untuk publikasi dokumen, data nominatif, SOP, dan kanal sanggahan masyarakat terkait kegiatan pengadaan tanah untuk kepentingan umum.",
     tautanTitle: "Tautan",
     sanggahanTitle: "Sanggahan",
-    adminTitle: "Admin",
+    kontakTitle: "Hubungi Kami",
+    bantuanTitle: "Bantuan",
     sopPengadaan: "SOP Pengadaan",
     lacakStatus: "Lacak Status Sanggahan",
     unduhFormulir: "Unduh Formulir PDF",
-    loginAdmin: "Login Admin",
-    hakCipta: "Panitia Pengadaan Tanah Kota Depok. Seluruh dokumen bersifat resmi.",
+    faqLink: "Pertanyaan Umum (FAQ)",
+    hakCipta: "SIPATAN — Sistem Informasi Pengadaan Tanah. Seluruh dokumen bersifat resmi.",
+  },
+  kontak: {
+    title: "Hubungi Kami",
+    desc: "Ada pertanyaan seputar pengadaan tanah atau proses sanggahan? Hubungi kami melalui kanal berikut.",
+    alamatLabel: "Alamat Kantor",
+    emailLabel: "Email",
+    teleponLabel: "Telepon / WhatsApp",
+    jamLabel: "Jam Layanan",
+  },
+  faq: {
+    title: "Pertanyaan yang Sering Diajukan",
+    desc: "Jawaban singkat untuk pertanyaan umum seputar sanggahan dan data nominatif.",
+    items: [
+      {
+        q: "Bagaimana cara mengajukan sanggahan?",
+        a: "Buka halaman \"Ajukan Sanggahan\", pilih data bidang atau pengumuman yang ingin disanggah, lalu isi form. Anda bisa mengajukan secara anonim atau login sebagai warga agar tersimpan di riwayat akun.",
+      },
+      {
+        q: "Apakah pengajuan sanggahan memiliki batas waktu?",
+        a: "Ya. Masa sanggah berlangsung 14 hari kalender sejak tanggal pengumuman data nominatif suatu proyek. Setelah sanggahan diajukan, petugas akan menanggapi dalam waktu 3-4 hari kerja.",
+      },
+      {
+        q: "Bagaimana cara melacak status sanggahan saya?",
+        a: "Gunakan nomor tiket dan NIK Anda di halaman \"Lacak Status Sanggahan\", atau login ke akun warga untuk melihat seluruh riwayat sanggahan Anda.",
+      },
+      {
+        q: "Apakah data pribadi saya aman dipublikasikan?",
+        a: "NIK, tempat/tanggal lahir, pekerjaan, dan alamat pada Data Nominatif publik ditutup sebagian (dimasking) untuk melindungi privasi Anda.",
+      },
+      {
+        q: "Ke mana saya bisa bertanya lebih lanjut?",
+        a: "Silakan hubungi kami melalui kanal pada bagian \"Hubungi Kami\" di halaman ini.",
+      },
+    ],
   },
   home: {
     eyebrow: "Pengadaan Tanah untuk Kepentingan Umum",
@@ -272,18 +394,50 @@ const id: Dictionary = {
     sopDesc: "Pelajari tahapan proses pengadaan tanah dari awal hingga akhir.",
     unduhFormulirTitle: "Unduh Formulir Sanggahan",
     unduhFormulirDesc: "Unduh formulir sanggahan resmi dalam format PDF.",
+    unduhFormulirPilihProyekDesc: "Pilih proyek untuk mengunduh formulir sanggahan yang sudah berisi identitas proyek terkait.",
+    lacakStatusTitle: "Lacak Status Sanggahan",
+    lacakStatusDesc: "Pantau perkembangan sanggahan yang sudah Anda ajukan dengan nomor tiket.",
+    bacaSelengkapnya: "Baca Selengkapnya",
     tentangKegiatan: "Tentang Kegiatan",
     ctaTitle: "Data Anda tidak sesuai dengan pengumuman?",
     ctaDesc: "Ajukan sanggahan secara online, dapatkan nomor tiket, dan pantau statusnya kapan saja.",
     ctaButton: "Ajukan Sanggahan Sekarang",
-  },
-  banner: {
-    belumDiatur: "Jadwal masa sanggah belum diumumkan.",
-    berakhirPrefix: "Masa sanggah telah berakhir pada",
-    berakhirSuffix: "Sanggahan tetap dapat diajukan untuk dokumen, pengumuman, atau data bidang yang kanalnya masih dibuka.",
-    sisaPrefix: "Masa sanggah berakhir dalam",
-    sisaHari: "hari",
-    sisaSuffix: "sampai dengan",
+    kanalSanggahanTitle: "Sanggahan Memiliki Tenggat Waktu 14 Hari",
+    kanalSanggahanDesc:
+      "Sanggahan dapat diajukan dalam 14 hari kalender sejak tanggal pengumuman data nominatif, dan akan ditanggapi petugas dalam 3-4 hari kerja. Ajukan langsung dari data bidang yang ingin disanggah atau dari pengumuman terkait.",
+    kanalSanggahanNominatif: "Pilih bidang di Data Nominatif",
+    kanalSanggahanPengumuman: "Pilih pengumuman yang kanalnya dibuka",
+    pengumumanTerbaruTitle: "Pengumuman Terbaru",
+    pengumumanTerbaruLihatSemua: "Lihat Semua Pengumuman",
+    pengumumanTerbaruKosong: "Belum ada pengumuman yang diterbitkan.",
+    dataTerkiniBadge: "Data diperbarui otomatis",
+    dataTerkiniBidang: "Bidang Terdaftar",
+    dataTerkiniDokumen: "Dokumen Dipublikasikan",
+    dataTerkiniPengumuman: "Pengumuman Terbit",
+    dataTerkiniSanggahan: "Sanggahan Diproses",
+    pembaruanTerakhir: "Pembaruan terakhir",
+    faqTeaserLink: "Lihat semua pertanyaan",
+    kontakTeaserLink: "Lihat halaman Hubungi Kami",
+    instansiPelayananLabel: "Pelayanan Online Pengadaan Tanah",
+    instansiIndukTitle: "Dinas Perumahan & Permukiman",
+    instansiIndukKota: "Kota Depok",
+    instansiBidang: "Bidang Pertanahan",
+    instansiDesc:
+      "SIPATAN hadir untuk menjawab kebutuhan masyarakat Kota Depok yang ingin mendapatkan informasi dan pelayanan pengadaan tanah dengan cepat, transparan, dan mudah.",
+    unitLainTitle: "Bagian dari Dinas Perumahan & Permukiman Kota Depok",
+    unitLainAndaDiSini: "Anda di sini",
+    unitLainSegeraHadir: "Website segera hadir",
+    unitLainKunjungiWebsite: "Kunjungi website",
+    unitPerumahan: "Bidang Perumahan",
+    unitPermukiman: "Bidang Permukiman",
+    unitPertanahan: "Bidang Pertanahan (SIPATAN)",
+    unitTataBangunan: "Bidang Tata Bangunan",
+    unitUptdPemakaman: "UPTD Pemakaman",
+    unitUptdRusunawa: "UPTD Rusunawa",
+    galeriTitle: "Galeri Kegiatan",
+    galeriDesc: "Contoh dokumentasi kegiatan pengadaan tanah di lapangan, dari pengukuran hingga penyerahan dokumen.",
+    galeriSoon: "Foto akan diperbarui berkala",
+    galeriKlikPerbesar: "Klik untuk memperbesar",
   },
   dokumen: {
     pageTitle: "Dokumen Publikasi",
@@ -313,6 +467,7 @@ const id: Dictionary = {
   sanggahanSukses: {
     title: "Sanggahan Berhasil Dikirim",
     desc: "Sanggahan Anda telah kami terima dan akan diproses oleh panitia. Simpan nomor tiket berikut untuk melacak status sanggahan Anda.",
+    unduhBukti: "Cetak / Unduh Bukti Sanggahan (PDF)",
     lacakStatus: "Lacak Status Sanggahan",
     kembaliBeranda: "Kembali ke Beranda",
   },
@@ -326,11 +481,15 @@ const id: Dictionary = {
   },
   detailSanggahan: {
     diajukan: "Diajukan",
+    unduhBukti: "Cetak / Unduh Bukti (PDF)",
     bidangTerkait: "Bidang Terkait",
     dokumenTerkait: "Dokumen Terkait",
     pengumumanTerkait: "Pengumuman Terkait",
     catatanAdmin: "Catatan / Tanggapan Admin",
+    perkiraanTanggapan: "Perkiraan tanggapan: 3–4 hari kerja sejak pengajuan",
     riwayat: "Riwayat",
+    lampiranBukti: "Lampiran Bukti",
+    tabelBuktiTambahan: "Tabel Bukti Tambahan",
   },
   sanggahanForm: {
     pageTitle: "Ajukan Sanggahan",
@@ -343,6 +502,9 @@ const id: Dictionary = {
     noDanom: "No. Danom",
     noPetaBidang: "No. Peta Bidang",
     noNis: "No. NIS",
+    proyekTerkait: "Proyek Terkait *",
+    pilihProyek: "— Pilih proyek —",
+    pilihProyekDulu: "Pilih proyek terlebih dahulu",
     bidangTerkaitOpsional: "Bidang Terkait (opsional)",
     pilihBidang: "— Pilih bidang —",
     dokumenTerkaitOpsional: "Dokumen Publikasi Terkait (opsional)",
@@ -354,9 +516,21 @@ const id: Dictionary = {
     isiSalahSatu: "Isi salah satu: email atau nomor HP.",
     isiSanggahan: "Isi Sanggahan *",
     isiSanggahanPlaceholder: "Jelaskan secara rinci ketidaksesuaian data yang Anda temukan...",
-    lampiran: "Lampiran Bukti (opsional, PDF/JPG/PNG, maks. 5MB)",
+    lampiran: "Unggah File Bukti (opsional)",
     pernyataanBenar: "Saya menyatakan bahwa data yang saya isikan di atas adalah benar.",
     kirim: "Kirim Sanggahan",
+    sectionIdentitas: "Yang Bertanda Tangan Di Bawah Ini",
+    sectionPernyataan: "Menyatakan Bahwa",
+    sectionBukti: "Bukti Pendukung",
+    lampiranDesc: "Bisa lebih dari satu file: foto atau dokumen (PDF/JPG/PNG/WEBP), masing-masing maks. 10MB.",
+    hapus: "Hapus",
+    tabelBuktiTitle: "Tabel Bukti Tambahan (opsional)",
+    tabelBuktiDesc: "Tambahkan baris untuk mencatat bukti lain yang Anda miliki, mis. jenis surat/sertifikat beserta keterangannya.",
+    tabelBuktiJenis: "Jenis Bukti",
+    tabelBuktiJenisPlaceholder: "mis. Sertifikat Tanah",
+    tabelBuktiKeterangan: "Keterangan",
+    tabelBuktiKeteranganPlaceholder: "mis. No. SHM 02412/Rangkapan Jaya Baru",
+    tambahBarisBukti: "+ Tambah Baris",
   },
   nominatif: {
     pageTitle: "Data Nominatif",
@@ -366,6 +540,7 @@ const id: Dictionary = {
     dataTidakSesuai: "Data tidak sesuai?",
     dataTidakSesuaiDesc: "Jika ada data pada bidang ini yang menurut Anda tidak sesuai, silakan ajukan sanggahan.",
     ajukanUntukBidang: "Ajukan Sanggahan untuk Bidang Ini",
+    kembaliKeDaftar: "Kembali ke Data Nominatif",
   },
   nominatifTable: {
     cariPlaceholder: "Cari nama, NIB, atau no. urut...",
@@ -389,7 +564,20 @@ const id: Dictionary = {
     pageTitle: "Pengumuman",
     pageDesc: "Pengumuman resmi terkait kegiatan pengadaan tanah untuk kepentingan umum.",
     lihatLampiran: "Lihat lampiran",
+    lihatDokumenTerkait: "Lihat Dokumen Terkait",
+    lihatDataNominatif: "Lihat Data Nominatif",
     belumAda: "Belum ada pengumuman.",
+    baruBadge: "Baru",
+    kanalDibuka: "Kanal sanggahan dibuka",
+    cariPlaceholder: "Cari judul atau isi pengumuman...",
+    semuaStatus: "Semua Status",
+    filterDibuka: "Kanal Sanggahan Dibuka",
+    filterTutup: "Kanal Sanggahan Tertutup",
+    terapkan: "Terapkan",
+    tidakAda: "Tidak ada pengumuman yang sesuai dengan pencarian Anda.",
+    urutkanLabel: "Urutkan",
+    urutkanTerbaru: "Terbaru",
+    urutkanTerlama: "Terlama",
   },
 };
 

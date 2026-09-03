@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { CheckCircle2, TriangleAlert } from "lucide-react";
+import { SaveButton } from "@/components/save-button";
+import { useActionToast } from "@/hooks/use-action-toast";
 import { SANGGAHAN_STATUS_LABEL } from "@/lib/labels";
 import { updateSanggahanStatus } from "./actions";
 
@@ -15,20 +15,11 @@ export function StatusForm({ id, currentStatus }: { id: string; currentStatus: s
     async (_prevState, formData) => updateSanggahanStatus(id, formData),
     {}
   );
+  const formRef = useRef<HTMLFormElement>(null);
+  useActionToast(state, "Data telah diedit");
 
   return (
-    <form action={formAction} className="space-y-4">
-      {state.error && (
-        <div className="flex items-start gap-2 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800">
-          <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" /> {state.error}
-        </div>
-      )}
-      {state.success && (
-        <div className="flex items-start gap-2 rounded-md border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-800">
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> Status berhasil diperbarui.
-        </div>
-      )}
-
+    <form ref={formRef} action={formAction} className="space-y-4">
       <div className="space-y-1.5">
         <Label htmlFor="status">Ubah Status</Label>
         <select
@@ -48,7 +39,13 @@ export function StatusForm({ id, currentStatus }: { id: string; currentStatus: s
         <Textarea id="catatan" name="catatan" rows={4} placeholder="Tanggapan untuk pemohon..." />
       </div>
 
-      <Button type="submit" disabled={pending}>Simpan Perubahan</Button>
+      <SaveButton
+        formRef={formRef}
+        pending={pending}
+        mode="edit"
+        label="Simpan Perubahan"
+        confirmDescription="Apakah Anda yakin ingin mengubah status sanggahan ini?"
+      />
     </form>
   );
 }

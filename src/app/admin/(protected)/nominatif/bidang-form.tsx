@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { SaveButton } from "@/components/save-button";
 import { TriangleAlert } from "lucide-react";
 import type { Bidang } from "@prisma/client";
 
@@ -12,19 +12,42 @@ type ActionState = { error?: string };
 
 export function BidangForm({
   bidang,
+  projects,
   action,
 }: {
   bidang?: Bidang;
+  projects?: { id: string; namaProyek: string }[];
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
 }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(action, {});
+  const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <form action={formAction} className="max-w-4xl space-y-6">
+    <form ref={formRef} action={formAction} className="max-w-4xl space-y-6">
       {state.error && (
         <div className="flex items-start gap-2 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800">
           <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" /> {state.error}
         </div>
+      )}
+
+      {!bidang && projects && (
+        <section>
+          <div className="max-w-sm space-y-1.5">
+            <Label htmlFor="projectId">Proyek</Label>
+            <select
+              id="projectId"
+              name="projectId"
+              required
+              className="h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 dark:bg-zinc-900 dark:border-zinc-700"
+              defaultValue=""
+            >
+              <option value="" disabled>Pilih proyek…</option>
+              {projects.map((p) => (
+                <option key={p.id} value={p.id}>{p.namaProyek}</option>
+              ))}
+            </select>
+          </div>
+        </section>
       )}
 
       <section>
@@ -48,6 +71,8 @@ export function BidangForm({
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="NIB" name="nib" defaultValue={bidang?.nib} />
           <Field label="RT/RW" name="rtRw" defaultValue={bidang?.rtRw} />
+          <Field label="Letak — Kelurahan" name="letakKelurahan" defaultValue={bidang?.letakKelurahan} />
+          <Field label="Letak — Kecamatan" name="letakKecamatan" defaultValue={bidang?.letakKecamatan} />
           <Field label="No. Danom" name="danomNo" defaultValue={bidang?.danomNo} />
           <Field label="Surat Tanda Bukti" name="suratTandaBukti" defaultValue={bidang?.suratTandaBukti} />
           <Field label="Luas Sesuai Alas Hak (m²)" name="luasSesuaiAlasHak" type="number" step="0.01" defaultValue={bidang?.luasSesuaiAlasHak ?? undefined} />
@@ -77,7 +102,12 @@ export function BidangForm({
         </div>
       </section>
 
-      <Button type="submit" disabled={pending}>Simpan</Button>
+      <SaveButton
+        formRef={formRef}
+        pending={pending}
+        mode={bidang ? "edit" : "create"}
+        confirmDescription="Apakah Anda yakin ingin menyimpan perubahan data bidang ini?"
+      />
     </form>
   );
 }

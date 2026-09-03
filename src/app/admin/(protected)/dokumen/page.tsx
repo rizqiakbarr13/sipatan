@@ -4,19 +4,36 @@ import { prisma } from "@/lib/prisma";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { KATEGORI_DOKUMEN_LABEL, formatTanggalIndonesia, formatUkuranFile } from "@/lib/labels";
+import { Pagination, resolvePage } from "@/components/pagination";
 import { DokumenRowActions } from "./row-actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminDokumenPage() {
-  const list = await prisma.dokumenPublikasi.findMany({ orderBy: { tanggalUpload: "desc" } });
+const PAGE_SIZE = 15;
+
+export default async function AdminDokumenPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageParam } = await searchParams;
+  const page = resolvePage(pageParam);
+  const [list, total] = await Promise.all([
+    prisma.dokumenPublikasi.findMany({
+      orderBy: { tanggalUpload: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.dokumenPublikasi.count(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Kelola Dokumen Publikasi</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">Upload dan kelola dokumen resmi pengadaan tanah.</p>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">{total} dokumen. Upload dan kelola dokumen resmi pengadaan tanah.</p>
         </div>
         <Link href="/admin/dokumen/baru" className={cn(buttonVariants())}>
           <Plus className="h-4 w-4" /> Upload Dokumen
@@ -66,6 +83,8 @@ export default async function AdminDokumenPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination currentPage={page} totalPages={totalPages} basePath="/admin/dokumen" searchParams={{}} />
     </div>
   );
 }

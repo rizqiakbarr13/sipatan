@@ -20,6 +20,8 @@ model Project {
   deskripsi     String?  @db.Text
   bidang        Bidang[]
   dokumen       DokumenPublikasi[]
+  pengumuman    Pengumuman[]
+  sanggahan     Sanggahan[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -41,6 +43,8 @@ model Bidang {
   // Tanah
   nib               String?
   rtRw              String?
+  letakKelurahan    String?
+  letakKecamatan    String?
   danomNo           String?
   luasSesuaiAlasHak Float?
   luasHasilUkur     Float?
@@ -57,6 +61,7 @@ model Bidang {
 
   bangunan          BangunanItem[]
   tanaman           TanamanItem[]
+  bendaLain         BendaLainItem[]
   sanggahan         Sanggahan[]
 
   createdAt         DateTime @default(now())
@@ -85,9 +90,20 @@ model TanamanItem {
   jumlah   Int?
 }
 
+model BendaLainItem {
+  id       String @id @default(cuid())
+  bidangId String
+  bidang   Bidang @relation(fields: [bidangId], references: [id], onDelete: Cascade)
+  jenis    String
+  jumlah   Float?
+}
+
 model Sanggahan {
   id           String   @id @default(cuid())
   nomorTiket   String   @unique
+
+  projectId    String
+  project      Project  @relation(fields: [projectId], references: [id])
 
   bidangId     String?
   bidang       Bidang?  @relation(fields: [bidangId], references: [id])
@@ -100,6 +116,7 @@ model Sanggahan {
 
   wargaId      String?
   warga        Warga?   @relation(fields: [wargaId], references: [id])
+  anonim       Boolean  @default(false)
 
   nama         String
   nik          String
@@ -116,16 +133,44 @@ model Sanggahan {
   catatanAdmin String?  @db.Text
   tampilPublik Boolean  @default(false)
 
-  riwayat      SanggahanLog[]
+  riwayat       SanggahanLog[]
+  lampiran      SanggahanLampiran[]
+  buktiTambahan SanggahanBuktiTambahan[]
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  @@index([projectId])
   @@index([bidangId])
   @@index([dokumenId])
   @@index([pengumumanId])
   @@index([wargaId])
   @@index([status])
+}
+
+model SanggahanLampiran {
+  id          String    @id @default(cuid())
+  sanggahanId String
+  sanggahan   Sanggahan @relation(fields: [sanggahanId], references: [id], onDelete: Cascade)
+  fileUrl     String
+  fileName    String
+  fileType    String
+  fileSize    Int
+  createdAt   DateTime  @default(now())
+
+  @@index([sanggahanId])
+}
+
+model SanggahanBuktiTambahan {
+  id          String    @id @default(cuid())
+  sanggahanId String
+  sanggahan   Sanggahan @relation(fields: [sanggahanId], references: [id], onDelete: Cascade)
+  jenisBukti  String
+  keterangan  String?   @db.Text
+  urutan      Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  @@index([sanggahanId])
 }
 
 enum SanggahanStatus {
@@ -161,16 +206,23 @@ model SOPDoc {
 }
 
 model Pengumuman {
-  id              String   @id @default(cuid())
-  judul           String
-  konten          String   @db.Text
-  lampiranUrl     String?
-  tanggalTerbit   DateTime @default(now())
-  published       Boolean  @default(true)
-  sanggahanDibuka Boolean  @default(false)
-  sanggahan       Sanggahan[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                   String            @id @default(cuid())
+  projectId            String?
+  project              Project?          @relation(fields: [projectId], references: [id])
+  judul                String
+  konten               String            @db.Text
+  lampiranUrl          String?
+  tanggalTerbit        DateTime          @default(now())
+  published            Boolean           @default(true)
+  sanggahanDibuka      Boolean           @default(false)
+  dokumenTerkaitId     String?
+  dokumenTerkait       DokumenPublikasi? @relation(fields: [dokumenTerkaitId], references: [id])
+  linkDataNominatif    Boolean           @default(false)
+  sanggahan            Sanggahan[]
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  @@index([projectId])
 }
 
 model DokumenPublikasi {
@@ -193,6 +245,7 @@ model DokumenPublikasi {
   jumlahUnduhan   Int      @default(0)
 
   sanggahan       Sanggahan[]
+  pengumuman      Pengumuman[]
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -209,6 +262,20 @@ enum KategoriDokumen {
   SOP
   BERITA_ACARA
   LAINNYA
+}
+
+model GaleriFoto {
+  id        String   @id @default(cuid())
+  judul     String
+  fileUrl   String
+  fileName  String
+  fileType  String?
+  fileSize  Int?
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published])
 }
 
 model User {

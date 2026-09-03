@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { SaveButton } from "@/components/save-button";
 import { TriangleAlert, UploadCloud } from "lucide-react";
 import { KATEGORI_DOKUMEN_LABEL } from "@/lib/labels";
 import type { DokumenPublikasi } from "@prisma/client";
@@ -13,15 +13,18 @@ type ActionState = { error?: string };
 
 export function DokumenForm({
   dokumen,
+  projects,
   action,
 }: {
   dokumen?: DokumenPublikasi;
+  projects: { id: string; namaProyek: string }[];
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
 }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(action, {});
+  const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <form action={formAction} className="max-w-2xl space-y-4">
+    <form ref={formRef} action={formAction} className="max-w-2xl space-y-4">
       {state.error && (
         <div className="flex items-start gap-2 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800">
           <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" /> {state.error}
@@ -48,6 +51,20 @@ export function DokumenForm({
           </select>
         </div>
         <div className="space-y-1.5">
+          <Label htmlFor="projectId">Proyek Terkait</Label>
+          <select
+            id="projectId"
+            name="projectId"
+            defaultValue={dokumen?.projectId ?? ""}
+            className="h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 dark:bg-zinc-900 dark:border-zinc-700"
+          >
+            <option value="">Umum / Tidak terkait proyek tertentu</option>
+            {projects.map((p) => (
+              <option key={p.id} value={p.id}>{p.namaProyek}</option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-1.5">
           <Label htmlFor="nomorSurat">Nomor Surat</Label>
           <Input id="nomorSurat" name="nomorSurat" defaultValue={dokumen?.nomorSurat ?? ""} />
         </div>
@@ -69,7 +86,7 @@ export function DokumenForm({
 
       <div className="space-y-1.5">
         <Label htmlFor="file">
-          {dokumen ? "Ganti File (opsional)" : "File Dokumen"} — PDF/JPG/PNG, maks. 5MB
+          {dokumen ? "Ganti File (opsional)" : "File Dokumen"} — PDF/JPG/PNG, maks. 10MB
         </Label>
         <div className="rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center dark:border-zinc-700">
           <input
@@ -88,7 +105,12 @@ export function DokumenForm({
         </div>
       </div>
 
-      <Button type="submit" disabled={pending}>Simpan</Button>
+      <SaveButton
+        formRef={formRef}
+        pending={pending}
+        mode={dokumen ? "edit" : "create"}
+        confirmDescription="Apakah Anda yakin ingin menyimpan perubahan dokumen ini?"
+      />
     </form>
   );
 }

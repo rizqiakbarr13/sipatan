@@ -8,9 +8,14 @@ export const metadata = {
   title: "Daftar Akun Warga",
 };
 
-export default async function DaftarPage() {
+export default async function DaftarPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const { next } = await searchParams;
   const session = await getWargaSession();
-  if (session) redirect("/akun");
+  if (session) redirect(next && next.startsWith("/") && !next.startsWith("//") ? next : "/akun");
   const { dict } = await getDictionary();
 
   return (
@@ -23,7 +28,7 @@ export default async function DaftarPage() {
           <h1 className="mt-3 font-semibold text-zinc-900 dark:text-zinc-100">{dict.auth.daftarTitle}</h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400">{dict.auth.daftarDesc}</p>
         </div>
-        <RegisterForm />
+        <RegisterForm next={next} />
       </div>
     </div>
   );

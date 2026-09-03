@@ -1,3 +1,4 @@
+import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises";
 import { getLocalStorageDriver } from "@/lib/storage";
@@ -7,12 +8,23 @@ export async function GET(
   { params }: { params: Promise<{ key: string[] }> }
 ) {
   const { key: keyParts } = await params;
+  // Tolak segmen path traversal (mis. "..") sebelum digabung — mencegah akses
+  // file di luar direktori upload (lihat juga cek boundary kedua di bawah).
+  if (keyParts.some((part) => part === ".." || part.includes("/") || part.includes("\\"))) {
+    return NextResponse.json({ error: "File tidak ditemukan" }, { status: 404 });
+  }
   const key = keyParts.join("/");
 
   try {
-    const filePath = getLocalStorageDriver().resolvePath(key);
-    const buffer = await fs.readFile(filePath);
-    const contentType = guessContentType(filePath);
+    const driver = getLocalStorageDriver();
+    const filePath = driver.resolvePath(key);
+    const baseDir = driver.resolvePath("");
+    const normalized = path.normalize(filePath);
+    if (!normalized.startsWith(path.normalize(baseDir + path.sep))) {
+      return NextResponse.json({ error: "File tidak ditemukan" }, { status: 404 });
+    }
+    const buffer = await fs.readFile(normalized);
+    const contentType = guessContentType(normalized);
 
     return new NextResponse(new Uint8Array(buffer), {
       headers: {

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Download, MessageSquareWarning } from "lucide-react";
+import { ChevronLeft, Download, MessageSquareWarning } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
@@ -43,6 +43,13 @@ export default async function DokumenDetailPage({
       <PageHeader title={dokumen.judul} />
 
       <div className="mx-auto max-w-5xl px-4 py-8">
+        <Link
+          href="/dokumen"
+          className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-emerald-700 hover:underline dark:text-emerald-400"
+        >
+          <ChevronLeft className="h-4 w-4" /> {dict.common.back} — {dict.dokumen.pageTitle}
+        </Link>
+
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
             {isPdf ? (

@@ -4,19 +4,36 @@ import { prisma } from "@/lib/prisma";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatTanggalIndonesia } from "@/lib/labels";
+import { Pagination, resolvePage } from "@/components/pagination";
 import { PengumumanRowActions } from "./row-actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminPengumumanPage() {
-  const list = await prisma.pengumuman.findMany({ orderBy: { tanggalTerbit: "desc" } });
+const PAGE_SIZE = 15;
+
+export default async function AdminPengumumanPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageParam } = await searchParams;
+  const page = resolvePage(pageParam);
+  const [list, total] = await Promise.all([
+    prisma.pengumuman.findMany({
+      orderBy: { tanggalTerbit: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.pengumuman.count(),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Kelola Pengumuman</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">CRUD pengumuman untuk halaman publik.</p>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">{total} pengumuman. CRUD pengumuman untuk halaman publik.</p>
         </div>
         <Link href="/admin/pengumuman/baru" className={cn(buttonVariants())}>
           <Plus className="h-4 w-4" /> Tambah
@@ -58,6 +75,8 @@ export default async function AdminPengumumanPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination currentPage={page} totalPages={totalPages} basePath="/admin/pengumuman" searchParams={{}} />
     </div>
   );
 }

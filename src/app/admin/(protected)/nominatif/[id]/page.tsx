@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { BidangForm } from "../bidang-form";
 import { updateBidang } from "../actions";
-import { BangunanManager, TanamanManager } from "../item-manager";
+import { BangunanManager, TanamanManager, BendaLainManager } from "../item-manager";
 
 export default async function BidangEditPage({
   params,
@@ -12,7 +12,7 @@ export default async function BidangEditPage({
   const { id } = await params;
   const bidang = await prisma.bidang.findUnique({
     where: { id },
-    include: { bangunan: true, tanaman: true },
+    include: { bangunan: true, tanaman: true, bendaLain: true },
   });
   if (!bidang) notFound();
 
@@ -38,6 +38,10 @@ export default async function BidangEditPage({
         <section>
           <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Rincian Tanaman</h2>
           <TanamanManager bidangId={bidang.id} items={bidang.tanaman} />
+        </section>
+        <section>
+          <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Benda Lain yang Berkaitan dengan Tanah</h2>
+          <BendaLainManager bidangId={bidang.id} items={bidang.bendaLain} />
         </section>
       </div>
     </div>

@@ -11,12 +11,13 @@ import { useLocale } from "@/lib/i18n/client";
 
 type ActionState = { error?: string };
 
-export function LoginForm() {
+export function LoginForm({ next }: { next?: string }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(loginWarga, {});
   const { dict } = useLocale();
 
   return (
     <form action={formAction} className="space-y-4">
+      {next && <input type="hidden" name="next" value={next} />}
       {state.error && (
         <div className="flex items-start gap-2 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
           <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" /> {state.error}
@@ -38,7 +39,10 @@ export function LoginForm() {
 
       <p className="text-center text-sm text-zinc-600 dark:text-zinc-400">
         {dict.auth.belumPunyaAkun}{" "}
-        <Link href="/akun/daftar" className="font-medium text-emerald-700 hover:underline dark:text-emerald-400">
+        <Link
+          href={next ? `/akun/daftar?next=${encodeURIComponent(next)}` : "/akun/daftar"}
+          className="font-medium text-emerald-700 hover:underline dark:text-emerald-400"
+        >
           {dict.auth.daftarDiSini}
         </Link>
       </p>

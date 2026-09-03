@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { KATEGORI_DOKUMEN_LABEL, formatTanggalIndonesia, formatUkuranFile } from "@/lib/labels";
+import { ProjectFilterTabs } from "@/components/project-filter-tabs";
+import { Pagination, resolvePage } from "@/components/pagination";
 import type { Prisma, KategoriDokumen } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -16,13 +18,15 @@ export const metadata = {
 };
 
 const KATEGORI_OPTIONS = Object.entries(KATEGORI_DOKUMEN_LABEL);
+const PAGE_SIZE = 6;
 
 export default async function DokumenPage({
   searchParams,
 }: {
-  searchParams: Promise<{ kategori?: string; q?: string }>;
+  searchParams: Promise<{ kategori?: string; q?: string; proyek?: string; page?: string }>;
 }) {
-  const { kategori, q } = await searchParams;
+  const { kategori, q, proyek, page: pageParam } = await searchParams;
+  const page = resolvePage(pageParam);
   const { dict } = await getDictionary();
 
   const where: Prisma.DokumenPublikasiWhereInput = { published: true };
@@ -30,17 +34,33 @@ export default async function DokumenPage({
     where.kategori = kategori as KategoriDokumen;
   }
   if (q) where.judul = { contains: q, mode: "insensitive" };
+  if (proyek) where.projectId = proyek;
 
-  const dokumenList = await prisma.dokumenPublikasi.findMany({
-    where,
-    orderBy: { tanggalUpload: "desc" },
-  });
+  const [dokumenList, totalDokumen, projects] = await Promise.all([
+    prisma.dokumenPublikasi.findMany({
+      where,
+      orderBy: { tanggalUpload: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.dokumenPublikasi.count({ where }),
+    prisma.project.findMany({ orderBy: { createdAt: "desc" }, select: { id: true, namaProyek: true } }),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(totalDokumen / PAGE_SIZE));
 
   return (
     <div>
       <PageHeader title={dict.dokumen.pageTitle} description={dict.dokumen.pageDesc} />
 
       <div className="mx-auto max-w-6xl px-4 py-8">
+        <ProjectFilterTabs
+          projects={projects}
+          activeProjectId={proyek}
+          basePath="/dokumen"
+          searchParams={{ kategori, q }}
+          semuaLabel={dict.common.semuaProyek}
+        />
+
         <form method="GET" className="mb-6 flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
@@ -70,10 +90,10 @@ export default async function DokumenPage({
           {dokumenList.map((d) => (
             <div
               key={d.id}
-              className="flex flex-col rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+              className="group flex flex-col rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-emerald-800"
             >
               <div className="flex items-start justify-between gap-2">
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 transition group-hover:bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-400 dark:group-hover:bg-emerald-900">
                   <FileText className="h-5 w-5" />
                 </span>
                 <Badge variant="secondary">{KATEGORI_DOKUMEN_LABEL[d.kategori]}</Badge>
@@ -107,6 +127,13 @@ export default async function DokumenPage({
             {dict.dokumen.tidakAda}
           </p>
         )}
+
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          basePath="/dokumen"
+          searchParams={{ kategori, q, proyek }}
+        />
       </div>
     </div>
   );

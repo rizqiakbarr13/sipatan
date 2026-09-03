@@ -12,10 +12,13 @@ export default async function DokumenEditPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const dokumen = await prisma.dokumenPublikasi.findUnique({
-    where: { id },
-    include: { sanggahan: { orderBy: { createdAt: "desc" } } },
-  });
+  const [dokumen, projects] = await Promise.all([
+    prisma.dokumenPublikasi.findUnique({
+      where: { id },
+      include: { sanggahan: { orderBy: { createdAt: "desc" } } },
+    }),
+    prisma.project.findMany({ orderBy: { createdAt: "desc" }, select: { id: true, namaProyek: true } }),
+  ]);
   if (!dokumen) notFound();
 
   return (
@@ -23,6 +26,7 @@ export default async function DokumenEditPage({
       <h1 className="mb-6 text-xl font-bold text-zinc-900 dark:text-zinc-100">Edit Dokumen Publikasi</h1>
       <DokumenForm
         dokumen={dokumen}
+        projects={projects}
         action={async (_prevState, formData) => {
           "use server";
           const result = await updateDokumenMeta(id, formData);

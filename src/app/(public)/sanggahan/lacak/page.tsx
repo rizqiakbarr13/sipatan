@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { SanggahanDetailCard } from "@/components/sanggahan/sanggahan-detail-card";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,10 @@ export default async function LacakSanggahanPage({
   const { dict } = await getDictionary();
   const sudahCari = Boolean(nomorTiket && nik);
 
-  const sanggahan = sudahCari
+  const ip = await getClientIp();
+  const rateLimited = sudahCari && isRateLimited(`lacak:${ip}`, 20, 15 * 60 * 1000);
+
+  const sanggahan = sudahCari && !rateLimited
     ? await prisma.sanggahan.findFirst({
         where: { nomorTiket: nomorTiket!.trim(), nik: nik!.trim() },
         include: {
@@ -30,6 +34,8 @@ export default async function LacakSanggahanPage({
           bidang: { select: { noUrut: true, namaPemilik: true } },
           dokumen: { select: { judul: true } },
           pengumuman: { select: { judul: true } },
+          lampiran: { orderBy: { createdAt: "asc" } },
+          buktiTambahan: { orderBy: { urutan: "asc" } },
         },
       })
     : null;
@@ -53,7 +59,14 @@ export default async function LacakSanggahanPage({
           </Button>
         </form>
 
-        {sudahCari && !sanggahan && (
+        {rateLimited && (
+          <div className="mt-6 flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+            <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>Terlalu banyak percobaan pencarian. Silakan coba lagi dalam beberapa menit.</p>
+          </div>
+        )}
+
+        {sudahCari && !rateLimited && !sanggahan && (
           <div className="mt-6 flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
             <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
             <p>{dict.lacak.tidakDitemukan}</p>
@@ -62,7 +75,7 @@ export default async function LacakSanggahanPage({
 
         {sanggahan && (
           <div className="mt-8">
-            <SanggahanDetailCard sanggahan={sanggahan} dict={dict} />
+            <SanggahanDetailCard sanggahan={sanggahan} nik={nik!.trim()} dict={dict} />
           </div>
         )}
       </div>

@@ -42,7 +42,7 @@ export async function createSop(formData: FormData) {
 
   revalidatePath("/admin/sop");
   revalidatePath("/sop");
-  redirect("/admin/sop");
+  redirect("/admin/sop?saved=created");
 }
 
 export async function updateSop(id: string, formData: FormData) {
@@ -70,7 +70,7 @@ export async function updateSop(id: string, formData: FormData) {
 
   revalidatePath("/admin/sop");
   revalidatePath("/sop");
-  redirect("/admin/sop");
+  redirect("/admin/sop?saved=updated");
 }
 
 export async function deleteSop(id: string) {

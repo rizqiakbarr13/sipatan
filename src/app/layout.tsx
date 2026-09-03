@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Sora } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LocaleProvider } from "@/lib/i18n/client";
 import { getDictionary } from "@/lib/i18n/server";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,20 +16,26 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const sora = Sora({
+  variable: "--font-heading-sora",
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+});
+
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   title: {
-    default: "Pengadaan Tanah Pelebaran Simpang Parung Bingung — Kota Depok",
-    template: "%s — Pengadaan Tanah Simpang Parung Bingung",
+    default: "SIPATAN — Sistem Informasi Pengadaan Tanah",
+    template: "%s — SIPATAN",
   },
   description:
-    "Website resmi publikasi pengadaan tanah untuk kepentingan umum pembangunan pelebaran Simpang Parung Bingung, Kota Depok: dokumen publikasi, data nominatif, SOP, dan kanal sanggahan masyarakat.",
+    "SIPATAN adalah portal resmi publikasi pengadaan tanah untuk kepentingan umum: dokumen publikasi, data nominatif, SOP, dan kanal sanggahan masyarakat.",
   openGraph: {
-    title: "Pengadaan Tanah Pelebaran Simpang Parung Bingung — Kota Depok",
+    title: "SIPATAN — Sistem Informasi Pengadaan Tanah",
     description:
-      "Dokumen publikasi resmi, data nominatif, SOP, dan kanal sanggahan pengadaan tanah untuk kepentingan umum di Kota Depok.",
+      "Dokumen publikasi resmi, data nominatif, SOP, dan kanal sanggahan pengadaan tanah untuk kepentingan umum.",
     locale: "id_ID",
     type: "website",
   },
@@ -42,7 +49,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
@@ -50,6 +57,7 @@ export default async function RootLayout({
           <LocaleProvider locale={locale} dict={dict}>
             {children}
           </LocaleProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

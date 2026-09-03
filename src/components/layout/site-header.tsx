@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, UserCircle, LogOut, FileText } from "lucide-react";
@@ -35,19 +36,20 @@ export function SiteHeader({ warga }: { warga: { nama: string; email: string } |
 
   return (
     <header className="sticky top-0 z-40 border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-zinc-800 dark:bg-zinc-950/95 dark:supports-[backdrop-filter]:bg-zinc-950/80">
+      <div className="h-1 bg-gradient-to-r from-emerald-600 via-teal-500 to-amber-500" />
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-        <Link href="/" className="flex items-center gap-2 font-semibold text-emerald-800 dark:text-emerald-400">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-700 text-sm text-white">
-            PT
-          </span>
-          <span className="hidden text-sm leading-tight sm:block">
-            Pengadaan Tanah
-            <br />
-            Kota Depok
-          </span>
+        <Link href="/" className="flex shrink-0 items-center">
+          <Image
+            src="/sipatan-logo.png"
+            alt="SIPATAN"
+            width={140}
+            height={140}
+            className="h-12 w-auto object-contain"
+            priority
+          />
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigasi utama">
+        <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Navigasi utama">
           {NAV_LINKS.map((link) => {
             const active = pathname === link.href;
             return (
@@ -55,7 +57,7 @@ export function SiteHeader({ warga }: { warga: { nama: string; email: string } |
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-emerald-50 hover:text-emerald-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-emerald-400",
+                  "whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-emerald-50 hover:text-emerald-800 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-emerald-400",
                   active && "bg-emerald-50 text-emerald-800 dark:bg-zinc-800 dark:text-emerald-400"
                 )}
                 aria-current={active ? "page" : undefined}
@@ -90,12 +92,13 @@ export function SiteHeader({ warga }: { warga: { nama: string; email: string } |
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <form action={logoutWarga} className="w-full">
-                    <button type="submit" className="flex w-full items-center gap-2 text-red-600 dark:text-red-400">
-                      <LogOut className="h-4 w-4" /> {dict.nav.keluar}
-                    </button>
-                  </form>
+                <DropdownMenuItem
+                  onSelect={() => {
+                    logoutWarga();
+                  }}
+                  className="text-red-600 dark:text-red-400"
+                >
+                  <LogOut className="h-4 w-4" /> {dict.nav.keluar}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -169,6 +172,19 @@ export function SiteHeader({ warga }: { warga: { nama: string; email: string } |
                 </Link>
               )}
             </li>
+            {warga && (
+              <li>
+                <form action={logoutWarga}>
+                  <button
+                    type="submit"
+                    onClick={() => setOpen(false)}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium text-red-600 dark:border-zinc-700 dark:text-red-400"
+                  >
+                    <LogOut className="h-4 w-4" /> {dict.nav.keluar}
+                  </button>
+                </form>
+              </li>
+            )}
             <li className="pt-2">
               <Link
                 href="/sanggahan/baru"

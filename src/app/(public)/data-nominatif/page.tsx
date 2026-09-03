@@ -3,6 +3,7 @@ import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { NominatifTable } from "@/components/nominatif/nominatif-table";
 import { Card, CardContent } from "@/components/ui/card";
+import { ProjectFilterTabs } from "@/components/project-filter-tabs";
 
 export const dynamic = "force-dynamic";
 
@@ -19,12 +20,20 @@ function jenisAlasHak(suratTandaBukti: string | null): string {
   return "Lainnya";
 }
 
-export default async function DataNominatifPage() {
-  const [bidangList, { locale, dict }] = await Promise.all([
+export default async function DataNominatifPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ proyek?: string }>;
+}) {
+  const { proyek } = await searchParams;
+
+  const [bidangList, projects, { locale, dict }] = await Promise.all([
     prisma.bidang.findMany({
+      where: proyek ? { projectId: proyek } : undefined,
       orderBy: { noUrut: "asc" },
       select: {
         id: true,
+        projectId: true,
         noUrut: true,
         namaPemilik: true,
         nik: true,
@@ -38,10 +47,11 @@ export default async function DataNominatifPage() {
         keterangan: true,
       },
     }),
+    prisma.project.findMany({ orderBy: { createdAt: "desc" }, select: { id: true, namaProyek: true } }),
     getDictionary(),
   ]);
 
-  const totalLuasKena = bidangList.reduce((sum, b) => sum + (b.luasKena ?? 0), 0);
+  const totalLuasKena = bidangList.reduce((sum, b) => sum + (b.luasKena ?? b.luasHasilUkur ?? 0), 0);
   const jenisCounts = bidangList.reduce<Record<string, number>>((acc, b) => {
     const jenis = jenisAlasHak(b.suratTandaBukti);
     acc[jenis] = (acc[jenis] ?? 0) + 1;
@@ -53,6 +63,14 @@ export default async function DataNominatifPage() {
       <PageHeader title={dict.nominatif.pageTitle} description={dict.nominatif.pageDesc} />
 
       <div className="mx-auto max-w-6xl px-4 py-8">
+        <ProjectFilterTabs
+          projects={projects}
+          activeProjectId={proyek}
+          basePath="/data-nominatif"
+          searchParams={{}}
+          semuaLabel={dict.common.semuaProyek}
+        />
+
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Card>
             <CardContent className="p-4">

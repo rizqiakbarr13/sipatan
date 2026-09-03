@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const sanggahanFormSchema = z
   .object({
+    projectId: z.string().min(1, "Pilih proyek terkait sanggahan ini"),
     nama: z.string().min(3, "Nama wajib diisi (minimal 3 karakter)"),
     nik: z
       .string()
@@ -42,6 +43,15 @@ export const sanggahanFormSchema = z
   });
 
 export type SanggahanFormValues = z.infer<typeof sanggahanFormSchema>;
+
+export const buktiTambahanRowSchema = z.object({
+  jenisBukti: z.string().trim().min(1, "Jenis bukti wajib diisi"),
+  keterangan: z.string().trim().optional(),
+});
+
+export const buktiTambahanSchema = z.array(buktiTambahanRowSchema).max(10, "Maksimal 10 baris bukti tambahan");
+
+export type BuktiTambahanRow = z.infer<typeof buktiTambahanRowSchema>;
 
 export const lacakSanggahanSchema = z.object({
   nomorTiket: z.string().trim().min(1, "Nomor tiket wajib diisi"),

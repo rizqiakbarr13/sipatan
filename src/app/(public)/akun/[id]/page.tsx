@@ -31,6 +31,8 @@ export default async function AkunSanggahanDetailPage({
       bidang: { select: { noUrut: true, namaPemilik: true } },
       dokumen: { select: { judul: true } },
       pengumuman: { select: { judul: true } },
+      lampiran: { orderBy: { createdAt: "asc" } },
+      buktiTambahan: { orderBy: { urutan: "asc" } },
     },
   });
 
@@ -46,7 +48,7 @@ export default async function AkunSanggahanDetailPage({
         >
           <ChevronLeft className="h-4 w-4" /> {dict.common.back} — {dict.nav.akunSaya}
         </Link>
-        <SanggahanDetailCard sanggahan={sanggahan} dict={dict} />
+        <SanggahanDetailCard sanggahan={sanggahan} nik={sanggahan.nik} dict={dict} />
       </div>
     </div>
   );

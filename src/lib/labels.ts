@@ -43,6 +43,18 @@ export function formatTanggalIndonesia(date: Date | string): string {
   return d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
 }
 
+export function formatTanggalWaktuIndonesia(date: Date | string): string {
+  const d = typeof date === "string" ? new Date(date) : date;
+  const tanggal = d.toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const waktu = d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+  return `${tanggal}, ${waktu} WIB`;
+}
+
 export function formatUkuranFile(bytes: number | null | undefined): string {
   if (!bytes || bytes <= 0) return "-";
   const units = ["B", "KB", "MB", "GB"];

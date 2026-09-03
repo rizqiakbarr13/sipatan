@@ -11,15 +11,11 @@ export const registerWargaSchema = z
     nik: z
       .string()
       .trim()
-      .optional()
-      .refine((v) => !v || /^\d{16}$/.test(v), { message: "NIK harus terdiri dari 16 digit angka" }),
+      .regex(/^\d{16}$/, "NIK harus terdiri dari 16 digit angka"),
     noHp: z
       .string()
       .trim()
-      .optional()
-      .refine((v) => !v || /^0\d{9,14}$/.test(v), {
-        message: "Nomor HP tidak valid, contoh: 081234567890",
-      }),
+      .regex(/^0\d{9,14}$/, "Nomor HP tidak valid, contoh: 081234567890"),
     password: z.string().min(8, "Kata sandi minimal 8 karakter"),
     konfirmasiPassword: z.string(),
   })

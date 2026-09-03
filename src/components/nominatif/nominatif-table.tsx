@@ -21,6 +21,7 @@ import { useLocale } from "@/lib/i18n/client";
 
 export interface NominatifRow {
   id: string;
+  projectId: string;
   noUrut: number;
   namaPemilik: string;
   nik: string | null;
@@ -66,7 +67,7 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
         header: "Nama Pemilik",
         cell: (info) => (
           <Link
-            href={`/data-nominatif/${info.row.original.noUrut}`}
+            href={`/data-nominatif/${info.row.original.noUrut}?p=${info.row.original.projectId}`}
             className="font-medium text-emerald-700 hover:underline"
           >
             {info.getValue()}

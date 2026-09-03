@@ -19,13 +19,14 @@ interface RowPreview {
   errors?: string[];
 }
 
-export function ImportCsvClient() {
+export function ImportCsvClient({ projects }: { projects: { id: string; namaProyek: string }[] }) {
   const router = useRouter();
   const [rows, setRows] = useState<RowPreview[] | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<{ created: number; updated: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [projectId, setProjectId] = useState(projects[0]?.id ?? "");
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -54,10 +55,10 @@ export function ImportCsvClient() {
   }
 
   function handleCommit() {
-    if (!rows) return;
+    if (!rows || !projectId) return;
     const validRows = rows.filter((r) => r.ok).map((r) => r.data!);
     startTransition(async () => {
-      const res = await importNominatifRows(validRows);
+      const res = await importNominatifRows(validRows, projectId);
       if (res.error) {
         setError(res.error);
         return;
@@ -72,6 +73,23 @@ export function ImportCsvClient() {
 
   return (
     <div className="max-w-4xl space-y-6">
+      <div className="max-w-sm space-y-1.5">
+        <label htmlFor="projectId" className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+          Proyek tujuan import
+        </label>
+        <select
+          id="projectId"
+          value={projectId}
+          onChange={(e) => setProjectId(e.target.value)}
+          className="h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 dark:bg-zinc-900 dark:border-zinc-700"
+        >
+          <option value="" disabled>Pilih proyek…</option>
+          {projects.map((p) => (
+            <option key={p.id} value={p.id}>{p.namaProyek}</option>
+          ))}
+        </select>
+      </div>
+
       <div className="rounded-lg border-2 border-dashed border-zinc-300 p-6 text-center dark:border-zinc-700">
         <UploadCloud className="mx-auto h-8 w-8 text-zinc-400 dark:text-zinc-500" />
         <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
@@ -109,7 +127,7 @@ export function ImportCsvClient() {
                 <span className="ml-2 font-medium text-red-600">{invalidCount} baris bermasalah</span>
               )}
             </p>
-            <Button onClick={handleCommit} disabled={pending || validCount === 0}>
+            <Button onClick={handleCommit} disabled={pending || validCount === 0 || !projectId}>
               {pending && <Loader2 className="h-4 w-4 animate-spin" />}
               Konfirmasi Import ({validCount} baris)
             </Button>

@@ -7,11 +7,11 @@ import { KategoriDokumen } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { getStorageDriver, MAX_UPLOAD_SIZE_BYTES, ALLOWED_UPLOAD_TYPES } from "@/lib/storage";
-import { getActiveProject } from "@/lib/project";
 
 const metaSchema = z.object({
   judul: z.string().min(1, "Judul wajib diisi"),
   kategori: z.enum(KategoriDokumen),
+  projectId: z.string().optional(),
   deskripsi: z.string().optional(),
   nomorSurat: z.string().optional(),
   tanggalDokumen: z.string().optional(),
@@ -44,8 +44,6 @@ export async function createDokumen(formData: FormData) {
     folder: "dokumen",
   });
 
-  const project = await getActiveProject();
-
   await prisma.dokumenPublikasi.create({
     data: {
       judul: data.judul,
@@ -57,7 +55,7 @@ export async function createDokumen(formData: FormData) {
       fileName: file.name,
       fileType: file.type,
       fileSize: file.size,
-      projectId: project?.id,
+      projectId: data.projectId || null,
       published: true,
       sanggahanDibuka: true,
     },
@@ -65,7 +63,7 @@ export async function createDokumen(formData: FormData) {
 
   revalidatePath("/admin/dokumen");
   revalidatePath("/dokumen");
-  redirect("/admin/dokumen");
+  redirect("/admin/dokumen?saved=created");
 }
 
 export async function updateDokumenMeta(id: string, formData: FormData) {
@@ -79,6 +77,7 @@ export async function updateDokumenMeta(id: string, formData: FormData) {
   const updateData: Record<string, unknown> = {
     judul: data.judul,
     kategori: data.kategori,
+    projectId: data.projectId || null,
     deskripsi: data.deskripsi || null,
     nomorSurat: data.nomorSurat || null,
     tanggalDokumen: data.tanggalDokumen ? new Date(data.tanggalDokumen) : null,
@@ -111,7 +110,7 @@ export async function updateDokumenMeta(id: string, formData: FormData) {
   revalidatePath(`/admin/dokumen/${id}`);
   revalidatePath("/dokumen");
   revalidatePath(`/dokumen/${id}`);
-  redirect("/admin/dokumen");
+  redirect("/admin/dokumen?saved=updated");
 }
 
 export async function deleteDokumen(id: string) {

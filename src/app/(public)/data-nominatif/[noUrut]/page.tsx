@@ -2,11 +2,12 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MessageSquareWarning } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { maskNik, maskSebagian, maskTanggalLahir } from "@/lib/mask";
+import { maskNik, maskSebagian, maskTanggalLahir, initialName } from "@/lib/mask";
 import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { formatTanggalWaktuIndonesia } from "@/lib/labels";
 
 export const dynamic = "force-dynamic";
 
@@ -21,28 +22,72 @@ function InfoItem({ label, value }: { label: string; value?: string | number | n
 
 export default async function DetailBidangPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ noUrut: string }>;
+  searchParams: Promise<{ p?: string }>;
 }) {
   const { noUrut: noUrutParam } = await params;
+  const { p: projectId } = await searchParams;
   const noUrut = Number(noUrutParam);
   if (!Number.isInteger(noUrut)) notFound();
 
-  const [bidang, { locale, dict }] = await Promise.all([
-    prisma.bidang.findFirst({
-      where: { noUrut },
-      include: { bangunan: true, tanaman: true },
+  const [matches, { locale, dict }] = await Promise.all([
+    prisma.bidang.findMany({
+      where: projectId ? { noUrut, projectId } : { noUrut },
+      include: { bangunan: true, tanaman: true, bendaLain: true, project: { select: { id: true, namaProyek: true } } },
     }),
     getDictionary(),
   ]);
 
-  if (!bidang) notFound();
+  if (matches.length === 0) notFound();
+
+  if (matches.length > 1) {
+    return (
+      <div>
+        <PageHeader
+          title={`Bidang No. ${noUrut}`}
+          backHref="/data-nominatif"
+          backLabel={dict.nominatif.kembaliKeDaftar}
+        />
+        <div className="mx-auto max-w-2xl px-4 py-8">
+          <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+            Nomor urut ini ditemukan di beberapa proyek. Pilih proyek yang dimaksud:
+          </p>
+          <div className="space-y-2">
+            {matches.map((m) => (
+              <Link
+                key={m.id}
+                href={`/data-nominatif/${noUrut}?p=${m.projectId}`}
+                className="block rounded-lg border border-zinc-200 bg-white p-4 hover:border-emerald-300 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+              >
+                <p className="font-medium text-zinc-900 dark:text-zinc-100">{m.project.namaProyek}</p>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">{m.namaPemilik}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const bidang = matches[0];
+
+  const sanggahanPublik = await prisma.sanggahan.findMany({
+    where: { bidangId: bidang.id, tampilPublik: true },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, nama: true, isiSanggahan: true, catatanAdmin: true, createdAt: true },
+  });
 
   const numberLocale = locale === "en" ? "en-US" : "id-ID";
 
   return (
     <div>
-      <PageHeader title={`Bidang No. ${bidang.noUrut} — ${bidang.namaPemilik}`} />
+      <PageHeader
+        title={`Bidang No. ${bidang.noUrut} — ${bidang.namaPemilik}`}
+        backHref="/data-nominatif"
+        backLabel={dict.nominatif.kembaliKeDaftar}
+      />
 
       <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">
         <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
@@ -54,6 +99,14 @@ export default async function DetailBidangPage({
             <InfoItem label="Pekerjaan" value={maskSebagian(bidang.pekerjaan)} />
             <InfoItem label="No. Peta Bidang" value={bidang.noPetaBidang} />
             <InfoItem label="RT/RW" value={bidang.rtRw} />
+            <InfoItem
+              label="Letak"
+              value={
+                bidang.letakKelurahan || bidang.letakKecamatan
+                  ? `Kel. ${bidang.letakKelurahan ?? "-"}, Kec. ${bidang.letakKecamatan ?? "-"}`
+                  : null
+              }
+            />
             <InfoItem label="Alamat" value={maskSebagian(bidang.alamat, 4)} />
           </dl>
         </section>
@@ -150,6 +203,28 @@ export default async function DetailBidangPage({
           </section>
         )}
 
+        {bidang.bendaLain.length > 0 && (
+          <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+            <h2 className="mb-4 font-semibold text-zinc-900 dark:text-zinc-100">Benda Lain yang Berkaitan dengan Tanah</h2>
+            <table className="w-full text-sm">
+              <thead className="text-left text-xs uppercase text-zinc-400">
+                <tr>
+                  <th className="pb-2">Jenis</th>
+                  <th className="pb-2">Jumlah</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                {bidang.bendaLain.map((b) => (
+                  <tr key={b.id}>
+                    <td className="py-2 text-zinc-800 dark:text-zinc-200">{b.jenis}</td>
+                    <td className="py-2 text-zinc-800 dark:text-zinc-200">{b.jumlah ?? "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
+
         <section className="rounded-xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-900 dark:bg-emerald-950/40">
           <h2 className="flex items-center gap-2 font-semibold text-emerald-900 dark:text-emerald-200">
             <MessageSquareWarning className="h-5 w-5" /> {dict.nominatif.dataTidakSesuai}
@@ -162,6 +237,31 @@ export default async function DetailBidangPage({
             {dict.nominatif.ajukanUntukBidang}
           </Link>
         </section>
+
+        {sanggahanPublik.length > 0 && (
+          <section>
+            <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
+              {dict.dokumen.sanggahanDitanggapi} ({sanggahanPublik.length})
+            </h2>
+            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{dict.dokumen.transparansiDesc}</p>
+            <div className="mt-4 space-y-3">
+              {sanggahanPublik.map((s) => (
+                <div key={s.id} className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+                  <p className="text-xs font-medium uppercase text-zinc-400">
+                    {initialName(s.nama)} · {formatTanggalWaktuIndonesia(s.createdAt)}
+                  </p>
+                  <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">{s.isiSanggahan}</p>
+                  {s.catatanAdmin && (
+                    <div className="mt-2 rounded-md bg-emerald-50 p-2 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+                      <span className="font-medium">{dict.dokumen.tanggapanAdmin} </span>
+                      {s.catatanAdmin}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

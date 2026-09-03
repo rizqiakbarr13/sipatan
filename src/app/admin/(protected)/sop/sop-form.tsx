@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { SaveButton } from "@/components/save-button";
 import { TriangleAlert } from "lucide-react";
 import type { SOPDoc } from "@prisma/client";
 
@@ -18,9 +18,10 @@ export function SopForm({
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
 }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(action, {});
+  const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <form action={formAction} className="max-w-2xl space-y-4">
+    <form ref={formRef} action={formAction} className="max-w-2xl space-y-4">
       {state.error && (
         <div className="flex items-start gap-2 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800">
           <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" /> {state.error}
@@ -62,7 +63,12 @@ export function SopForm({
         <Label htmlFor="published" className="font-normal">Publikasikan</Label>
       </div>
 
-      <Button type="submit" disabled={pending}>Simpan</Button>
+      <SaveButton
+        formRef={formRef}
+        pending={pending}
+        mode={sop ? "edit" : "create"}
+        confirmDescription="Apakah Anda yakin ingin menyimpan perubahan SOP ini?"
+      />
     </form>
   );
 }

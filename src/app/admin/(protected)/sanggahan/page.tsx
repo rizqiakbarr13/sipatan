@@ -5,6 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { Pagination, resolvePage } from "@/components/pagination";
 import {
   SANGGAHAN_STATUS_LABEL,
   SANGGAHAN_STATUS_BADGE_VARIANT,
@@ -14,12 +15,15 @@ import type { Prisma, SanggahanStatus } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
+const PAGE_SIZE = 20;
+
 export default async function AdminSanggahanPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; q?: string }>;
+  searchParams: Promise<{ status?: string; q?: string; dari?: string; sampai?: string; page?: string }>;
 }) {
-  const { status, q } = await searchParams;
+  const { status, q, dari, sampai, page: pageParam } = await searchParams;
+  const page = resolvePage(pageParam);
 
   const where: Prisma.SanggahanWhereInput = {};
   if (status && status in SANGGAHAN_STATUS_LABEL) where.status = status as SanggahanStatus;
@@ -29,27 +33,44 @@ export default async function AdminSanggahanPage({
       { nomorTiket: { contains: q, mode: "insensitive" } },
     ];
   }
+  if (dari || sampai) {
+    where.createdAt = {};
+    if (dari) where.createdAt.gte = new Date(dari);
+    if (sampai) {
+      const end = new Date(sampai);
+      end.setHours(23, 59, 59, 999);
+      where.createdAt.lte = end;
+    }
+  }
 
-  const list = await prisma.sanggahan.findMany({
-    where,
-    orderBy: { createdAt: "desc" },
-    include: {
-      bidang: { select: { noUrut: true, namaPemilik: true } },
-      dokumen: { select: { judul: true } },
-      pengumuman: { select: { judul: true } },
-    },
-  });
+  const [list, total] = await Promise.all([
+    prisma.sanggahan.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      include: {
+        bidang: { select: { noUrut: true, namaPemilik: true } },
+        dokumen: { select: { judul: true } },
+        pengumuman: { select: { judul: true } },
+      },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.sanggahan.count({ where }),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const exportParams = new URLSearchParams();
   if (status) exportParams.set("status", status);
   if (q) exportParams.set("q", q);
+  if (dari) exportParams.set("dari", dari);
+  if (sampai) exportParams.set("sampai", sampai);
 
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Kelola Sanggahan</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">{list.length} sanggahan.</p>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">{total} sanggahan.</p>
         </div>
         <a
           href={`/api/admin/sanggahan/export?${exportParams.toString()}`}
@@ -59,7 +80,7 @@ export default async function AdminSanggahanPage({
         </a>
       </div>
 
-      <form method="GET" className="mb-4 flex flex-wrap gap-2">
+      <form method="GET" className="mb-4 flex flex-wrap items-end gap-2">
         <Input name="q" defaultValue={q} placeholder="Cari nama atau nomor tiket..." className="max-w-xs" />
         <select
           name="status"
@@ -71,7 +92,20 @@ export default async function AdminSanggahanPage({
             <option key={value} value={value}>{label}</option>
           ))}
         </select>
+        <div className="space-y-1">
+          <label className="block text-xs text-zinc-500 dark:text-zinc-400">Dari tanggal</label>
+          <Input type="date" name="dari" defaultValue={dari} className="w-40" />
+        </div>
+        <div className="space-y-1">
+          <label className="block text-xs text-zinc-500 dark:text-zinc-400">Sampai tanggal</label>
+          <Input type="date" name="sampai" defaultValue={sampai} className="w-40" />
+        </div>
         <button type="submit" className={cn(buttonVariants({ variant: "outline" }))}>Terapkan</button>
+        {(status || q || dari || sampai) && (
+          <Link href="/admin/sanggahan" className={cn(buttonVariants({ variant: "ghost" }))}>
+            Reset
+          </Link>
+        )}
       </form>
 
       <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white dark:bg-zinc-900 dark:border-zinc-800">
@@ -121,6 +155,13 @@ export default async function AdminSanggahanPage({
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        basePath="/admin/sanggahan"
+        searchParams={{ status, q, dari, sampai }}
+      />
     </div>
   );
 }

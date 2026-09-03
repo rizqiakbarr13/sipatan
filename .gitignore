@@ -44,5 +44,9 @@ next-env.d.ts
 # storage lokal (upload dokumen & lampiran pengguna, bukan file contoh seed)
 /uploads
 
+# file sumber asli berisi data pribadi mentah — versi masking-nya ada di public/dokumen-resmi
+/Data Form Sanggahan.pdf
+/Data Pengadaan Tanah No 10.pdf
+
 # Claude Code local settings (mesin-spesifik, jangan commit)
 .claude/settings.local.json

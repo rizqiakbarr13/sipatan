@@ -25,7 +25,7 @@ export async function sendEmail({
     return;
   }
 
-  const from = process.env.EMAIL_FROM || "Pengadaan Tanah Depok <no-reply@example.com>";
+  const from = process.env.EMAIL_FROM || "SIPATAN <no-reply@example.com>";
   try {
     await resend.emails.send({ from, to, subject, html });
   } catch (err) {
@@ -37,7 +37,7 @@ function layout(title: string, bodyHtml: string): string {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; color: #18181b;">
       <div style="background: #047857; padding: 16px 24px; border-radius: 8px 8px 0 0;">
-        <span style="color: #fff; font-weight: bold; font-size: 16px;">Pengadaan Tanah Kota Depok</span>
+        <span style="color: #fff; font-weight: bold; font-size: 16px;">SIPATAN</span>
       </div>
       <div style="border: 1px solid #e4e4e7; border-top: none; padding: 24px; border-radius: 0 0 8px 8px;">
         <h1 style="font-size: 18px; margin: 0 0 12px;">${title}</h1>

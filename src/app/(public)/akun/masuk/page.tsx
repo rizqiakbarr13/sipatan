@@ -8,10 +8,16 @@ export const metadata = {
   title: "Masuk Akun Warga",
 };
 
-export default async function MasukPage() {
+export default async function MasukPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const { next } = await searchParams;
   const session = await getWargaSession();
-  if (session) redirect("/akun");
+  if (session) redirect(next && next.startsWith("/") && !next.startsWith("//") ? next : "/akun");
   const { dict } = await getDictionary();
+  const untukSanggahan = next?.startsWith("/sanggahan/baru");
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-10">
@@ -21,9 +27,11 @@ export default async function MasukPage() {
             <UserCircle className="h-6 w-6" />
           </span>
           <h1 className="mt-3 font-semibold text-zinc-900 dark:text-zinc-100">{dict.auth.masukTitle}</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">{dict.auth.masukDesc}</p>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            {untukSanggahan ? dict.auth.masukUntukSanggahan : dict.auth.masukDesc}
+          </p>
         </div>
-        <LoginForm />
+        <LoginForm next={next} />
       </div>
     </div>
   );

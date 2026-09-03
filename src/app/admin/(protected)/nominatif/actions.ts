@@ -5,10 +5,12 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
-import { getActiveProject } from "@/lib/project";
 import { nominatifRowSchema, type NominatifRow } from "@/lib/nominatif-csv";
+import { extractNominatifRowsFromPdf } from "@/lib/nominatif-pdf";
+import { MAX_UPLOAD_SIZE_BYTES } from "@/lib/storage";
 
 const bidangFormSchema = z.object({
+  projectId: z.string().optional(),
   noUrut: z.coerce.number().int().positive(),
   noPetaBidang: z.string().optional(),
   namaPemilik: z.string().min(1, "Nama pemilik wajib diisi"),
@@ -18,6 +20,8 @@ const bidangFormSchema = z.object({
   nik: z.string().optional(),
   nib: z.string().optional(),
   rtRw: z.string().optional(),
+  letakKelurahan: z.string().optional(),
+  letakKecamatan: z.string().optional(),
   danomNo: z.string().optional(),
   luasSesuaiAlasHak: z.coerce.number().optional(),
   luasHasilUkur: z.coerce.number().optional(),
@@ -39,6 +43,7 @@ function emptyToUndefined(v: FormDataEntryValue | null) {
 
 function parseBidangForm(formData: FormData) {
   const raw = {
+    projectId: formData.get("projectId"),
     noUrut: formData.get("noUrut"),
     noPetaBidang: emptyToUndefined(formData.get("noPetaBidang")),
     namaPemilik: formData.get("namaPemilik"),
@@ -48,6 +53,8 @@ function parseBidangForm(formData: FormData) {
     nik: emptyToUndefined(formData.get("nik")),
     nib: emptyToUndefined(formData.get("nib")),
     rtRw: emptyToUndefined(formData.get("rtRw")),
+    letakKelurahan: emptyToUndefined(formData.get("letakKelurahan")),
+    letakKecamatan: emptyToUndefined(formData.get("letakKecamatan")),
     danomNo: emptyToUndefined(formData.get("danomNo")),
     luasSesuaiAlasHak: emptyToUndefined(formData.get("luasSesuaiAlasHak")),
     luasHasilUkur: emptyToUndefined(formData.get("luasHasilUkur")),
@@ -69,20 +76,22 @@ export async function createBidang(formData: FormData) {
 
   const parsed = parseBidangForm(formData);
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Data tidak valid" };
+  const { projectId, ...bidangData } = parsed.data;
+  if (!projectId) return { error: "Proyek wajib dipilih" };
 
-  const project = await getActiveProject();
-  if (!project) return { error: "Proyek belum dikonfigurasi" };
+  const project = await prisma.project.findUnique({ where: { id: projectId } });
+  if (!project) return { error: "Proyek yang dipilih tidak ditemukan" };
 
   const dup = await prisma.bidang.findUnique({
-    where: { projectId_noUrut: { projectId: project.id, noUrut: parsed.data.noUrut } },
+    where: { projectId_noUrut: { projectId: project.id, noUrut: bidangData.noUrut } },
   });
-  if (dup) return { error: `No. Urut ${parsed.data.noUrut} sudah digunakan` };
+  if (dup) return { error: `No. Urut ${bidangData.noUrut} sudah digunakan pada proyek ini` };
 
-  await prisma.bidang.create({ data: { ...parsed.data, projectId: project.id } });
+  await prisma.bidang.create({ data: { ...bidangData, projectId: project.id } });
 
   revalidatePath("/admin/nominatif");
   revalidatePath("/data-nominatif");
-  redirect("/admin/nominatif");
+  redirect("/admin/nominatif?saved=created");
 }
 
 export async function updateBidang(id: string, formData: FormData) {
@@ -91,22 +100,24 @@ export async function updateBidang(id: string, formData: FormData) {
 
   const parsed = parseBidangForm(formData);
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Data tidak valid" };
+  const { projectId: _unused, ...bidangData } = parsed.data;
+  void _unused;
 
-  const project = await getActiveProject();
-  if (!project) return { error: "Proyek belum dikonfigurasi" };
+  const existing = await prisma.bidang.findUnique({ where: { id }, select: { projectId: true } });
+  if (!existing) return { error: "Bidang tidak ditemukan" };
 
   const dup = await prisma.bidang.findUnique({
-    where: { projectId_noUrut: { projectId: project.id, noUrut: parsed.data.noUrut } },
+    where: { projectId_noUrut: { projectId: existing.projectId, noUrut: bidangData.noUrut } },
   });
-  if (dup && dup.id !== id) return { error: `No. Urut ${parsed.data.noUrut} sudah digunakan` };
+  if (dup && dup.id !== id) return { error: `No. Urut ${bidangData.noUrut} sudah digunakan pada proyek ini` };
 
-  await prisma.bidang.update({ where: { id }, data: parsed.data });
+  await prisma.bidang.update({ where: { id }, data: bidangData });
 
   revalidatePath("/admin/nominatif");
   revalidatePath(`/admin/nominatif/${id}`);
   revalidatePath("/data-nominatif");
   revalidatePath(`/data-nominatif/${parsed.data.noUrut}`);
-  redirect("/admin/nominatif");
+  redirect("/admin/nominatif?saved=updated");
 }
 
 export async function deleteBidang(id: string) {
@@ -125,7 +136,8 @@ export async function addBangunanItem(bidangId: string, formData: FormData) {
   const jenis = String(formData.get("jenis") ?? "").trim();
   if (!jenis) return { error: "Jenis bangunan wajib diisi" };
   const jumlah = formData.get("jumlah") ? Number(formData.get("jumlah")) : null;
-  const satuan = emptyToUndefined(formData.get("satuan")) ?? null;
+  const satuanRaw = emptyToUndefined(formData.get("satuan"));
+  const satuan = satuanRaw && ["m²", "m¹", "unit"].includes(satuanRaw) ? satuanRaw : null;
 
   await prisma.bangunanItem.create({ data: { bidangId, jenis, jumlah, satuan } });
   revalidatePath(`/admin/nominatif/${bidangId}`);
@@ -170,12 +182,33 @@ export async function deleteTanamanItem(id: string, bidangId: string) {
   revalidatePath(`/admin/nominatif/${bidangId}`);
 }
 
-export async function importNominatifRows(rows: NominatifRow[]) {
+export async function addBendaLainItem(bidangId: string, formData: FormData) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
-  const project = await getActiveProject();
-  if (!project) return { error: "Proyek belum dikonfigurasi", created: 0, updated: 0 };
+  const jenis = String(formData.get("jenis") ?? "").trim();
+  if (!jenis) return { error: "Jenis benda wajib diisi" };
+  const jumlah = formData.get("jumlah") ? Number(formData.get("jumlah")) : null;
+
+  await prisma.bendaLainItem.create({ data: { bidangId, jenis, jumlah } });
+  revalidatePath(`/admin/nominatif/${bidangId}`);
+  return { success: true };
+}
+
+export async function deleteBendaLainItem(id: string, bidangId: string) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  await prisma.bendaLainItem.delete({ where: { id } });
+  revalidatePath(`/admin/nominatif/${bidangId}`);
+}
+
+export async function importNominatifRows(rows: NominatifRow[], projectId: string) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const project = await prisma.project.findUnique({ where: { id: projectId } });
+  if (!project) return { error: "Proyek yang dipilih tidak ditemukan", created: 0, updated: 0 };
 
   let created = 0;
   let updated = 0;
@@ -201,4 +234,28 @@ export async function importNominatifRows(rows: NominatifRow[]) {
   revalidatePath("/admin/nominatif");
   revalidatePath("/data-nominatif");
   return { success: true, created, updated };
+}
+
+export async function extractNominatifPdf(formData: FormData) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return { error: "File PDF wajib diunggah" };
+  }
+  if (file.type !== "application/pdf") {
+    return { error: "File harus berformat PDF" };
+  }
+  if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+    return { error: "Ukuran file melebihi batas maksimal" };
+  }
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+  try {
+    const { rows, warnings } = await extractNominatifRowsFromPdf(buffer);
+    return { rows, warnings };
+  } catch {
+    return { error: "Gagal membaca file PDF. Pastikan file tidak rusak dan berisi tabel data." };
+  }
 }
