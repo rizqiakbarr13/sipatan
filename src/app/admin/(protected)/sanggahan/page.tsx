@@ -11,6 +11,7 @@ import {
   SANGGAHAN_STATUS_BADGE_VARIANT,
   formatTanggalIndonesia,
 } from "@/lib/labels";
+import { SanggahanRowActions } from "./row-actions";
 import type { Prisma, SanggahanStatus } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -117,6 +118,7 @@ export default async function AdminSanggahanPage({
               <th className="px-4 py-3">Terkait</th>
               <th className="px-4 py-3">Tanggal</th>
               <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -143,11 +145,14 @@ export default async function AdminSanggahanPage({
                     {SANGGAHAN_STATUS_LABEL[s.status]}
                   </Badge>
                 </td>
+                <td className="px-4 py-3">
+                  <SanggahanRowActions id={s.id} nomorTiket={s.nomorTiket} />
+                </td>
               </tr>
             ))}
             {list.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-zinc-500 dark:text-zinc-400">
+                <td colSpan={6} className="px-4 py-8 text-center text-zinc-500 dark:text-zinc-400">
                   Belum ada sanggahan.
                 </td>
               </tr>

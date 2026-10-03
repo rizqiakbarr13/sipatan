@@ -13,10 +13,11 @@ export const authConfig = {
   providers: [],
   callbacks: {
     authorized({ auth, request }) {
+      const PUBLIC_ADMIN_PATHS = ["/admin/login", "/admin/lupa-password", "/admin/reset-password"];
       const isLoggedIn = !!auth?.user;
       const isOnAdmin =
         request.nextUrl.pathname.startsWith("/admin") &&
-        request.nextUrl.pathname !== "/admin/login";
+        !PUBLIC_ADMIN_PATHS.includes(request.nextUrl.pathname);
       const isOnUsers = request.nextUrl.pathname.startsWith("/admin/users");
 
       if (isOnUsers && auth?.user?.role !== "SUPER_ADMIN") {

@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { TriangleAlert } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { loginWarga } from "@/app/(public)/akun/actions";
@@ -29,8 +30,16 @@ export function LoginForm({ next }: { next?: string }) {
         <Input id="email" name="email" type="email" required autoComplete="username" />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="password">{dict.auth.password}</Label>
-        <Input id="password" name="password" type="password" required autoComplete="current-password" />
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">{dict.auth.password}</Label>
+          <Link
+            href="/akun/lupa-password"
+            className="text-xs font-medium text-emerald-700 hover:underline dark:text-emerald-400"
+          >
+            Lupa password?
+          </Link>
+        </div>
+        <PasswordInput id="password" name="password" required autoComplete="current-password" />
       </div>
 
       <Button type="submit" className="w-full" disabled={pending}>

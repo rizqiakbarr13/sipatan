@@ -20,7 +20,8 @@ export default async function AdminProyekPage() {
         <div>
           <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Kelola Proyek</h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Atur proyek pengadaan tanah — masa sanggah dihitung otomatis dari tanggal pengumuman.
+            Atur proyek pengadaan tanah — masa sanggah dihitung otomatis dari tanggal pengumuman, dan bisa
+            diperpanjang lewat halaman Edit tiap proyek.
           </p>
         </div>
         <Link href="/admin/proyek/baru" className={cn(buttonVariants())}>

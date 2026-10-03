@@ -12,6 +12,7 @@ import {
 import { getTargetTanggapan } from "@/lib/date-utils";
 import { StatusForm } from "../status-form";
 import { TampilPublikToggle } from "../tampil-publik-toggle";
+import { SanggahanDeleteButton } from "./delete-button";
 
 export default async function SanggahanDetailPage({
   params,
@@ -58,6 +59,7 @@ export default async function SanggahanDetailPage({
           <Badge variant={SANGGAHAN_STATUS_BADGE_VARIANT[sanggahan.status]}>
             {SANGGAHAN_STATUS_LABEL[sanggahan.status]}
           </Badge>
+          <SanggahanDeleteButton id={sanggahan.id} nomorTiket={sanggahan.nomorTiket} />
         </div>
       </div>
 

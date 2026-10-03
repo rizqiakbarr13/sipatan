@@ -303,3 +303,40 @@ model Warga {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+/// Token "lupa password" — dipakai untuk akun admin (User) maupun akun warga (Warga).
+/// Token disimpan dalam bentuk hash (sha256), bukan plaintext, supaya isi kolom ini
+/// tidak langsung bisa dipakai untuk reset password meski database bocor.
+model PasswordResetToken {
+  id        String             @id @default(cuid())
+  email     String
+  tipe      PasswordResetTipe
+  tokenHash String             @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime           @default(now())
+
+  @@index([email, tipe])
+}
+
+enum PasswordResetTipe {
+  ADMIN
+  WARGA
+}
+
+/// Jejak audit aksi admin (tambah/ubah/hapus/toggle) di luar riwayat status
+/// sanggahan (yang sudah punya SanggahanLog sendiri). Dipakai untuk akuntabilitas
+/// — siapa mengubah apa dan kapan.
+model AdminAuditLog {
+  id         String   @id @default(cuid())
+  adminId    String?
+  adminNama  String
+  aksi       String
+  entitas    String
+  entitasId  String?
+  keterangan String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  @@index([entitas])
+  @@index([createdAt])
+}

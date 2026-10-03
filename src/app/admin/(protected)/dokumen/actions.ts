@@ -7,6 +7,7 @@ import { KategoriDokumen } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { getStorageDriver, MAX_UPLOAD_SIZE_BYTES, ALLOWED_UPLOAD_TYPES } from "@/lib/storage";
+import { logAdminAction } from "@/lib/audit-log";
 
 const metaSchema = z.object({
   judul: z.string().min(1, "Judul wajib diisi"),
@@ -44,7 +45,7 @@ export async function createDokumen(formData: FormData) {
     folder: "dokumen",
   });
 
-  await prisma.dokumenPublikasi.create({
+  const dokumen = await prisma.dokumenPublikasi.create({
     data: {
       judul: data.judul,
       kategori: data.kategori,
@@ -60,6 +61,7 @@ export async function createDokumen(formData: FormData) {
       sanggahanDibuka: true,
     },
   });
+  await logAdminAction("CREATE", "Dokumen Publikasi", dokumen.id, dokumen.judul);
 
   revalidatePath("/admin/dokumen");
   revalidatePath("/dokumen");
@@ -105,6 +107,7 @@ export async function updateDokumenMeta(id: string, formData: FormData) {
   }
 
   await prisma.dokumenPublikasi.update({ where: { id }, data: updateData });
+  await logAdminAction("UPDATE", "Dokumen Publikasi", id, data.judul);
 
   revalidatePath("/admin/dokumen");
   revalidatePath(`/admin/dokumen/${id}`);
@@ -117,7 +120,9 @@ export async function deleteDokumen(id: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
+  const dokumen = await prisma.dokumenPublikasi.findUnique({ where: { id }, select: { judul: true } });
   await prisma.dokumenPublikasi.delete({ where: { id } });
+  await logAdminAction("DELETE", "Dokumen Publikasi", id, dokumen?.judul);
   revalidatePath("/admin/dokumen");
   revalidatePath("/dokumen");
 }
@@ -127,6 +132,7 @@ export async function togglePublishDokumen(id: string, published: boolean) {
   if (!session?.user) throw new Error("Unauthorized");
 
   await prisma.dokumenPublikasi.update({ where: { id }, data: { published } });
+  await logAdminAction("TOGGLE", "Dokumen Publikasi", id, `published=${published}`);
   revalidatePath("/admin/dokumen");
   revalidatePath("/dokumen");
 }
@@ -136,6 +142,7 @@ export async function toggleSanggahanDibuka(id: string, dibuka: boolean) {
   if (!session?.user) throw new Error("Unauthorized");
 
   await prisma.dokumenPublikasi.update({ where: { id }, data: { sanggahanDibuka: dibuka } });
+  await logAdminAction("TOGGLE", "Dokumen Publikasi", id, `sanggahanDibuka=${dibuka}`);
   revalidatePath("/admin/dokumen");
   revalidatePath(`/dokumen/${id}`);
 }

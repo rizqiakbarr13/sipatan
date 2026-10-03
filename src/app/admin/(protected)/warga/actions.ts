@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { logAdminAction } from "@/lib/audit-log";
 
 async function requireAdmin() {
   const session = await auth();
@@ -30,6 +31,7 @@ export async function resetPasswordWarga(id: string): Promise<{ password: string
   const password = generateTempPassword();
   const hashed = await bcrypt.hash(password, 10);
   await prisma.warga.update({ where: { id }, data: { password: hashed } });
+  await logAdminAction("UPDATE", "Akun Warga", id, `Reset password untuk ${warga.nama} (${warga.email})`);
 
   revalidatePath("/admin/warga");
   return { password };
@@ -42,5 +44,6 @@ export async function deleteWargaAccount(id: string): Promise<{ error: string } 
   if (!warga) return { error: "Akun warga tidak ditemukan" };
 
   await prisma.warga.delete({ where: { id } });
+  await logAdminAction("DELETE", "Akun Warga", id, `${warga.nama} (${warga.email})`);
   revalidatePath("/admin/warga");
 }

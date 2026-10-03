@@ -62,6 +62,20 @@ export function sanggahanKonfirmasiEmail(nomorTiket: string): { subject: string;
   };
 }
 
+export function resetPasswordEmail(link: string): { subject: string; html: string } {
+  return {
+    subject: "Permintaan Reset Password SIPATAN",
+    html: layout(
+      "Reset Password",
+      `<p>Kami menerima permintaan untuk mengatur ulang password akun Anda. Klik tombol di bawah untuk membuat password baru:</p>
+       <p style="margin: 20px 0;">
+         <a href="${link}" style="display: inline-block; background: #047857; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">Atur Ulang Password</a>
+       </p>
+       <p style="font-size: 12px; color: #71717a;">Tautan ini berlaku selama 1 jam dan hanya bisa dipakai sekali. Jika Anda tidak meminta reset password, abaikan email ini — password Anda tidak akan berubah.</p>`
+    ),
+  };
+}
+
 export function sanggahanStatusEmail(
   nomorTiket: string,
   statusLabel: string,

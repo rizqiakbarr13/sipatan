@@ -6,17 +6,32 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { getMasaSanggahRange } from "@/lib/date-utils";
+import { logAdminAction } from "@/lib/audit-log";
 
-const proyekSchema = z.object({
-  namaProyek: z.string().min(1, "Nama proyek wajib diisi"),
-  nomorPeng: z.string().min(1, "Nomor pengumuman wajib diisi"),
-  tanggalPeng: z.string().min(1, "Tanggal pengumuman wajib diisi"),
-  kelurahan: z.string().min(1),
-  kecamatan: z.string().min(1),
-  kota: z.string().min(1),
-  provinsi: z.string().min(1),
-  deskripsi: z.string().optional(),
-});
+const proyekSchema = z
+  .object({
+    namaProyek: z.string().min(1, "Nama proyek wajib diisi"),
+    nomorPeng: z.string().min(1, "Nomor pengumuman wajib diisi"),
+    tanggalPeng: z.string().min(1, "Tanggal pengumuman wajib diisi"),
+    kelurahan: z.string().min(1),
+    kecamatan: z.string().min(1),
+    kota: z.string().min(1),
+    provinsi: z.string().min(1),
+    deskripsi: z.string().optional(),
+    // Opsional: jika diisi, menggantikan perhitungan otomatis (14 hari sejak
+    // tanggal pengumuman) — ini yang dipakai admin untuk memperpanjang masa
+    // sanggah. Dikosongkan → fallback ke perhitungan otomatis.
+    masaSanggahSelesai: z.string().optional(),
+  })
+  .refine(
+    (data) =>
+      !data.masaSanggahSelesai ||
+      new Date(data.masaSanggahSelesai).getTime() >= new Date(data.tanggalPeng).getTime(),
+    {
+      message: "Tanggal akhir masa sanggah tidak boleh sebelum tanggal pengumuman",
+      path: ["masaSanggahSelesai"],
+    }
+  );
 
 type ActionState = { error?: string; success?: boolean };
 
@@ -29,9 +44,10 @@ export async function createProyek(formData: FormData): Promise<ActionState> {
   const data = parsed.data;
 
   const tanggalPeng = new Date(data.tanggalPeng);
-  const { mulai, selesai } = getMasaSanggahRange(tanggalPeng);
+  const { mulai, selesai: selesaiDefault } = getMasaSanggahRange(tanggalPeng);
+  const selesai = data.masaSanggahSelesai ? new Date(data.masaSanggahSelesai) : selesaiDefault;
 
-  await prisma.project.create({
+  const proyek = await prisma.project.create({
     data: {
       namaProyek: data.namaProyek,
       nomorPeng: data.nomorPeng,
@@ -45,6 +61,7 @@ export async function createProyek(formData: FormData): Promise<ActionState> {
       masaSanggahSelesai: selesai,
     },
   });
+  await logAdminAction("CREATE", "Proyek", proyek.id, proyek.namaProyek);
 
   revalidatePath("/admin/proyek");
   revalidatePath("/");
@@ -60,7 +77,10 @@ export async function updateProyek(id: string, formData: FormData): Promise<Acti
   const data = parsed.data;
 
   const tanggalPeng = new Date(data.tanggalPeng);
-  const { mulai, selesai } = getMasaSanggahRange(tanggalPeng);
+  const { mulai, selesai: selesaiDefault } = getMasaSanggahRange(tanggalPeng);
+  const selesai = data.masaSanggahSelesai ? new Date(data.masaSanggahSelesai) : selesaiDefault;
+
+  const sebelumnya = await prisma.project.findUnique({ where: { id }, select: { masaSanggahSelesai: true } });
 
   await prisma.project.update({
     where: { id },
@@ -77,6 +97,12 @@ export async function updateProyek(id: string, formData: FormData): Promise<Acti
       masaSanggahSelesai: selesai,
     },
   });
+
+  const keterangan =
+    sebelumnya?.masaSanggahSelesai && sebelumnya.masaSanggahSelesai.getTime() !== selesai.getTime()
+      ? `${data.namaProyek} — masa sanggah diubah ke ${selesai.toLocaleDateString("id-ID")}`
+      : data.namaProyek;
+  await logAdminAction("UPDATE", "Proyek", id, keterangan);
 
   revalidatePath("/admin/proyek");
   revalidatePath(`/admin/proyek/${id}`);
@@ -101,7 +127,9 @@ export async function deleteProyek(id: string): Promise<ActionState> {
     };
   }
 
+  const proyek = await prisma.project.findUnique({ where: { id }, select: { namaProyek: true } });
   await prisma.project.delete({ where: { id } });
+  await logAdminAction("DELETE", "Proyek", id, proyek?.namaProyek);
   revalidatePath("/admin/proyek");
   revalidatePath("/");
   return { success: true };

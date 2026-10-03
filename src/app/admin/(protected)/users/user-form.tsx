@@ -2,6 +2,7 @@
 
 import { useActionState, useRef } from "react";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { SaveButton } from "@/components/save-button";
 import { TriangleAlert } from "lucide-react";
@@ -56,7 +57,7 @@ export function UserForm({
         <Label htmlFor="password">
           {user ? "Reset Password (opsional, kosongkan jika tidak diubah)" : "Password"}
         </Label>
-        <Input id="password" name="password" type="password" required={!user} minLength={8} />
+        <PasswordInput id="password" name="password" required={!user} minLength={8} />
       </div>
 
       <SaveButton

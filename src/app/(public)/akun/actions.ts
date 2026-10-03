@@ -1,10 +1,13 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { createWargaSession, destroyWargaSession } from "@/lib/warga-session";
 import { registerWargaSchema, loginWargaSchema } from "@/lib/validation/warga";
+import { requestPasswordResetSchema, resetPasswordSchema } from "@/lib/validation/password-reset";
+import { requestPasswordReset, resetPasswordWithToken } from "@/lib/password-reset";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 type ActionState = { error?: string };
@@ -82,4 +85,39 @@ export async function loginWarga(_prevState: ActionState, formData: FormData): P
 export async function logoutWarga() {
   await destroyWargaSession();
   redirect("/");
+}
+
+export async function requestResetPasswordWarga(
+  _prevState: ActionState & { success?: boolean },
+  formData: FormData
+): Promise<ActionState & { success?: boolean }> {
+  const ip = await getClientIp();
+  if (isRateLimited(`reset-request:${ip}`, 5, 60 * 60 * 1000)) {
+    return { error: "Terlalu banyak permintaan reset password. Silakan coba lagi nanti." };
+  }
+
+  const parsed = requestPasswordResetSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Data tidak valid" };
+  }
+
+  const h = await headers();
+  const origin = h.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  await requestPasswordReset(parsed.data.email, "WARGA", `${origin}/akun/reset-password`);
+
+  return { success: true };
+}
+
+export async function resetPasswordWargaWithToken(
+  _prevState: ActionState & { success?: boolean },
+  formData: FormData
+): Promise<ActionState & { success?: boolean }> {
+  const parsed = resetPasswordSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Data tidak valid" };
+  }
+
+  const result = await resetPasswordWithToken(parsed.data.token, "WARGA", parsed.data.password);
+  if ("error" in result) return { error: result.error };
+  return { success: true };
 }

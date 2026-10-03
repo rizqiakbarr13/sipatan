@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { TriangleAlert } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { registerWarga } from "@/app/(public)/akun/actions";
@@ -45,14 +46,13 @@ export function RegisterForm({ next }: { next?: string }) {
       <p className="text-xs text-zinc-500 dark:text-zinc-400">{dict.auth.catatanNikHp}</p>
       <div className="space-y-1.5">
         <Label htmlFor="password">{dict.auth.password}</Label>
-        <Input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" />
+        <PasswordInput id="password" name="password" required minLength={8} autoComplete="new-password" />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="konfirmasiPassword">{dict.auth.konfirmasiPassword}</Label>
-        <Input
+        <PasswordInput
           id="konfirmasiPassword"
           name="konfirmasiPassword"
-          type="password"
           required
           minLength={8}
           autoComplete="new-password"

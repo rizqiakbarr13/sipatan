@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { logAdminAction } from "@/lib/audit-log";
 
 async function requireSuperAdmin() {
   const session = await auth();
@@ -34,9 +35,10 @@ export async function createUser(formData: FormData) {
   if (existing) return { error: "Email sudah digunakan" };
 
   const hashed = await bcrypt.hash(data.password, 10);
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: { nama: data.nama, email: data.email, password: hashed, role: data.role },
   });
+  await logAdminAction("CREATE", "User Admin", user.id, `${user.nama} (${user.role})`);
 
   revalidatePath("/admin/users");
   redirect("/admin/users?saved=created");
@@ -72,6 +74,7 @@ export async function updateUser(id: string, formData: FormData) {
       ...(data.password ? { password: await bcrypt.hash(data.password, 10) } : {}),
     },
   });
+  await logAdminAction("UPDATE", "User Admin", id, `${data.nama} (${data.role})`);
 
   revalidatePath("/admin/users");
   redirect("/admin/users?saved=updated");
@@ -84,6 +87,8 @@ export async function deleteUser(id: string) {
     return { error: "Anda tidak dapat menghapus akun Anda sendiri" };
   }
 
+  const user = await prisma.user.findUnique({ where: { id }, select: { nama: true } });
   await prisma.user.delete({ where: { id } });
+  await logAdminAction("DELETE", "User Admin", id, user?.nama);
   revalidatePath("/admin/users");
 }

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { getStorageDriver, MAX_UPLOAD_SIZE_BYTES } from "@/lib/storage";
+import { logAdminAction } from "@/lib/audit-log";
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -40,7 +41,7 @@ export async function createGaleriFoto(formData: FormData) {
     folder: "galeri",
   });
 
-  await prisma.galeriFoto.create({
+  const foto = await prisma.galeriFoto.create({
     data: {
       judul: data.judul,
       fileUrl: saved.url,
@@ -50,6 +51,7 @@ export async function createGaleriFoto(formData: FormData) {
       published: true,
     },
   });
+  await logAdminAction("CREATE", "Galeri Kegiatan", foto.id, foto.judul);
 
   revalidatePath("/admin/galeri");
   revalidatePath("/");
@@ -90,6 +92,7 @@ export async function updateGaleriFotoMeta(id: string, formData: FormData) {
   }
 
   await prisma.galeriFoto.update({ where: { id }, data: updateData });
+  await logAdminAction("UPDATE", "Galeri Kegiatan", id, data.judul);
 
   revalidatePath("/admin/galeri");
   revalidatePath(`/admin/galeri/${id}`);
@@ -101,7 +104,9 @@ export async function deleteGaleriFoto(id: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
+  const foto = await prisma.galeriFoto.findUnique({ where: { id }, select: { judul: true } });
   await prisma.galeriFoto.delete({ where: { id } });
+  await logAdminAction("DELETE", "Galeri Kegiatan", id, foto?.judul);
   revalidatePath("/admin/galeri");
   revalidatePath("/");
 }
@@ -111,6 +116,7 @@ export async function toggleGaleriFotoPublish(id: string, published: boolean) {
   if (!session?.user) throw new Error("Unauthorized");
 
   await prisma.galeriFoto.update({ where: { id }, data: { published } });
+  await logAdminAction("TOGGLE", "Galeri Kegiatan", id, `published=${published}`);
   revalidatePath("/admin/galeri");
   revalidatePath("/");
 }

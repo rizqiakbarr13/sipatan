@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { logAdminAction } from "@/lib/audit-log";
 
 const sopSchema = z.object({
   judul: z.string().min(1, "Judul wajib diisi"),
@@ -29,7 +30,7 @@ export async function createSop(formData: FormData) {
   const existing = await prisma.sOPDoc.findUnique({ where: { slug: data.slug } });
   if (existing) return { error: "Slug sudah digunakan, gunakan slug lain" };
 
-  await prisma.sOPDoc.create({
+  const sop = await prisma.sOPDoc.create({
     data: {
       judul: data.judul,
       slug: data.slug,
@@ -39,6 +40,7 @@ export async function createSop(formData: FormData) {
       published: data.published === "on",
     },
   });
+  await logAdminAction("CREATE", "SOP", sop.id, sop.judul);
 
   revalidatePath("/admin/sop");
   revalidatePath("/sop");
@@ -67,6 +69,7 @@ export async function updateSop(id: string, formData: FormData) {
       published: data.published === "on",
     },
   });
+  await logAdminAction("UPDATE", "SOP", id, data.judul);
 
   revalidatePath("/admin/sop");
   revalidatePath("/sop");
@@ -77,7 +80,9 @@ export async function deleteSop(id: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
+  const sop = await prisma.sOPDoc.findUnique({ where: { id }, select: { judul: true } });
   await prisma.sOPDoc.delete({ where: { id } });
+  await logAdminAction("DELETE", "SOP", id, sop?.judul);
   revalidatePath("/admin/sop");
   revalidatePath("/sop");
 }
@@ -87,6 +92,7 @@ export async function togglePublishSop(id: string, published: boolean) {
   if (!session?.user) throw new Error("Unauthorized");
 
   await prisma.sOPDoc.update({ where: { id }, data: { published } });
+  await logAdminAction("TOGGLE", "SOP", id, `published=${published}`);
   revalidatePath("/admin/sop");
   revalidatePath("/sop");
 }

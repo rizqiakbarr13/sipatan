@@ -15,6 +15,7 @@ import {
   Users,
   IdCard,
   Camera,
+  ScrollText,
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,7 @@ const NAV_ITEMS = [
   { href: "/admin/sanggahan", label: "Sanggahan", icon: MessageSquareWarning, exact: false, color: "text-orange-600 dark:text-orange-400", ring: "bg-orange-500" },
   { href: "/admin/warga", label: "Akun Warga", icon: IdCard, exact: false, color: "text-cyan-600 dark:text-cyan-400", ring: "bg-cyan-500" },
   { href: "/admin/galeri", label: "Galeri Kegiatan", icon: Camera, exact: false, color: "text-rose-600 dark:text-rose-400", ring: "bg-rose-500" },
+  { href: "/admin/log-aktivitas", label: "Log Aktivitas", icon: ScrollText, exact: false, color: "text-indigo-600 dark:text-indigo-400", ring: "bg-indigo-500" },
 ] as const;
 
 export function AdminSidebar({

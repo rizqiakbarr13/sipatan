@@ -5,7 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ProjectFilterTabs } from "@/components/project-filter-tabs";
 import { Pagination, resolvePage } from "@/components/pagination";
-import { BidangRowActions } from "./row-actions";
+import { BidangTableClient } from "./bidang-table-client";
 
 export const dynamic = "force-dynamic";
 
@@ -60,50 +60,19 @@ export default async function AdminNominatifPage({
         semuaLabel="Semua Proyek"
       />
 
-      <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white dark:bg-zinc-900 dark:border-zinc-800">
-        <table className="w-full text-sm">
-          <thead className="bg-zinc-50 text-left text-xs uppercase text-zinc-500 dark:text-zinc-400 dark:bg-zinc-950">
-            <tr>
-              <th className="px-4 py-3">No.</th>
-              <th className="px-4 py-3">Nama Pemilik</th>
-              <th className="px-4 py-3">Proyek</th>
-              <th className="px-4 py-3">NIB</th>
-              <th className="px-4 py-3">Luas Terkena</th>
-              <th className="px-4 py-3">Surat Tanda Bukti</th>
-              <th className="px-4 py-3">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-            {list.map((b) => (
-              <tr key={b.id}>
-                <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">{b.noUrut}</td>
-                <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{b.namaPemilik}</td>
-                <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">{b.project.namaProyek}</td>
-                <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">{b.nib || "-"}</td>
-                <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
-                  {b.luasKena ? `${b.luasKena.toLocaleString("id-ID")} m²` : "-"}
-                </td>
-                <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">{b.suratTandaBukti || "-"}</td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <Link href={`/admin/nominatif/${b.id}`} className="text-emerald-700 hover:underline">
-                      Edit
-                    </Link>
-                    <BidangRowActions id={b.id} />
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {list.length === 0 && (
-              <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-zinc-500 dark:text-zinc-400">
-                  Belum ada data. Tambah manual atau import dari CSV/PDF.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <BidangTableClient
+        items={list.map((b) => ({
+          id: b.id,
+          noUrut: b.noUrut,
+          namaPemilik: b.namaPemilik,
+          projectNama: b.project.namaProyek,
+          nib: b.nib,
+          luasKena: b.luasKena,
+          suratTandaBukti: b.suratTandaBukti,
+        }))}
+        activeProjectId={proyek}
+        activeProjectNama={projects.find((p) => p.id === proyek)?.namaProyek}
+      />
 
       <Pagination currentPage={page} totalPages={totalPages} basePath="/admin/nominatif" searchParams={{ proyek }} />
     </div>

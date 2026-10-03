@@ -8,6 +8,7 @@ import { auth } from "@/auth";
 import { nominatifRowSchema, type NominatifRow } from "@/lib/nominatif-csv";
 import { extractNominatifRowsFromPdf } from "@/lib/nominatif-pdf";
 import { MAX_UPLOAD_SIZE_BYTES } from "@/lib/storage";
+import { logAdminAction } from "@/lib/audit-log";
 
 const bidangFormSchema = z.object({
   projectId: z.string().optional(),
@@ -87,7 +88,8 @@ export async function createBidang(formData: FormData) {
   });
   if (dup) return { error: `No. Urut ${bidangData.noUrut} sudah digunakan pada proyek ini` };
 
-  await prisma.bidang.create({ data: { ...bidangData, projectId: project.id } });
+  const bidang = await prisma.bidang.create({ data: { ...bidangData, projectId: project.id } });
+  await logAdminAction("CREATE", "Data Nominatif", bidang.id, `No. Urut ${bidang.noUrut} — ${bidang.namaPemilik}`);
 
   revalidatePath("/admin/nominatif");
   revalidatePath("/data-nominatif");
@@ -112,6 +114,7 @@ export async function updateBidang(id: string, formData: FormData) {
   if (dup && dup.id !== id) return { error: `No. Urut ${bidangData.noUrut} sudah digunakan pada proyek ini` };
 
   await prisma.bidang.update({ where: { id }, data: bidangData });
+  await logAdminAction("UPDATE", "Data Nominatif", id, `No. Urut ${bidangData.noUrut} — ${bidangData.namaPemilik}`);
 
   revalidatePath("/admin/nominatif");
   revalidatePath(`/admin/nominatif/${id}`);
@@ -124,9 +127,64 @@ export async function deleteBidang(id: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
+  const bidang = await prisma.bidang.findUnique({ where: { id }, select: { noUrut: true, namaPemilik: true } });
   await prisma.bidang.delete({ where: { id } });
+  await logAdminAction(
+    "DELETE",
+    "Data Nominatif",
+    id,
+    bidang ? `No. Urut ${bidang.noUrut} — ${bidang.namaPemilik}` : undefined
+  );
   revalidatePath("/admin/nominatif");
   revalidatePath("/data-nominatif");
+}
+
+export async function deleteBidangBulk(ids: string[]): Promise<{ error?: string; success?: boolean; count?: number }> {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  if (!ids || ids.length === 0) return { error: "Tidak ada data yang dipilih" };
+
+  const items = await prisma.bidang.findMany({
+    where: { id: { in: ids } },
+    select: { noUrut: true },
+    orderBy: { noUrut: "asc" },
+  });
+  if (items.length === 0) return { error: "Data yang dipilih tidak ditemukan" };
+
+  await prisma.bidang.deleteMany({ where: { id: { in: ids } } });
+  await logAdminAction(
+    "DELETE",
+    "Data Nominatif",
+    undefined,
+    `Hapus terpilih ${items.length} bidang (No. Urut: ${items.map((i) => i.noUrut).join(", ")})`
+  );
+
+  revalidatePath("/admin/nominatif");
+  revalidatePath("/data-nominatif");
+  return { success: true, count: items.length };
+}
+
+export async function deleteBidangByProject(projectId: string): Promise<{ error?: string; success?: boolean; count?: number }> {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  if (!projectId) return { error: "Proyek wajib dipilih" };
+
+  const project = await prisma.project.findUnique({ where: { id: projectId } });
+  if (!project) return { error: "Proyek yang dipilih tidak ditemukan" };
+
+  const { count } = await prisma.bidang.deleteMany({ where: { projectId } });
+  await logAdminAction(
+    "DELETE",
+    "Data Nominatif",
+    projectId,
+    `Hapus semua ${count} bidang pada proyek "${project.namaProyek}"`
+  );
+
+  revalidatePath("/admin/nominatif");
+  revalidatePath("/data-nominatif");
+  return { success: true, count };
 }
 
 export async function addBangunanItem(bidangId: string, formData: FormData) {
@@ -230,6 +288,13 @@ export async function importNominatifRows(rows: NominatifRow[], projectId: strin
       created++;
     }
   }
+
+  await logAdminAction(
+    "CREATE",
+    "Data Nominatif",
+    undefined,
+    `Impor massal pada proyek "${project.namaProyek}": ${created} baru, ${updated} diperbarui`
+  );
 
   revalidatePath("/admin/nominatif");
   revalidatePath("/data-nominatif");
