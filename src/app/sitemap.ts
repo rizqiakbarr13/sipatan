@@ -4,16 +4,12 @@ import { prisma } from "@/lib/prisma";
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [dokumen, bidangList, sopList] = await Promise.all([
+  const [dokumen, bidangList] = await Promise.all([
     prisma.dokumenPublikasi.findMany({
       where: { published: true },
       select: { id: true, updatedAt: true },
     }),
     prisma.bidang.findMany({ select: { noUrut: true, updatedAt: true } }),
-    prisma.sOPDoc.findMany({
-      where: { published: true },
-      select: { slug: true, updatedAt: true },
-    }),
   ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -40,12 +36,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  const sopRoutes: MetadataRoute.Sitemap = sopList.map((s) => ({
-    url: `${appUrl}/sop/${s.slug}`,
-    lastModified: s.updatedAt,
-    changeFrequency: "monthly",
-    priority: 0.4,
-  }));
-
-  return [...staticRoutes, ...dokumenRoutes, ...bidangRoutes, ...sopRoutes];
+  return [...staticRoutes, ...dokumenRoutes, ...bidangRoutes];
 }

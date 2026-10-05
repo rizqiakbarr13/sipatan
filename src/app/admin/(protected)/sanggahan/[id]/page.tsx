@@ -11,6 +11,8 @@ import {
 } from "@/lib/labels";
 import { getTargetTanggapan } from "@/lib/date-utils";
 import { StatusForm } from "../status-form";
+import { VerifikasiIdentitas } from "./verifikasi-identitas";
+import { cocokkanIdentitas } from "@/lib/identitas";
 import { TampilPublikToggle } from "../tampil-publik-toggle";
 import { SanggahanDeleteButton } from "./delete-button";
 
@@ -24,7 +26,7 @@ export default async function SanggahanDetailPage({
     where: { id },
     include: {
       project: { select: { id: true, namaProyek: true } },
-      bidang: { select: { id: true, noUrut: true, namaPemilik: true } },
+      bidang: { select: { id: true, noUrut: true, namaPemilik: true, nik: true } },
       dokumen: { select: { id: true, judul: true } },
       pengumuman: { select: { id: true, judul: true } },
       warga: { select: { nama: true, email: true } },
@@ -183,6 +185,17 @@ export default async function SanggahanDetailPage({
         </div>
 
         <div className="space-y-6">
+          <VerifikasiIdentitas
+            id={sanggahan.id}
+            status={sanggahan.status}
+            pengaju={{ nama: sanggahan.nama, nik: sanggahan.nik }}
+            pemilik={sanggahan.bidang ? { namaPemilik: sanggahan.bidang.namaPemilik, nik: sanggahan.bidang.nik } : null}
+            hasil={cocokkanIdentitas(
+              { nama: sanggahan.nama, nik: sanggahan.nik },
+              sanggahan.bidang ? { namaPemilik: sanggahan.bidang.namaPemilik, nik: sanggahan.bidang.nik } : null
+            )}
+          />
+
           <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:bg-zinc-900 dark:border-zinc-800">
             <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Proses Sanggahan</h2>
             <div

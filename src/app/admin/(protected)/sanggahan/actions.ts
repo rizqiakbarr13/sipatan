@@ -8,6 +8,7 @@ import { auth } from "@/auth";
 import { sendEmail, sanggahanStatusEmail } from "@/lib/email";
 import { SANGGAHAN_STATUS_LABEL } from "@/lib/labels";
 import { logAdminAction } from "@/lib/audit-log";
+import { cocokkanIdentitas } from "@/lib/identitas";
 
 const updateStatusSchema = z.object({
   status: z.enum(SanggahanStatus),
@@ -84,4 +85,71 @@ export async function deleteSanggahan(id: string): Promise<{ error?: string; suc
 
   revalidatePath("/admin/sanggahan");
   return { success: true };
+}
+
+/**
+ * Verifikasi identitas pengaju (nama & NIK) terhadap data pemilik bidang.
+ * Jika sesuai → DIVERIFIKASI. Jika tidak sesuai → DITOLAK otomatis (dengan
+ * catatan dan email ke pengaju). Jika sanggahan tidak terkait bidang, tidak
+ * ada data untuk dicocokkan sehingga langsung DIVERIFIKASI.
+ */
+export async function verifikasiIdentitas(id: string): Promise<{ error?: string; success?: boolean; ditolak?: boolean }> {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const sanggahan = await prisma.sanggahan.findUnique({
+    where: { id },
+    include: { bidang: { select: { namaPemilik: true, nik: true } } },
+  });
+  if (!sanggahan) return { error: "Sanggahan tidak ditemukan" };
+  if (sanggahan.status === "DITOLAK" || sanggahan.status === "SELESAI") {
+    return { error: "Sanggahan ini sudah berstatus final" };
+  }
+
+  const hasil = cocokkanIdentitas(
+    { nama: sanggahan.nama, nik: sanggahan.nik },
+    sanggahan.bidang ? { namaPemilik: sanggahan.bidang.namaPemilik, nik: sanggahan.bidang.nik } : null
+  );
+  const ditolak = hasil.tidakSesuai;
+  const statusBaru = ditolak ? "DITOLAK" : "DIVERIFIKASI";
+  const catatanOtomatis = ditolak
+    ? "Identitas pengaju (nama/NIK) tidak sesuai dengan data pemilik pada bidang yang disanggah."
+    : null;
+  const catatanFinal = catatanOtomatis ?? sanggahan.catatanAdmin;
+
+  await prisma.$transaction([
+    prisma.sanggahan.update({
+      where: { id },
+      data: { status: statusBaru, catatanAdmin: catatanFinal },
+    }),
+    prisma.sanggahanLog.create({
+      data: {
+        sanggahanId: id,
+        statusLama: sanggahan.status,
+        statusBaru,
+        catatan: ditolak ? catatanOtomatis : "Identitas pengaju sesuai (verifikasi admin)",
+        olehAdmin: session.user.nama,
+      },
+    }),
+  ]);
+  await logAdminAction(
+    "UPDATE",
+    "Sanggahan",
+    id,
+    `${sanggahan.nomorTiket}: verifikasi identitas → ${SANGGAHAN_STATUS_LABEL[statusBaru]}`
+  );
+
+  revalidatePath("/admin/sanggahan");
+  revalidatePath(`/admin/sanggahan/${id}`);
+
+  if (sanggahan.kontakEmail) {
+    const { subject, html } = sanggahanStatusEmail(
+      sanggahan.nomorTiket,
+      SANGGAHAN_STATUS_LABEL[statusBaru],
+      catatanFinal
+    );
+    await sendEmail({ to: sanggahan.kontakEmail, subject, html });
+  }
+
+  return { success: true, ditolak };
 }
