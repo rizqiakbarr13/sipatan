@@ -11,11 +11,20 @@ import { formatTanggalWaktuIndonesia } from "@/lib/labels";
 
 export const dynamic = "force-dynamic";
 
-function InfoItem({ label, value }: { label: string; value?: string | number | null }) {
+function InfoItem({ label, value, blur }: { label: string; value?: string | number | null; blur?: boolean }) {
   return (
     <div>
       <dt className="text-xs uppercase text-zinc-400">{label}</dt>
-      <dd className="text-sm text-zinc-800 dark:text-zinc-200">{value ?? "-"}</dd>
+      <dd
+        className={
+          blur
+            ? "select-none text-sm text-zinc-800 blur-[3px] dark:text-zinc-200"
+            : "text-sm text-zinc-800 dark:text-zinc-200"
+        }
+        aria-hidden={blur || undefined}
+      >
+        {value ?? "-"}
+      </dd>
     </div>
   );
 }
@@ -98,9 +107,10 @@ export default async function DetailBidangPage({
             <InfoItem label="Tanggal Lahir" value={maskTanggalLahir(bidang.tanggalLahir)} />
             <InfoItem label="Pekerjaan" value={maskSebagian(bidang.pekerjaan)} />
             <InfoItem label="No. Peta Bidang" value={bidang.noPetaBidang} />
-            <InfoItem label="RT/RW" value={bidang.rtRw} />
+            <InfoItem label="RT/RW" value={bidang.rtRw} blur />
             <InfoItem
               label="Letak"
+              blur
               value={
                 bidang.letakKelurahan || bidang.letakKecamatan
                   ? `Kel. ${bidang.letakKelurahan ?? "-"}, Kec. ${bidang.letakKecamatan ?? "-"}`

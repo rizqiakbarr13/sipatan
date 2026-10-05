@@ -27,7 +27,7 @@ export default async function ImportNominatifPage({
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Import Data Nominatif</h1>
+      <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Import Daftar Nominatif</h1>
       <p className="mb-6 text-sm text-zinc-500 dark:text-zinc-400">
         Upload file CSV atau PDF untuk membuat atau memperbarui data bidang secara massal. Data akan
         divalidasi dan ditampilkan sebagai preview sebelum disimpan.

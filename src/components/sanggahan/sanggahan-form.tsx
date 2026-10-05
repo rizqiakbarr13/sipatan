@@ -23,6 +23,25 @@ export interface BidangOption {
   projectId: string;
   noUrut: number;
   namaPemilik: string;
+  suratTandaBukti?: string | null;
+  danomNo?: string | null;
+  noPetaBidang?: string | null;
+  nisTerkena?: string | null;
+}
+
+/**
+ * Nilai identitas tanah yang diisi otomatis dari bidang terpilih. Hanya field
+ * yang memang terisi di data bidang yang diisi; yang kosong dibiarkan
+ * (tidak ditimpa) supaya admin/warga tetap bisa mengisi sendiri.
+ */
+function autofillFromBidang(bidang: BidangOption | undefined) {
+  const values: Partial<Pick<SanggahanFormValues, "alasHak" | "noDanom" | "noPetaBidang" | "noNis">> = {};
+  if (!bidang) return values;
+  if (bidang.suratTandaBukti) values.alasHak = bidang.suratTandaBukti;
+  if (bidang.danomNo) values.noDanom = bidang.danomNo;
+  if (bidang.noPetaBidang) values.noPetaBidang = bidang.noPetaBidang;
+  if (bidang.nisTerkena) values.noNis = bidang.nisTerkena;
+  return values;
 }
 
 export interface DokumenOption {
@@ -84,12 +103,14 @@ export function SanggahanForm({
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<SanggahanFormValues>({
     resolver: zodResolver(sanggahanFormSchema),
     defaultValues: {
       projectId: defaultProjectId ?? "",
       bidangId: defaultBidangId ?? "",
+      ...autofillFromBidang(bidangOptions.find((b) => b.id === defaultBidangId)),
       dokumenId: defaultDokumenId ?? "",
       pengumumanId: defaultPengumumanId ?? "",
       nama: warga.nama,
@@ -305,7 +326,17 @@ export function SanggahanForm({
             <Label htmlFor="bidangId">{dict.sanggahanForm.bidangTerkaitOpsional}</Label>
             <select
               id="bidangId"
-              {...register("bidangId")}
+              {...register("bidangId", {
+                onChange: (e) => {
+                  // Sinkronkan ke bidang yang dipilih: field yang tidak ada datanya
+                  // di bidang tersebut dikosongkan, supaya nilai bidang sebelumnya
+                  // tidak ikut terbawa.
+                  const values = autofillFromBidang(bidangOptions.find((b) => b.id === e.target.value));
+                  (["alasHak", "noDanom", "noPetaBidang", "noNis"] as const).forEach((key) =>
+                    setValue(key, values[key] ?? "", { shouldDirty: true })
+                  );
+                },
+              })}
               disabled={!selectedProjectId}
               className="flex h-10 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 disabled:cursor-not-allowed disabled:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:disabled:bg-zinc-800"
             >

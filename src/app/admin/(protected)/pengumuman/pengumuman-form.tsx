@@ -100,7 +100,7 @@ export function PengumumanForm({
           className="h-4 w-4 rounded border-zinc-300 text-emerald-700 dark:border-zinc-700"
         />
         <Label htmlFor="linkDataNominatif" className="font-normal">
-          Kaitkan dengan halaman Data Nominatif
+          Kaitkan dengan halaman Daftar Nominatif
         </Label>
       </div>
       <div className="flex items-center gap-2">

@@ -80,7 +80,11 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
       }),
       columnHelper.accessor("rtRw", {
         header: "RT/RW",
-        cell: (info) => info.getValue() || "-",
+        cell: (info) => (
+          <span className="select-none blur-[3px]" aria-hidden="true">
+            {info.getValue() || "-"}
+          </span>
+        ),
       }),
       columnHelper.accessor("luasSesuaiAlasHak", {
         header: "Luas Alas Hak (m²)",
@@ -146,7 +150,7 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
       namaPemilik: r.original.namaPemilik,
       nik: maskNik(r.original.nik),
       nib: r.original.nib ?? "",
-      rtRw: r.original.rtRw ?? "",
+      rtRw: "(disamarkan)",
       luasSesuaiAlasHak: r.original.luasSesuaiAlasHak ?? "",
       luasHasilUkur: r.original.luasHasilUkur ?? "",
       luasKena: r.original.luasKena ?? "",

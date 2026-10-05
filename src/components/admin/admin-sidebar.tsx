@@ -25,7 +25,7 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true, color: "text-zinc-600 dark:text-zinc-300", ring: "bg-zinc-400" },
   { href: "/admin/proyek", label: "Proyek", icon: Building2, exact: false, color: "text-blue-600 dark:text-blue-400", ring: "bg-blue-500" },
   { href: "/admin/dokumen", label: "Dokumen Publikasi", icon: FileStack, exact: false, color: "text-violet-600 dark:text-violet-400", ring: "bg-violet-500" },
-  { href: "/admin/nominatif", label: "Data Nominatif", icon: Table, exact: false, color: "text-amber-600 dark:text-amber-400", ring: "bg-amber-500" },
+  { href: "/admin/nominatif", label: "Daftar Nominatif", icon: Table, exact: false, color: "text-amber-600 dark:text-amber-400", ring: "bg-amber-500" },
   { href: "/admin/sop", label: "SOP", icon: ListChecks, exact: false, color: "text-teal-600 dark:text-teal-400", ring: "bg-teal-500" },
   { href: "/admin/pengumuman", label: "Pengumuman", icon: Megaphone, exact: false, color: "text-pink-600 dark:text-pink-400", ring: "bg-pink-500" },
   { href: "/admin/sanggahan", label: "Sanggahan", icon: MessageSquareWarning, exact: false, color: "text-orange-600 dark:text-orange-400", ring: "bg-orange-500" },

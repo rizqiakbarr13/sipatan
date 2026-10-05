@@ -31,11 +31,11 @@ export const metadata: Metadata = {
     template: "%s — SIPATAN",
   },
   description:
-    "SIPATAN adalah portal resmi publikasi pengadaan tanah untuk kepentingan umum: dokumen publikasi, data nominatif, SOP, dan kanal sanggahan masyarakat.",
+    "SIPATAN adalah portal resmi publikasi pengadaan tanah untuk kepentingan umum: dokumen publikasi, daftar nominatif, SOP, dan kanal sanggahan masyarakat.",
   openGraph: {
     title: "SIPATAN — Sistem Informasi Pengadaan Tanah",
     description:
-      "Dokumen publikasi resmi, data nominatif, SOP, dan kanal sanggahan pengadaan tanah untuk kepentingan umum.",
+      "Dokumen publikasi resmi, daftar nominatif, SOP, dan kanal sanggahan pengadaan tanah untuk kepentingan umum.",
     locale: "id_ID",
     type: "website",
   },

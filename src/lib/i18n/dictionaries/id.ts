@@ -287,7 +287,7 @@ const id: Dictionary = {
   nav: {
     beranda: "Beranda",
     dokumen: "Dokumen Publikasi",
-    nominatif: "Data Nominatif",
+    nominatif: "Daftar Nominatif",
     sop: "SOP",
     pengumuman: "Pengumuman",
     lacak: "Lacak Sanggahan",
@@ -334,7 +334,7 @@ const id: Dictionary = {
   },
   footer: {
     alamat:
-      "SIPATAN — Sistem Informasi Pengadaan Tanah adalah portal resmi untuk publikasi dokumen, data nominatif, SOP, dan kanal sanggahan masyarakat terkait kegiatan pengadaan tanah untuk kepentingan umum.",
+      "SIPATAN — Sistem Informasi Pengadaan Tanah adalah portal resmi untuk publikasi dokumen, daftar nominatif, SOP, dan kanal sanggahan masyarakat terkait kegiatan pengadaan tanah untuk kepentingan umum.",
     tautanTitle: "Tautan",
     sanggahanTitle: "Sanggahan",
     kontakTitle: "Hubungi Kami",
@@ -355,7 +355,7 @@ const id: Dictionary = {
   },
   faq: {
     title: "Pertanyaan yang Sering Diajukan",
-    desc: "Jawaban singkat untuk pertanyaan umum seputar sanggahan dan data nominatif.",
+    desc: "Jawaban singkat untuk pertanyaan umum seputar sanggahan dan daftar nominatif.",
     items: [
       {
         q: "Bagaimana cara mengajukan sanggahan?",
@@ -363,7 +363,7 @@ const id: Dictionary = {
       },
       {
         q: "Apakah pengajuan sanggahan memiliki batas waktu?",
-        a: "Ya. Masa sanggah berlangsung 14 hari kalender sejak tanggal pengumuman data nominatif suatu proyek. Setelah sanggahan diajukan, petugas akan menanggapi dalam waktu 3-4 hari kerja.",
+        a: "Ya. Masa sanggah berlangsung 14 hari kalender sejak tanggal pengumuman daftar nominatif suatu proyek. Setelah sanggahan diajukan, petugas akan menanggapi dalam waktu 3-4 hari kerja.",
       },
       {
         q: "Bagaimana cara melacak status sanggahan saya?",
@@ -371,7 +371,7 @@ const id: Dictionary = {
       },
       {
         q: "Apakah data pribadi saya aman dipublikasikan?",
-        a: "NIK, tempat/tanggal lahir, pekerjaan, dan alamat pada Data Nominatif publik ditutup sebagian (dimasking) untuk melindungi privasi Anda.",
+        a: "NIK, tempat/tanggal lahir, pekerjaan, dan alamat pada Daftar Nominatif publik ditutup sebagian (dimasking) untuk melindungi privasi Anda.",
       },
       {
         q: "Ke mana saya bisa bertanya lebih lanjut?",
@@ -386,7 +386,7 @@ const id: Dictionary = {
     tanggal: "Tanggal:",
     lokasi: "Lokasi:",
     layananUtama: "Layanan Utama",
-    lihatNominatifTitle: "Lihat Data Nominatif",
+    lihatNominatifTitle: "Lihat Daftar Nominatif",
     lihatNominatifDesc: "Periksa data bidang, luas tanah, bangunan, dan tanaman yang terkena dampak.",
     ajukanSanggahanTitle: "Ajukan Sanggahan",
     ajukanSanggahanDesc: "Sampaikan sanggahan bila data yang diumumkan tidak sesuai.",
@@ -404,8 +404,8 @@ const id: Dictionary = {
     ctaButton: "Ajukan Sanggahan Sekarang",
     kanalSanggahanTitle: "Sanggahan Memiliki Tenggat Waktu 14 Hari",
     kanalSanggahanDesc:
-      "Sanggahan dapat diajukan dalam 14 hari kalender sejak tanggal pengumuman data nominatif, dan akan ditanggapi petugas dalam 3-4 hari kerja. Ajukan langsung dari data bidang yang ingin disanggah atau dari pengumuman terkait.",
-    kanalSanggahanNominatif: "Pilih bidang di Data Nominatif",
+      "Sanggahan dapat diajukan dalam 14 hari kalender sejak tanggal pengumuman daftar nominatif, dan akan ditanggapi petugas dalam 3-4 hari kerja. Ajukan langsung dari data bidang yang ingin disanggah atau dari pengumuman terkait.",
+    kanalSanggahanNominatif: "Pilih bidang di Daftar Nominatif",
     kanalSanggahanPengumuman: "Pilih pengumuman yang kanalnya dibuka",
     pengumumanTerbaruTitle: "Pengumuman Terbaru",
     pengumumanTerbaruLihatSemua: "Lihat Semua Pengumuman",
@@ -493,7 +493,7 @@ const id: Dictionary = {
   },
   sanggahanForm: {
     pageTitle: "Ajukan Sanggahan",
-    pageDesc: "Sampaikan sanggahan atas data nominatif atau dokumen publikasi yang menurut Anda tidak sesuai.",
+    pageDesc: "Sampaikan sanggahan atas daftar nominatif atau dokumen publikasi yang menurut Anda tidak sesuai.",
     kanalTertutup:
       "Masa sanggah telah berakhir atau kanal sanggahan untuk dokumen terkait sedang ditutup, sehingga pengajuan sanggahan baru tidak dapat diproses saat ini.",
     nama: "Nama *",
@@ -533,14 +533,14 @@ const id: Dictionary = {
     tambahBarisBukti: "+ Tambah Baris",
   },
   nominatif: {
-    pageTitle: "Data Nominatif",
+    pageTitle: "Daftar Nominatif",
     pageDesc: "Daftar bidang tanah, bangunan, dan tanaman yang terkena dampak pengadaan tanah.",
     totalBidang: "Total Bidang",
     totalLuasTerkena: "Total Luas Terkena",
     dataTidakSesuai: "Data tidak sesuai?",
     dataTidakSesuaiDesc: "Jika ada data pada bidang ini yang menurut Anda tidak sesuai, silakan ajukan sanggahan.",
     ajukanUntukBidang: "Ajukan Sanggahan untuk Bidang Ini",
-    kembaliKeDaftar: "Kembali ke Data Nominatif",
+    kembaliKeDaftar: "Kembali ke Daftar Nominatif",
   },
   nominatifTable: {
     cariPlaceholder: "Cari nama, NIB, atau no. urut...",
@@ -565,7 +565,7 @@ const id: Dictionary = {
     pageDesc: "Pengumuman resmi terkait kegiatan pengadaan tanah untuk kepentingan umum.",
     lihatLampiran: "Lihat lampiran",
     lihatDokumenTerkait: "Lihat Dokumen Terkait",
-    lihatDataNominatif: "Lihat Data Nominatif",
+    lihatDataNominatif: "Lihat Daftar Nominatif",
     belumAda: "Belum ada pengumuman.",
     baruBadge: "Baru",
     kanalDibuka: "Kanal sanggahan dibuka",

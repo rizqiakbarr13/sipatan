@@ -36,7 +36,7 @@ export default async function AdminNominatifPage({
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Kelola Data Nominatif</h1>
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Kelola Daftar Nominatif</h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400">{total} bidang terdaftar.</p>
         </div>
         <div className="flex gap-2">

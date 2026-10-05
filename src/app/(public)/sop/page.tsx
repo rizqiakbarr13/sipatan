@@ -1,61 +1,47 @@
-import Link from "next/link";
-import { ChevronRight, FileText } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { Download, FileText } from "lucide-react";
 import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
-
-export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "SOP Pengadaan Tanah",
 };
 
+const SK_SOP_URL = "/dokumen-sop/SK-Penetapan-SOP-Bidang-Pertanahan.pdf";
+
 export default async function SopPage() {
-  const [tahapan, { dict }] = await Promise.all([
-    prisma.sOPDoc.findMany({
-      where: { published: true },
-      orderBy: { urutan: "asc" },
-    }),
-    getDictionary(),
-  ]);
+  const { dict } = await getDictionary();
 
   return (
     <div>
       <PageHeader title={dict.sop.pageTitle} description={dict.sop.pageDesc} />
 
-      <div className="mx-auto max-w-3xl px-4 py-10">
-        <ol className="relative border-l border-emerald-200 pl-6 dark:border-emerald-900">
-          {tahapan.map((t, i) => (
-            <li key={t.id} className="mb-8 last:mb-0">
-              <span className="absolute -left-[13px] flex h-6 w-6 items-center justify-center rounded-full bg-emerald-700 text-xs font-semibold text-white dark:bg-emerald-600">
-                {i + 1}
-              </span>
-              <Link
-                href={`/sop/${t.slug}`}
-                className="group flex items-start justify-between gap-3 rounded-lg border border-transparent p-3 -m-3 hover:border-emerald-200 hover:bg-emerald-50 dark:hover:border-emerald-900 dark:hover:bg-emerald-950/40"
-              >
-                <div>
-                  <h2 className="font-semibold text-zinc-900 group-hover:text-emerald-800 dark:text-zinc-100 dark:group-hover:text-emerald-400">
-                    {t.judul}
-                  </h2>
-                  <p className="mt-1 line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    {t.konten.replace(/[#*_`>-]/g, "").slice(0, 160)}
-                  </p>
-                  {t.fileUrl && (
-                    <span className="mt-2 inline-flex items-center gap-1 text-xs text-emerald-700 dark:text-emerald-400">
-                      <FileText className="h-3.5 w-3.5" /> {dict.sop.adaLampiran}
-                    </span>
-                  )}
-                </div>
-                <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-zinc-400 group-hover:text-emerald-700 dark:group-hover:text-emerald-400" />
-              </Link>
-            </li>
-          ))}
-        </ol>
+      <div className="mx-auto max-w-5xl space-y-4 px-4 py-10">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+              <FileText className="h-4 w-4" />
+            </span>
+            <div>
+              <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
+                SK Penetapan SOP Bidang Pertanahan
+              </h2>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">Dokumen resmi dalam format PDF</p>
+            </div>
+          </div>
+          <a
+            href={SK_SOP_URL}
+            download
+            className="inline-flex items-center gap-2 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-700 transition hover:border-emerald-400 hover:text-emerald-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-emerald-800"
+          >
+            <Download className="h-4 w-4" /> Unduh PDF
+          </a>
+        </div>
 
-        {tahapan.length === 0 && (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">{dict.sop.belumAda}</p>
-        )}
+        <iframe
+          src={SK_SOP_URL}
+          title="SK Penetapan SOP Bidang Pertanahan"
+          className="h-[80vh] w-full rounded-xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900"
+        />
       </div>
     </div>
   );

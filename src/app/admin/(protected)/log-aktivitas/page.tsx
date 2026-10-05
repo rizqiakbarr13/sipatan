@@ -58,7 +58,7 @@ export default async function LogAktivitasPage({
         <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Log Aktivitas</h1>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
           {total} aktivitas tercatat. Jejak audit ini mencatat siapa menambah, mengubah, menghapus, atau
-          mengganti status publikasi/kanal sanggahan pada data Proyek, Dokumen, Data Nominatif, SOP,
+          mengganti status publikasi/kanal sanggahan pada data Proyek, Dokumen, Daftar Nominatif, SOP,
           Pengumuman, Akun Warga, dan User Admin.
         </p>
       </div>

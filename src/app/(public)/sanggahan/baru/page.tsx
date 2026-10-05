@@ -37,7 +37,16 @@ export default async function AjukanSanggahanPage({
     }),
     prisma.bidang.findMany({
       orderBy: { noUrut: "asc" },
-      select: { id: true, projectId: true, noUrut: true, namaPemilik: true },
+      select: {
+        id: true,
+        projectId: true,
+        noUrut: true,
+        namaPemilik: true,
+        suratTandaBukti: true,
+        danomNo: true,
+        noPetaBidang: true,
+        nisTerkena: true,
+      },
     }),
     prisma.dokumenPublikasi.findMany({
       where: { published: true },

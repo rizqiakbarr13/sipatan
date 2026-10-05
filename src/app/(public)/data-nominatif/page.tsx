@@ -8,7 +8,7 @@ import { ProjectFilterTabs } from "@/components/project-filter-tabs";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Data Nominatif",
+  title: "Daftar Nominatif",
 };
 
 function jenisAlasHak(suratTandaBukti: string | null): string {
