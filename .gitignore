@@ -53,3 +53,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# Salinan dokumen resmi di root (sumber asli; versi publik ada di public/dokumen-sop)
+/SK Penetapan SOP Bidang Pertanahan.pdf
