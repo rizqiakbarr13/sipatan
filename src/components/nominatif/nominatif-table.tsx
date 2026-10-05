@@ -15,7 +15,7 @@ import {
 import { ArrowUpDown, Download, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { maskPenuh } from "@/lib/mask";
+import { maskPenuh, maskAngka } from "@/lib/mask";
 import { toCsv } from "@/lib/csv-export";
 import { useLocale } from "@/lib/i18n/client";
 
@@ -76,7 +76,7 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
       }),
       columnHelper.accessor("nib", {
         header: "NIB",
-        cell: (info) => maskPenuh(info.getValue()),
+        cell: (info) => maskAngka(info.getValue()),
       }),
       columnHelper.accessor("rtRw", {
         header: "RT/RW",
@@ -104,7 +104,7 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
       }),
       columnHelper.accessor("suratTandaBukti", {
         header: "Surat Tanda Bukti",
-        cell: (info) => maskPenuh(info.getValue()),
+        cell: (info) => maskAngka(info.getValue()),
       }),
       columnHelper.accessor("keterangan", {
         header: "Keterangan",
@@ -145,13 +145,13 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
       noUrut: r.original.noUrut,
       namaPemilik: r.original.namaPemilik,
       nik: maskPenuh(r.original.nik),
-      nib: maskPenuh(r.original.nib),
+      nib: maskAngka(r.original.nib),
       rtRw: maskPenuh(r.original.rtRw),
       luasSesuaiAlasHak: r.original.luasSesuaiAlasHak ?? "",
       luasHasilUkur: r.original.luasHasilUkur ?? "",
       luasKena: r.original.luasKena ?? "",
       luasSisa: r.original.luasSisa ?? "",
-      suratTandaBukti: maskPenuh(r.original.suratTandaBukti),
+      suratTandaBukti: maskAngka(r.original.suratTandaBukti),
       keterangan: r.original.keterangan ?? "",
     }));
     const csv = toCsv(

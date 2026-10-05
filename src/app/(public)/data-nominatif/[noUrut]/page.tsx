@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MessageSquareWarning } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { maskPenuh, initialName } from "@/lib/mask";
+import { maskPenuh, maskAngka, maskSebagian, initialName } from "@/lib/mask";
 import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { cn } from "@/lib/utils";
@@ -96,7 +96,7 @@ export default async function DetailBidangPage({
             <InfoItem label="Nama Pemilik" value={bidang.namaPemilik} />
             <InfoItem label="NIK" value={maskPenuh(bidang.nik)} />
             <InfoItem label="Tanggal Lahir" value={maskPenuh(bidang.tanggalLahir)} />
-            <InfoItem label="Pekerjaan" value={bidang.pekerjaan} />
+            <InfoItem label="Pekerjaan" value={maskSebagian(bidang.pekerjaan)} />
             <InfoItem label="No. Peta Bidang" value={bidang.noPetaBidang} />
             <InfoItem label="RT/RW" value={maskPenuh(bidang.rtRw)} />
             <InfoItem
@@ -114,9 +114,9 @@ export default async function DetailBidangPage({
         <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
           <h2 className="mb-4 font-semibold text-zinc-900 dark:text-zinc-100">Data Tanah</h2>
           <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <InfoItem label="NIB" value={maskPenuh(bidang.nib)} />
+            <InfoItem label="NIB" value={maskAngka(bidang.nib)} />
             <InfoItem label="No. Danom" value={bidang.danomNo} />
-            <InfoItem label="Surat Tanda Bukti" value={maskPenuh(bidang.suratTandaBukti)} />
+            <InfoItem label="Surat Tanda Bukti" value={maskAngka(bidang.suratTandaBukti)} />
             <InfoItem
               label="Luas Sesuai Alas Hak"
               value={bidang.luasSesuaiAlasHak ? `${bidang.luasSesuaiAlasHak.toLocaleString(numberLocale)} m²` : null}

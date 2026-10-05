@@ -38,3 +38,9 @@ export function maskPenuh(value: string | number | null | undefined): string {
   if (value === null || value === undefined || String(value).trim() === "") return "-";
   return "●●●●●●";
 }
+
+/** Sensor hanya bagian angka (mis. "SHM No. 1121" → "SHM No. ●●●●"); teks lain tetap terlihat. */
+export function maskAngka(value: string | null | undefined): string {
+  if (!value || value.trim() === "") return "-";
+  return value.replace(/[0-9]/g, "●");
+}
