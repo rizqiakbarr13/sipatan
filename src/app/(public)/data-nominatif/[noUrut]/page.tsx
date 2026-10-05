@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MessageSquareWarning } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { maskNik, maskSebagian, maskTanggalLahir, initialName } from "@/lib/mask";
+import { maskPenuh, initialName } from "@/lib/mask";
 import { getDictionary } from "@/lib/i18n/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { cn } from "@/lib/utils";
@@ -11,20 +11,11 @@ import { formatTanggalWaktuIndonesia } from "@/lib/labels";
 
 export const dynamic = "force-dynamic";
 
-function InfoItem({ label, value, blur }: { label: string; value?: string | number | null; blur?: boolean }) {
+function InfoItem({ label, value }: { label: string; value?: string | number | null }) {
   return (
     <div>
       <dt className="text-xs uppercase text-zinc-400">{label}</dt>
-      <dd
-        className={
-          blur
-            ? "select-none text-sm text-zinc-800 blur-[3px] dark:text-zinc-200"
-            : "text-sm text-zinc-800 dark:text-zinc-200"
-        }
-        aria-hidden={blur || undefined}
-      >
-        {value ?? "-"}
-      </dd>
+      <dd className="text-sm text-zinc-800 dark:text-zinc-200">{value ?? "-"}</dd>
     </div>
   );
 }
@@ -103,30 +94,29 @@ export default async function DetailBidangPage({
           <h2 className="mb-4 font-semibold text-zinc-900 dark:text-zinc-100">Pihak yang Berhak</h2>
           <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             <InfoItem label="Nama Pemilik" value={bidang.namaPemilik} />
-            <InfoItem label="NIK" value={maskNik(bidang.nik)} />
-            <InfoItem label="Tanggal Lahir" value={maskTanggalLahir(bidang.tanggalLahir)} />
-            <InfoItem label="Pekerjaan" value={maskSebagian(bidang.pekerjaan)} />
+            <InfoItem label="NIK" value={maskPenuh(bidang.nik)} />
+            <InfoItem label="Tanggal Lahir" value={maskPenuh(bidang.tanggalLahir)} />
+            <InfoItem label="Pekerjaan" value={bidang.pekerjaan} />
             <InfoItem label="No. Peta Bidang" value={bidang.noPetaBidang} />
-            <InfoItem label="RT/RW" value={bidang.rtRw} blur />
+            <InfoItem label="RT/RW" value={maskPenuh(bidang.rtRw)} />
             <InfoItem
               label="Letak"
-              blur
               value={
                 bidang.letakKelurahan || bidang.letakKecamatan
-                  ? `Kel. ${bidang.letakKelurahan ?? "-"}, Kec. ${bidang.letakKecamatan ?? "-"}`
+                  ? maskPenuh(`${bidang.letakKelurahan ?? ""}${bidang.letakKecamatan ?? ""}`)
                   : null
               }
             />
-            <InfoItem label="Alamat" value={maskSebagian(bidang.alamat, 4)} />
+            <InfoItem label="Alamat" value={maskPenuh(bidang.alamat)} />
           </dl>
         </section>
 
         <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
           <h2 className="mb-4 font-semibold text-zinc-900 dark:text-zinc-100">Data Tanah</h2>
           <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <InfoItem label="NIB" value={bidang.nib} />
+            <InfoItem label="NIB" value={maskPenuh(bidang.nib)} />
             <InfoItem label="No. Danom" value={bidang.danomNo} />
-            <InfoItem label="Surat Tanda Bukti" value={bidang.suratTandaBukti} />
+            <InfoItem label="Surat Tanda Bukti" value={maskPenuh(bidang.suratTandaBukti)} />
             <InfoItem
               label="Luas Sesuai Alas Hak"
               value={bidang.luasSesuaiAlasHak ? `${bidang.luasSesuaiAlasHak.toLocaleString(numberLocale)} m²` : null}

@@ -15,7 +15,7 @@ import {
 import { ArrowUpDown, Download, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { maskNik } from "@/lib/mask";
+import { maskPenuh } from "@/lib/mask";
 import { toCsv } from "@/lib/csv-export";
 import { useLocale } from "@/lib/i18n/client";
 
@@ -76,15 +76,11 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
       }),
       columnHelper.accessor("nib", {
         header: "NIB",
-        cell: (info) => info.getValue() || "-",
+        cell: (info) => maskPenuh(info.getValue()),
       }),
       columnHelper.accessor("rtRw", {
         header: "RT/RW",
-        cell: (info) => (
-          <span className="select-none blur-[3px]" aria-hidden="true">
-            {info.getValue() || "-"}
-          </span>
-        ),
+        cell: (info) => maskPenuh(info.getValue()),
       }),
       columnHelper.accessor("luasSesuaiAlasHak", {
         header: "Luas Alas Hak (m²)",
@@ -108,7 +104,7 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
       }),
       columnHelper.accessor("suratTandaBukti", {
         header: "Surat Tanda Bukti",
-        cell: (info) => info.getValue() || "-",
+        cell: (info) => maskPenuh(info.getValue()),
       }),
       columnHelper.accessor("keterangan", {
         header: "Keterangan",
@@ -148,14 +144,14 @@ export function NominatifTable({ data }: { data: NominatifRow[] }) {
     const rows = table.getFilteredRowModel().rows.map((r) => ({
       noUrut: r.original.noUrut,
       namaPemilik: r.original.namaPemilik,
-      nik: maskNik(r.original.nik),
-      nib: r.original.nib ?? "",
-      rtRw: "(disamarkan)",
+      nik: maskPenuh(r.original.nik),
+      nib: maskPenuh(r.original.nib),
+      rtRw: maskPenuh(r.original.rtRw),
       luasSesuaiAlasHak: r.original.luasSesuaiAlasHak ?? "",
       luasHasilUkur: r.original.luasHasilUkur ?? "",
       luasKena: r.original.luasKena ?? "",
       luasSisa: r.original.luasSisa ?? "",
-      suratTandaBukti: r.original.suratTandaBukti ?? "",
+      suratTandaBukti: maskPenuh(r.original.suratTandaBukti),
       keterangan: r.original.keterangan ?? "",
     }));
     const csv = toCsv(

@@ -32,3 +32,9 @@ export function initialName(nama: string): string {
     .join(".")
     .concat(".");
 }
+
+/** Sensor penuh untuk tampilan publik: nilai diganti tanda bullet tetap (tidak membocorkan panjang asli). */
+export function maskPenuh(value: string | number | null | undefined): string {
+  if (value === null || value === undefined || String(value).trim() === "") return "-";
+  return "●●●●●●";
+}
