@@ -9,13 +9,12 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["pdfjs-dist"],
   experimental: {
     serverActions: {
       // Server Actions default to a 1MB body limit regardless of app-level
       // upload validation (src/lib/storage.ts's MAX_UPLOAD_SIZE_BYTES) —
       // raise it here so uploads routed through "use server" actions
-      // (dokumen, galeri, impor PDF nominatif) aren't rejected before that
+      // (dokumen, galeri) aren't rejected before that
       // validation even runs. Route Handlers (e.g. /api/sanggahan) aren't
       // affected by this setting, only Server Actions are.
       bodySizeLimit: "15mb",

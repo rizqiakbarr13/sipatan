@@ -6,8 +6,6 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { nominatifRowSchema, type NominatifRow } from "@/lib/nominatif-csv";
-import { extractNominatifRowsFromPdf } from "@/lib/nominatif-pdf";
-import { MAX_UPLOAD_SIZE_BYTES } from "@/lib/storage";
 import { logAdminAction } from "@/lib/audit-log";
 
 const bidangFormSchema = z.object({
@@ -299,28 +297,4 @@ export async function importNominatifRows(rows: NominatifRow[], projectId: strin
   revalidatePath("/admin/nominatif");
   revalidatePath("/data-nominatif");
   return { success: true, created, updated };
-}
-
-export async function extractNominatifPdf(formData: FormData) {
-  const session = await auth();
-  if (!session?.user) throw new Error("Unauthorized");
-
-  const file = formData.get("file");
-  if (!(file instanceof File) || file.size === 0) {
-    return { error: "File PDF wajib diunggah" };
-  }
-  if (file.type !== "application/pdf") {
-    return { error: "File harus berformat PDF" };
-  }
-  if (file.size > MAX_UPLOAD_SIZE_BYTES) {
-    return { error: "Ukuran file melebihi batas maksimal" };
-  }
-
-  const buffer = Buffer.from(await file.arrayBuffer());
-  try {
-    const { rows, warnings } = await extractNominatifRowsFromPdf(buffer);
-    return { rows, warnings };
-  } catch {
-    return { error: "Gagal membaca file PDF. Pastikan file tidak rusak dan berisi tabel data." };
-  }
 }

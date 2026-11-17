@@ -56,3 +56,9 @@ next-env.d.ts
 
 # Salinan dokumen resmi di root (sumber asli; versi publik ada di public/dokumen-sop)
 /SK Penetapan SOP Bidang Pertanahan.pdf
+
+# PDF sumber di root (bisa berisi data pribadi lengkap; versi publik tersensor ada di public/dokumen-resmi)
+/*.pdf
+
+# Script & data impor sekali-jalan yang memuat data pribadi (NIK, alamat) — jangan di-commit (repo publik)
+/scripts/local/

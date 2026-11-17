@@ -9,7 +9,14 @@ import {
   isBlankTemplateRow,
   type NominatifRow,
 } from "@/lib/nominatif-csv";
-import { importNominatifRows, extractNominatifPdf } from "../actions";
+import { extractNominatifRowsFromTextPages } from "@/lib/nominatif-pdf";
+import { readPdfTextInBrowser } from "@/lib/pdf-text-client";
+import { importNominatifRows } from "../actions";
+
+const SCAN_PDF_MESSAGE =
+  "PDF ini hasil scan (berisi gambar saja, tanpa lapisan teks), sehingga datanya tidak bisa dibaca otomatis. " +
+  "Gunakan PDF asli hasil ekspor dari Excel/Word, atau masukkan datanya lewat tab Import CSV " +
+  "(template kolom tersedia di sana).";
 
 interface RowPreview {
   line: number;
@@ -39,17 +46,23 @@ export function ImportPdfClient({ projects }: { projects: { id: string; namaProy
     setWarnings([]);
     setExtracting(true);
 
-    const formData = new FormData();
-    formData.append("file", file);
+    const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+    if (!isPdf) {
+      setError("File harus berformat PDF");
+      setExtracting(false);
+      return;
+    }
 
-    extractNominatifPdf(formData)
-      .then((res) => {
-        if ("error" in res && res.error) {
-          setError(res.error);
+    // Dibaca di browser: file tidak diunggah, jadi tidak terkena batas ukuran request server.
+    readPdfTextInBrowser(file)
+      .then(({ pages, textItemCount }) => {
+        if (textItemCount === 0) {
+          setError(SCAN_PDF_MESSAGE);
           return;
         }
-        const rawRows = "rows" in res ? res.rows ?? [] : [];
-        setWarnings("warnings" in res ? res.warnings ?? [] : []);
+        const res = extractNominatifRowsFromTextPages(pages);
+        const rawRows = res.rows;
+        setWarnings(res.warnings);
         const preview: RowPreview[] = [];
         rawRows.forEach((raw, i) => {
           if (isBlankTemplateRow(raw)) return;
@@ -62,7 +75,14 @@ export function ImportPdfClient({ projects }: { projects: { id: string; namaProy
         });
         setRows(preview);
       })
-      .finally(() => setExtracting(false));
+      .catch(() => {
+        setError("Gagal membaca file PDF. Pastikan file tidak rusak atau terkunci kata sandi.");
+      })
+      .finally(() => {
+        setExtracting(false);
+        // izinkan memilih file yang sama lagi setelah error
+        e.target.value = "";
+      });
   }
 
   function handleCommit() {

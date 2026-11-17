@@ -18,6 +18,8 @@ interface Column {
   end: number;
 }
 
+export type PdfTextItem = { str: string; transform: number[] };
+
 export interface NominatifPdfExtractResult {
   rows: Record<string, string>[];
   warnings: string[];
@@ -250,12 +252,12 @@ function extractLabeledBlockRows(pagesLines: Line[][]): { rows: Record<string, s
  * dicoba bila strategi 1 tidak menemukan baris sama sekali. Hasil SELALU harus melalui
  * preview+konfirmasi manual sebelum disimpan — kedua strategi bersifat best-effort, bukan OCR
  * yang presisi.
+ *
+ * Fungsi ini murni (tanpa pdf.js) dan menerima item teks per halaman. Teks PDF dibaca di
+ * browser (lihat `src/lib/pdf-text-client.ts`) supaya file tidak perlu diunggah ke server:
+ * request ke Vercel dibatasi 4,5 MB, sedangkan scan nominatif mudah melebihi itu.
  */
-export async function extractNominatifRowsFromPdf(buffer: Buffer): Promise<NominatifPdfExtractResult> {
-  const pdfjsLib = await import(/* webpackIgnore: true */ "pdfjs-dist/legacy/build/pdf.mjs");
-  const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(buffer) });
-  const pdf = await loadingTask.promise;
-
+export function extractNominatifRowsFromTextPages(pages: PdfTextItem[][]): NominatifPdfExtractResult {
   const warnings: string[] = [];
   const unknownHeaders = new Set<string>();
   const rows: Record<string, string>[] = [];
@@ -264,10 +266,8 @@ export async function extractNominatifRowsFromPdf(buffer: Buffer): Promise<Nomin
   let columns: Column[] | null = null;
   let lastRow: Record<string, string> | null = null;
 
-  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-    const page = await pdf.getPage(pageNum);
-    const content = await page.getTextContent();
-    const lines = groupIntoLines(content.items as Array<{ str: string; transform: number[] }>);
+  for (const items of pages) {
+    const lines = groupIntoLines(items);
     pagesLines.push(lines);
 
     for (const line of lines) {
