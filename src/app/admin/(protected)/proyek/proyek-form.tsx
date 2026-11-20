@@ -27,9 +27,11 @@ function formatTanggalPreview(value: string): string {
 }
 
 function addDaysToDateInput(value: string, days: number): string {
-  const base = value ? new Date(`${value}T00:00:00`) : new Date();
+  // Hitung di UTC: membaca "YYYY-MM-DD" sebagai waktu lokal lalu toISOString() menggeser hasil
+  // satu hari ke belakang di zona waktu positif seperti WIB.
+  const base = value ? new Date(`${value}T00:00:00Z`) : new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00Z`);
   if (Number.isNaN(base.getTime())) return value;
-  base.setDate(base.getDate() + days);
+  base.setUTCDate(base.getUTCDate() + days);
   return base.toISOString().slice(0, 10);
 }
 
@@ -53,6 +55,13 @@ export function ProyekForm({
       ? toDateInputValue(project.masaSanggahSelesai) || defaultSelesaiFromTanggalPeng(tanggalPeng)
       : defaultSelesaiFromTanggalPeng(tanggalPeng)
   );
+  // Tanggal mulai masa sanggah: ikut tanggal pengumuman, kecuali admin mengaturnya sendiri
+  // (mis. back date ke tanggal pengumuman fisik yang sudah lewat).
+  const mulaiTersimpan = toDateInputValue(project?.masaSanggahMulai);
+  const [mulaiManual, setMulaiManual] = useState(Boolean(mulaiTersimpan && mulaiTersimpan !== tanggalPeng));
+  const [masaSanggahMulaiManual, setMasaSanggahMulaiManual] = useState(mulaiTersimpan || tanggalPeng);
+  const masaSanggahMulai = mulaiManual ? masaSanggahMulaiManual : tanggalPeng;
+  const [sinkronPengumuman, setSinkronPengumuman] = useState(false);
 
   function handleTanggalPengChange(value: string) {
     setTanggalPeng(value);
@@ -63,8 +72,18 @@ export function ProyekForm({
     if (!project) setMasaSanggahSelesai(defaultSelesaiFromTanggalPeng(value));
   }
 
+  /** Geser seluruh jadwal (tanggal pengumuman, mulai & akhir masa sanggah) sebanyak `days` hari. */
+  function geserJadwal(days: number) {
+    setTanggalPeng((prev) => (prev ? addDaysToDateInput(prev, days) : prev));
+    setMasaSanggahMulaiManual((prev) => (prev ? addDaysToDateInput(prev, days) : prev));
+    setMasaSanggahSelesai((prev) => (prev ? addDaysToDateInput(prev, days) : prev));
+  }
+
   const masaSanggahSudahLewat =
     masaSanggahSelesai && new Date(`${masaSanggahSelesai}T23:59:59`).getTime() < Date.now();
+  const hariIni = new Date().toISOString().slice(0, 10);
+  const tanggalLampau = (value: string) => Boolean(value) && value < hariIni;
+  const adaBackDate = tanggalLampau(tanggalPeng) || tanggalLampau(masaSanggahMulai);
 
   return (
     <form ref={formRef} action={formAction} className="max-w-3xl space-y-6">
@@ -122,19 +141,43 @@ export function ProyekForm({
           <div>
             <p className="font-medium">Masa Sanggah</p>
             <p className="mt-0.5 text-emerald-800/80 dark:text-emerald-300/80">
-              Default {MASA_SANGGAH_HARI_KALENDER} hari kalender sejak tanggal pengumuman. Tanggal akhir di bawah
-              bisa diubah langsung untuk menambah atau memperpanjang masa sanggah proyek ini.
+              Default {MASA_SANGGAH_HARI_KALENDER} hari kalender sejak tanggal pengumuman. Tanggal mulai dan akhir
+              bisa diubah langsung, termasuk diisi tanggal yang sudah lewat (back date) bila pengumuman fisiknya
+              terbit lebih dulu daripada input di sistem.
             </p>
           </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label>Masa Sanggah Mulai</Label>
-            <p className="flex h-10 items-center rounded-md border border-emerald-200 bg-white px-3 text-sm text-zinc-700 dark:border-emerald-900 dark:bg-zinc-900 dark:text-zinc-300">
-              {tanggalPeng ? formatTanggalPreview(tanggalPeng) : "-"}
-            </p>
-            <p className="text-xs text-emerald-800/70 dark:text-emerald-300/60">Ikut tanggal pengumuman.</p>
+            <Label htmlFor="masaSanggahMulai">Masa Sanggah Mulai</Label>
+            {mulaiManual ? (
+              <Input
+                id="masaSanggahMulai"
+                name="masaSanggahMulai"
+                type="date"
+                value={masaSanggahMulaiManual}
+                onChange={(e) => setMasaSanggahMulaiManual(e.target.value)}
+                max={masaSanggahSelesai || undefined}
+                required
+              />
+            ) : (
+              <p className="flex h-10 items-center rounded-md border border-emerald-200 bg-white px-3 text-sm text-zinc-700 dark:border-emerald-900 dark:bg-zinc-900 dark:text-zinc-300">
+                {tanggalPeng ? formatTanggalPreview(tanggalPeng) : "-"}
+              </p>
+            )}
+            <label className="flex items-center gap-2 text-xs text-emerald-800/80 dark:text-emerald-300/70">
+              <input
+                type="checkbox"
+                checked={mulaiManual}
+                onChange={(e) => {
+                  setMulaiManual(e.target.checked);
+                  if (e.target.checked) setMasaSanggahMulaiManual(masaSanggahMulaiManual || tanggalPeng);
+                }}
+                className="h-3.5 w-3.5 rounded border-zinc-300 text-emerald-700 dark:border-zinc-700"
+              />
+              Atur tanggal mulai sendiri (tidak ikut tanggal pengumuman)
+            </label>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="masaSanggahSelesai">Masa Sanggah Berakhir</Label>
@@ -144,7 +187,7 @@ export function ProyekForm({
               type="date"
               value={masaSanggahSelesai}
               onChange={(e) => setMasaSanggahSelesai(e.target.value)}
-              min={tanggalPeng || undefined}
+              min={masaSanggahMulai || undefined}
               required
             />
             <p className={cn("text-xs", masaSanggahSudahLewat ? "text-red-600 dark:text-red-400" : "text-emerald-800/70 dark:text-emerald-300/60")}>
@@ -177,6 +220,43 @@ export function ProyekForm({
             Reset ke default ({MASA_SANGGAH_HARI_KALENDER} hari)
           </button>
         </div>
+
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-xs text-emerald-800/70 dark:text-emerald-300/60">Mundurkan jadwal (back date):</span>
+          {[1, 7, 14, 30].map((days) => (
+            <button
+              key={days}
+              type="button"
+              onClick={() => geserJadwal(-days)}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }), "h-7 px-2.5 text-xs")}
+              title="Geser tanggal pengumuman serta mulai & akhir masa sanggah"
+            >
+              −{days} hari
+            </button>
+          ))}
+        </div>
+
+        {adaBackDate && (
+          <p className="text-xs text-amber-700 dark:text-amber-400">
+            Jadwal memakai tanggal lampau (back date). Pastikan sesuai tanggal pada dokumen pengumuman resmi.
+          </p>
+        )}
+
+        {project && (
+          <label className="flex items-start gap-2 rounded-md border border-emerald-200 bg-white p-3 text-sm text-zinc-700 dark:border-emerald-900 dark:bg-zinc-900 dark:text-zinc-300">
+            <input
+              type="checkbox"
+              name="sinkronPengumuman"
+              checked={sinkronPengumuman}
+              onChange={(e) => setSinkronPengumuman(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-emerald-700 dark:border-zinc-700"
+            />
+            <span>
+              Samakan juga <strong>tanggal terbit semua pengumuman</strong> proyek ini dengan tanggal pengumuman
+              {tanggalPeng ? ` (${formatTanggalPreview(tanggalPeng)})` : ""}.
+            </span>
+          </label>
+        )}
       </div>
 
       <SaveButton

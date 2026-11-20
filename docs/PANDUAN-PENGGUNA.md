@@ -35,7 +35,7 @@ Jika ada lebih dari satu proyek, banyak halaman menyediakan **tab filter proyek*
 
 ## A2. Membuat Akun Warga dan Masuk
 
-> **Akun warga wajib** untuk mengajukan sanggahan. Anda tetap bisa memilih mengajukan secara *anonim* setelah masuk (lihat A7).
+> **Akun warga wajib** untuk mengajukan sanggahan. Setiap sanggahan tercatat atas nama akun Anda.
 
 **Mendaftar**
 
@@ -93,7 +93,7 @@ Sanggahan bisa diajukan dari tiga tempat: halaman **Dokumen** (detail dokumen), 
 
 1. Pastikan sudah **masuk** ke akun warga.
 2. Buka formulir **Ajukan Sanggahan** (`/sanggahan/baru`).
-3. *(Opsional)* Centang **"Ajukan sebagai anonim"** bila sanggahan tidak ingin dikaitkan ke akun Anda. Jika tidak dicentang, data Anda terisi otomatis dan sanggahan tersimpan di riwayat akun.
+3. Data nama dan NIK terisi otomatis dari akun, dan sanggahan tersimpan di riwayat akun Anda.
 4. **Bagian Identitas**
    - Pilih **Proyek terkait** (wajib).
    - Nama dan NIK (terisi otomatis dari akun).
@@ -137,7 +137,7 @@ Ada dua cara:
 **Lewat akun warga**
 
 1. Masuk, lalu buka **Akun Saya → Sanggahan Saya** (`/akun`).
-2. Seluruh sanggahan yang diajukan lewat akun (tidak anonim) tercantum di riwayat. Klik salah satu untuk melihat detail.
+2. Seluruh sanggahan yang Anda ajukan tercantum di riwayat. Klik salah satu untuk melihat detail.
 
 **Arti status**
 
@@ -326,7 +326,7 @@ Urutan persiapan proyek baru:
 | Pesan "Masa sanggah telah berakhir" | Sudah lewat 14 hari dari tanggal pengumuman proyek; hubungi petugas |
 | Pesan "Kanal sanggahan ditutup" | Petugas menutup kanal pada dokumen/pengumuman itu; coba lewat item lain atau hubungi petugas |
 | Gagal mengirim sanggahan | Cek isi ≥ 20 karakter, NIK 16 digit, No. HP diawali `0`, email valid, ukuran lampiran tidak melebihi batas, dan belum melewati 5 pengajuan/jam |
-| Lupa nomor tiket | Masuk ke akun warga → **Sanggahan Saya** (hanya untuk sanggahan non-anonim) |
+| Lupa nomor tiket | Masuk ke akun warga → **Sanggahan Saya** |
 | Tidak menerima email | Pastikan email diisi saat mengajukan, cek folder spam; notifikasi email hanya aktif jika layanan email (Resend) dikonfigurasi di server |
 | Hasil impor PDF berantakan | Gunakan PDF berbasis teks (bukan scan) atau pakai impor CSV; periksa preview sebelum simpan |
 | Impor CSV menampilkan baris error | Perbaiki baris yang ditandai sesuai pesan error di preview, lalu unggah ulang |

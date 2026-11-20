@@ -31,7 +31,7 @@ const en: Dictionary = {
     masukTitle: "Sign In to Your Account",
     masukDesc: "Submit objections with auto-filled data and view your history.",
     masukUntukSanggahan:
-      "Sign in first to submit an objection. Once signed in, you can still choose to submit under your own name or anonymously.",
+      "Sign in first to submit an objection. Your name and NIK are filled in automatically from your account.",
     daftarTitle: "Create an Account",
     daftarDesc: "Submit objections faster and track them all in one place.",
     namaLengkap: "Full Name",
@@ -53,7 +53,6 @@ const en: Dictionary = {
     riwayatTitle: "My Objections",
     riwayatKosong: "You haven't submitted any objections through this account yet.",
     masukSebagai: "Signed in as",
-    ajukanAnonim: "Submit anonymously (don't link to my account)",
     dataOtomatisTerisi:
       "The fields below are auto-filled, and this objection will be saved to your account history.",
   },
@@ -84,7 +83,7 @@ const en: Dictionary = {
     items: [
       {
         q: "How do I submit an objection?",
-        a: "Open the \"Submit an Objection\" page, pick the land parcel or announcement you want to object to, then fill in the form. You can submit anonymously or sign in as a citizen so it's saved to your account history.",
+        a: "Open the \"Submit an Objection\" page, pick the land parcel or announcement you want to object to, then fill in the form. You need to sign in as a citizen first; every objection is saved to your account history.",
       },
       {
         q: "Is there a deadline for submitting an objection?",

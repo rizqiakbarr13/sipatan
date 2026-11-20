@@ -8,7 +8,10 @@ export default async function PengumumanBaruPage() {
       orderBy: { tanggalUpload: "desc" },
       select: { id: true, judul: true },
     }),
-    prisma.project.findMany({ orderBy: { createdAt: "desc" }, select: { id: true, namaProyek: true } }),
+    prisma.project.findMany({
+      orderBy: { createdAt: "desc" },
+      select: { id: true, namaProyek: true, tanggalPeng: true },
+    }),
   ]);
 
   return (

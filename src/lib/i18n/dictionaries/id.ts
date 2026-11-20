@@ -50,7 +50,6 @@ export interface Dictionary {
     riwayatTitle: string;
     riwayatKosong: string;
     masukSebagai: string;
-    ajukanAnonim: string;
     dataOtomatisTerisi: string;
   };
   footer: {
@@ -306,7 +305,7 @@ const id: Dictionary = {
     masukTitle: "Masuk Akun Warga",
     masukDesc: "Untuk mengajukan sanggahan dengan data otomatis terisi dan melihat riwayat.",
     masukUntukSanggahan:
-      "Masuk terlebih dahulu untuk mengajukan sanggahan. Setelah masuk, Anda tetap bisa memilih mengajukan dengan nama sendiri atau secara anonim.",
+      "Masuk terlebih dahulu untuk mengajukan sanggahan. Nama dan NIK akan terisi otomatis dari akun Anda.",
     daftarTitle: "Daftar Akun Warga",
     daftarDesc: "Ajukan sanggahan lebih cepat dan pantau riwayatnya di satu tempat.",
     namaLengkap: "Nama Lengkap",
@@ -328,7 +327,6 @@ const id: Dictionary = {
     riwayatTitle: "Sanggahan Saya",
     riwayatKosong: "Anda belum pernah mengajukan sanggahan lewat akun ini.",
     masukSebagai: "Masuk sebagai",
-    ajukanAnonim: "Ajukan sebagai anonim (jangan kaitkan dengan akun saya)",
     dataOtomatisTerisi:
       "Data di bawah sudah terisi otomatis dan sanggahan ini akan tersimpan di riwayat akun Anda.",
   },
@@ -359,7 +357,7 @@ const id: Dictionary = {
     items: [
       {
         q: "Bagaimana cara mengajukan sanggahan?",
-        a: "Buka halaman \"Ajukan Sanggahan\", pilih data bidang atau pengumuman yang ingin disanggah, lalu isi form. Anda bisa mengajukan secara anonim atau login sebagai warga agar tersimpan di riwayat akun.",
+        a: "Buka halaman \"Ajukan Sanggahan\", pilih data bidang atau pengumuman yang ingin disanggah, lalu isi form. Anda perlu masuk sebagai warga terlebih dahulu; setiap sanggahan tersimpan di riwayat akun.",
       },
       {
         q: "Apakah pengajuan sanggahan memiliki batas waktu?",

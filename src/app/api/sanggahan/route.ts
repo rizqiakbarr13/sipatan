@@ -170,7 +170,6 @@ export async function POST(request: NextRequest) {
   }
 
   const nomorTiket = await generateNomorTiket();
-  const anonim = formData.get("anonim")?.toString() === "true";
 
   const sanggahan = await prisma.sanggahan.create({
     data: {
@@ -180,7 +179,6 @@ export async function POST(request: NextRequest) {
       dokumenId: data.dokumenId || null,
       pengumumanId: data.pengumumanId || null,
       wargaId: wargaSession.id,
-      anonim,
       nama: data.nama,
       nik: data.nik,
       alasHak: data.alasHak,

@@ -97,7 +97,6 @@ export function SanggahanForm({
   const [buktiRows, setBuktiRows] = useState<BuktiTambahanRow[]>([]);
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [anonim, setAnonim] = useState(false);
 
   const {
     register,
@@ -203,7 +202,6 @@ export function SanggahanForm({
       if (validBuktiRows.length > 0) {
         formData.append("buktiTambahan", JSON.stringify(validBuktiRows));
       }
-      formData.append("anonim", String(anonim));
 
       const res = await fetch("/api/sanggahan", { method: "POST", body: formData });
       const data = await res.json();
@@ -245,15 +243,6 @@ export function SanggahanForm({
         <p>
           {dict.account.masukSebagai} <strong>{warga.nama}</strong>. {dict.account.dataOtomatisTerisi}
         </p>
-        <label className="mt-2 flex items-start gap-2">
-          <input
-            type="checkbox"
-            checked={anonim}
-            onChange={(e) => setAnonim(e.target.checked)}
-            className="mt-0.5 h-4 w-4 rounded border-emerald-300 text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
-          />
-          <span>{dict.account.ajukanAnonim}</span>
-        </label>
       </div>
 
       <fieldset className="space-y-4 rounded-xl border border-zinc-200 p-4 sm:p-5 dark:border-zinc-800">
